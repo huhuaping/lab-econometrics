@@ -1,0 +1,42 @@
+
+{
+	"commands" : null,
+	"description" : "",
+	"label" : "save",
+	"workbook_meta" : 
+	{
+		"_name" : "d:\\econometrics\\eviews\\family expenditure.wf1",
+		"_pages" : 
+		[
+			
+			{
+				"_frequency" : "U",
+				"_last_update" : [ 736775.9274305556, "03/23/2018 22:15" ],
+				"_name" : "food",
+				"_obj_count" : 2,
+				"_objects" : 
+				[
+					
+					{
+						"_data_type" : "integer",
+						"_name" : "@DATE",
+						"_obs_max" : 1519,
+						"_obs_min" : 1,
+						"_type" : "INDEX"
+					},
+					
+					{
+						"_name" : "C",
+						"_type" : "COEF"
+					},
+					
+					{
+						"_name" : "RESID",
+						"_type" : "SERIES"
+					}
+				],
+				"_obs_count" : 1519
+			}
+		]
+	}
+}

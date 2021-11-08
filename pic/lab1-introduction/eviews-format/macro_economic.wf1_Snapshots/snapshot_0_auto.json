@@ -1,0 +1,42 @@
+
+{
+	"commands" : "",
+	"description" : "",
+	"label" : "save",
+	"workbook_meta" : 
+	{
+		"_name" : "d:\\github\\books\\picture\\lab1-introduction\\eviews-format\\macro_economic.wf1",
+		"_pages" : 
+		[
+			
+			{
+				"_frequency" : "Q",
+				"_last_update" : [ 736896.4652430556, "07/22/2018 11:09" ],
+				"_name" : "gdp",
+				"_obj_count" : 2,
+				"_objects" : 
+				[
+					
+					{
+						"_data_type" : "date",
+						"_name" : "@DATE",
+						"_obs_max" : [ 734502.0, "01/01/2012" ],
+						"_obs_min" : [ 722814.0, "01/01/1980" ],
+						"_type" : "INDEX"
+					},
+					
+					{
+						"_name" : "C",
+						"_type" : "COEF"
+					},
+					
+					{
+						"_name" : "RESID",
+						"_type" : "SERIES"
+					}
+				],
+				"_obs_count" : 129
+			}
+		]
+	}
+}

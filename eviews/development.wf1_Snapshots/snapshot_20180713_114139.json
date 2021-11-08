@@ -1,0 +1,117 @@
+
+{
+	"commands" : null,
+	"description" : "",
+	"label" : "backup1",
+	"workbook_meta" : 
+	{
+		"_name" : "d:\\github\\books\\eviews\\development.wf1",
+		"_pages" : 
+		[
+			
+			{
+				"_frequency" : "Q",
+				"_last_update" : [ 736887.4383449074, "07/13/2018 10:31" ],
+				"_name" : "gdp",
+				"_obj_count" : 17,
+				"_objects" : 
+				[
+					
+					{
+						"_data_type" : "date",
+						"_name" : "@DATE",
+						"_obs_max" : [ 734776.0, "10/01/2012" ],
+						"_obs_min" : [ 722814.0, "01/01/1980" ],
+						"_type" : "INDEX"
+					},
+					
+					{
+						"_name" : "C",
+						"_type" : "COEF"
+					},
+					
+					{
+						"_name" : "EQ01",
+						"_type" : "EQUATION"
+					},
+					
+					{
+						"_name" : "EQ02",
+						"_type" : "EQUATION"
+					},
+					
+					{
+						"_name" : "GDP",
+						"_type" : "SERIES"
+					},
+					
+					{
+						"_name" : "GOVERNMENT",
+						"_type" : "SERIES"
+					},
+					
+					{
+						"_name" : "GRAPH01",
+						"_type" : "GRAPH"
+					},
+					
+					{
+						"_name" : "GRAPH02",
+						"_type" : "GRAPH"
+					},
+					
+					{
+						"_name" : "GRAPH03",
+						"_type" : "GRAPH"
+					},
+					
+					{
+						"_name" : "GROUP01",
+						"_type" : "GROUP"
+					},
+					
+					{
+						"_name" : "GROUP_VARS",
+						"_type" : "GROUP"
+					},
+					
+					{
+						"_name" : "INV",
+						"_type" : "SERIES"
+					},
+					
+					{
+						"_name" : "NEW",
+						"_type" : "SERIES"
+					},
+					
+					{
+						"_name" : "PCE",
+						"_type" : "SERIES"
+					},
+					
+					{
+						"_name" : "RESID",
+						"_type" : "SERIES"
+					},
+					
+					{
+						"_name" : "TAB_DESCRIPTIVE",
+						"_type" : "TABLE"
+					},
+					
+					{
+						"_name" : "TIME",
+						"_type" : "SERIES"
+					},
+					
+					{
+						"_name" : "VAR01",
+						"_type" : "VAR"
+					}
+				],
+				"_obs_count" : 132
+			}
+		]
+	}
+}

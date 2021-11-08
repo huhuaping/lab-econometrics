@@ -1,0 +1,56 @@
+
+{
+	"commands" : 
+	[
+		"import D:\\econometrics\\data\\Lab3-family-spends.xlsx range=\"Table 6_9\"!$H$1:$L$1520 colhead=1 na=\"#N/A\" @smpl @all",
+		"delete income nk age "
+	],
+	"description" : "",
+	"label" : "auto",
+	"workbook_meta" : 
+	{
+		"_name" : "d:\\econometrics\\eviews\\family expenditure.wf1",
+		"_pages" : 
+		[
+			
+			{
+				"_frequency" : "U",
+				"_last_update" : [ 736775.9298148148, "03/23/2018 22:18" ],
+				"_name" : "food",
+				"_obj_count" : 4,
+				"_objects" : 
+				[
+					
+					{
+						"_data_type" : "integer",
+						"_name" : "@DATE",
+						"_obs_max" : 1519,
+						"_obs_min" : 1,
+						"_type" : "INDEX"
+					},
+					
+					{
+						"_name" : "C",
+						"_type" : "COEF"
+					},
+					
+					{
+						"_name" : "FOOD",
+						"_type" : "SERIES"
+					},
+					
+					{
+						"_name" : "RESID",
+						"_type" : "SERIES"
+					},
+					
+					{
+						"_name" : "TOTEXP",
+						"_type" : "SERIES"
+					}
+				],
+				"_obs_count" : 1519
+			}
+		]
+	}
+}
