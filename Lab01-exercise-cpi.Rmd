@@ -107,15 +107,19 @@ end_line <- glue::glue("{end}（{weekdays(end)}）24:00:00")
 
 【校内权限】在线教育综合平台（需校内登陆）：
 
-- 计量经济学【理论课】课件（**pdf版**，停止更新）
+- 《计量经济学》课程【实验课】指导书（**pdf版**）
 
-- 计量经济学【实验课】指导书（**pdf版**，停止更新）
+```{r, fig.cap= "胡华平计量经济学（课程编号：3133101）"}
+knitr::include_graphics("pic/course/econometrics-nwafu-course.png")
+```
+
+
 
 【校外公开】胡华平个人网站（免费开放）：
 
-- 计量经济学【理论课】课件（**链接**[https://home.huhuaping.com/course-econometrics/schedule-theory/](https://home.huhuaping.com/course-econometrics/schedule-theory/)）
-
 - 计量经济学【实验课】指导书《计量经济学实验设计与应用：EViews软件实现》（**链接**[https://book.huhuaping.com/](https://book.huhuaping.com/)）。请参看“第1章 EViews 软件入门与基本操作”。
+
+- 计量经济学【理论课】课件（**链接**[https://home.huhuaping.com/course-econometrics/schedule-theory/](https://home.huhuaping.com/course-econometrics/schedule-theory/)）
 
 
 ## 如何在word中编辑数学公式？
