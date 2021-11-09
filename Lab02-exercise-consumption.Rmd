@@ -65,12 +65,17 @@ pagestyle: headings
 
 ```{r global_options, echo=F,message=FALSE,warning=F}
 source("R/set-global-only.R", encoding = "UTF-8")
-#source("../R/load-pkg.R", encoding = "UTF-8")
+source("R/load-pkg.R", encoding = "UTF-8")
 require(tidyverse)
 require(magrittr)
 require(glue)
 require(here)
 require(openxlsx)
+require(knitr)
+
+library(DT)
+library(webshot)
+library(htmlwidgets)
 ```
 
 </br>
@@ -105,21 +110,20 @@ end_line <- glue::glue("{end}（{weekdays(end)}）24:00:00")
 
 ## 实验参考材料
 
-【校内权限】在线教育综合平台（需校内登陆）：
+（1）【校内权限】在线教育综合平台（需校内登陆，网址[https://eol.nwafu.edu.cn/meol/index.do](https://eol.nwafu.edu.cn/meol/index.do)）：
 
-（1）《计量经济学》课程【实验课】指导书（**pdf版**）
+《计量经济学》课程【实验课】指导书（**pdf版**）
 
 ```{r, fig.cap= "胡华平计量经济学（课程编号：3133101）"}
 knitr::include_graphics("pic/course/econometrics-nwafu-course.png")
 ```
 
 
-【校外公开】胡华平个人网站（免费开放）：
+（2）【校外公开】胡华平个人网站（免费开放）：
 
+a.计量经济学【实验课】指导书《计量经济学实验设计与应用：EViews软件实现》（**链接**[https://book.huhuaping.com/](https://book.huhuaping.com/)）。请参看“第1章 EViews 软件入门与基本操作”。
 
-（1）计量经济学【实验课】指导书《计量经济学实验设计与应用：EViews软件实现》（**链接**[https://book.huhuaping.com/](https://book.huhuaping.com/)）。请参看“第2章”。
-
-（2）计量经济学【理论课】课件（**链接**[https://home.huhuaping.com/course-econometrics/schedule-theory/](https://home.huhuaping.com/course-econometrics/schedule-theory/)）
+b.计量经济学【理论课】课件（**链接**[https://home.huhuaping.com/course-econometrics/schedule-theory/](https://home.huhuaping.com/course-econometrics/schedule-theory/)）
 
 
 ## 如何在word中编辑数学公式？
@@ -130,11 +134,11 @@ knitr::include_graphics("pic/course/econometrics-nwafu-course.png")
 
 （3）使用独立公式软件`Mathtype`，任何Office版本都可以
 
-a. 在`Mathtype`中编写公式$\Rightarrow$ 确定无误后复制公式$\Rightarrow$然后粘贴到word中。
+a.在`Mathtype`中编写公式$\Rightarrow$ 确定无误后复制公式$\Rightarrow$然后粘贴到word中
     
-b. 在`word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打开Mathtype软件，然后按上一步骤操作，修改完成后，点击保存即可。
+b.word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打开Mathtype软件，然后按上一步骤操作，修改完成后，点击保存即可。
 
-</br>
+
 
 </br>
 
@@ -142,13 +146,40 @@ b. 在`word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可�
 
 # 作业内容
 
-<!---（Gujarati2011，第29-31页 练习题1.1/1.2）--->
+<!---（Gujarati2011，练习题）--->
+
+在一元线性回归的学习中，我们讨论了家庭收入（income）和消费支出（spend）案例。基于同一总体，每一个同学分别得到了自己的抽样数据（$n=10$），数据集见图\@ref(fig:data-students)。
 
 
 > **温馨提示**：
->（1） 所有同学的X数据`I`都一样！
->（2）每个同学的Y数据`C`都不一样！
+>（1） 所有同学的X数据`income`都一样！
+>（2）每个同学的Y数据`spend`都不一样！
 >（3）请下载数据表后，找到自己的两列，并进行Excel预处理（以便导入到Eviews）。
+
+<!--- DT table first （dummy no pic show）--->
+
+```{r, screenshot.opts = list(selector = ".dataTables_wrapper")}
+# DT table first. 
+## it works and shows the webshot
+DT::datatable(head(iris))
+```
+
+
+```{r}
+file_path <- "data/lab2-monte-carlo-table-for-students-year-2021.xlsx"
+df_students <- openxlsx::read.xlsx(file_path)
+```
+
+
+```{r data-sdutents, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap="家庭收入与支出案例数据"}
+DT::datatable(df_students,
+              #caption = "家庭收入与支出案例数据",
+              options = list(
+                dom ="tip",
+                pageLength = "16"
+              ))
+```
+
 
 # 作业任务
 

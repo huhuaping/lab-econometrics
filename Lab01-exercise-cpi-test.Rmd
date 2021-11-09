@@ -1,6 +1,6 @@
 ---
-title: "Exercise Lab `r stringr::str_pad(params$hand_out$lab_num,2,'left','0')` 课程作业"
-subtitle: " `r glue::glue('{params$hand_out$name_chn}')` "
+title: "Exercise Lab 课程作业"
+subtitle: "my "
 author: "任课教师：胡华平"
 date: "`r Sys.Date()`"
 params:
@@ -11,7 +11,6 @@ params:
       name_eng: EViews-basic-cpi
   hw_start: '2021-11-03'
   hw_end: '2021-11-23'
-#knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
   outFile <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(inputFile));
   out_dir <- 'public';
@@ -19,12 +18,16 @@ knit: (function(inputFile, encoding) {
                     encoding=encoding,
                      output_file=file.path(dirname(inputFile), out_dir, outFile)) })
 output:
-  bookdown::word_document2:
+bookdown::word_document2:
     fig_caption: yes
     toc: no
     toc_depth: 4
     number_sections: true
     global_numbering: true
+    reference_docx: template/template-word-lab-exrecise.docx
+  word_document:
+    toc: no
+    toc_depth: '4'
     reference_docx: template/template-word-lab-exrecise.docx
   bookdown::html_document2:
     number_sections: no
@@ -46,13 +49,8 @@ output:
     toc_depth: 5
     number_sections: yes
     keep_tex: yes
-
-  word_document:
-    toc: no
-    toc_depth: '4'
-    reference_docx: template/template-word-lab-exrecise.docx
   html_document: default
-always_allow_html: yes
+always_allow_html: true
 documentclass: article
 classoption:
 - (landscape
@@ -65,7 +63,7 @@ pagestyle: headings
 ---
 
 ```{r global_options, echo=F,message=FALSE,warning=F}
-source("R/set-global-only.R", encoding = "UTF-8")
+#source("R/set-global-only.R", encoding = "UTF-8")
 #source("R/load-pkg.R", encoding = "UTF-8")
 require(tidyverse)
 require(magrittr)
@@ -113,21 +111,58 @@ end_line <- glue::glue("{end}（{weekdays(end)}）24:00:00")
 
 ## 实验参考材料
 
-（1）【校内权限】在线教育综合平台（需校内登陆，网址[https://eol.nwafu.edu.cn/meol/index.do](https://eol.nwafu.edu.cn/meol/index.do)）：
+【校内权限】在线教育综合平台（需校内登陆）：
 
-《计量经济学》课程【实验课】指导书（**pdf版**）
+- 《计量经济学》课程【实验课】指导书（**pdf版**）
 
-```{r, fig.cap= "胡华平计量经济学（课程编号：3133101）"}
-knitr::include_graphics("pic/course/econometrics-nwafu-course.png")
+```{r}
+library(knitr)
+library(DT)
+library(webshot)
+library(htmlwidgets)
+#webshot::install_phantomjs(force = TRUE)
+#webshot::is_phantomjs_installed()
+```
+
+newline  a `include_graphics` image  fist
+
+
+```{r, eval=T, fig.cap= "first R logo png", fig.width=3,fig.height=2}
+# a `include_graphics` image following. 
+## it not work and doesn't show the image
+knitr::include_graphics("pic/Rlogo-small.png")
+```
+
+newline DT table first（dummy no pic show）
+
+```{r check-dataset0, screenshot.opts = list(selector = ".dataTables_wrapper")}
+# DT table first. 
+## it works and shows the webshot
+DT::datatable(head(iris))
+```
+
+newline another `include_graphics` image  continue
+
+```{r, eval=T, fig.cap= "second R logo png", fig.width=3,fig.height=2}
+# another `include_graphics` image continue
+## it works and shows the image
+knitr::include_graphics("pic/Rlogo-small.png")
+```
+
+newline  a `include_graphics` image second 
+
+```{r check-dataset1, fig.cap="second DT table",screenshot.opts = list(selector = ".dataTables_wrapper")}
+# DT table second. 
+## it works and shows the webshot
+DT::datatable(head(iris))
 ```
 
 
+【校外公开】胡华平个人网站（免费开放）：
 
-（2）【校外公开】胡华平个人网站（免费开放）：
+- 计量经济学【实验课】指导书《计量经济学实验设计与应用：EViews软件实现》（**链接**[https://book.huhuaping.com/](https://book.huhuaping.com/)）。请参看“第1章 EViews 软件入门与基本操作”。
 
-a.计量经济学【实验课】指导书《计量经济学实验设计与应用：EViews软件实现》（**链接**[https://book.huhuaping.com/](https://book.huhuaping.com/)）。请参看“第1章 EViews 软件入门与基本操作”。
-
-b.计量经济学【理论课】课件（**链接**[https://home.huhuaping.com/course-econometrics/schedule-theory/](https://home.huhuaping.com/course-econometrics/schedule-theory/)）
+- 计量经济学【理论课】课件（**链接**[https://home.huhuaping.com/course-econometrics/schedule-theory/](https://home.huhuaping.com/course-econometrics/schedule-theory/)）
 
 
 ## 如何在word中编辑数学公式？
@@ -138,9 +173,9 @@ b.计量经济学【理论课】课件（**链接**[https://home.huhuaping.com/c
 
 （3）使用独立公式软件`Mathtype`，任何Office版本都可以
 
-a.在`Mathtype`中编写公式$\Rightarrow$ 确定无误后复制公式$\Rightarrow$然后粘贴到word中
+a. 在`Mathtype`中编写公式$\Rightarrow$ 确定无误后复制公式$\Rightarrow$然后粘贴到word中
     
-b.word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打开Mathtype软件，然后按上一步骤操作，修改完成后，点击保存即可。
+b. 在`word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打开Mathtype软件，然后按上一步骤操作，修改完成后，点击保存即可。
 
 </br>
 
@@ -153,34 +188,62 @@ b.word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打
 <!---（Gujarati2011，第29-31页 练习题1.1/1.2）--->
 
 ```{r}
-data_cpi <- as_tibble(openxlsx::read.xlsx("data/exercise-Lab1-Table-1-3-CPI.xlsx"))
+#data_cpi <- openxlsx::read.xlsx("data/exercise-Lab1-Table-1-3-CPI.xlsx")
+data_cpi <- xlsx::read.xlsx("data/exercise-Lab1-Table-1-3-CPI.xlsx", sheetIndex = 1)
 n <- nrow(data_cpi)
 
 ```
 
 
-<!--- DT table first （dummy no pic show）--->
-
-```{r check-dataset0, screenshot.opts = list(selector = ".dataTables_wrapper")}
-# DT table first. 
-## it works and shows the webshot
-DT::datatable(head(iris))
-```
-
 下面的图\@ref(fig:cpi-show)给出了1980年-2005年7个工业化国家的消费价格指数（CPI）数据：
 
-> **温馨提示**：（1）作业配套数据请在作业发布平台界面中自行下载。（2）表中CPI指数以（1982-1984=100）。
+> **温馨提示**：作业配套数据请在作业发布平台界面中自行下载。
 
+newline1
 
-```{r cpi-show, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap=glue("1980年-2005年7个工业化国家的CPI（n={n}）")}
-DT::datatable(
-  data_cpi, 
-  options = list(pageLength=8,
-                 dom="tip")
-  )
+```{r check-dataset}
+DT::datatable(iris)
+```
+
+newline2
+
+```{r cpi-show}
+DT::datatable(iris)
+```
+
+newline3
+
+```{r cpi-show3}
+DT::datatable(data_cpi)
 ```
 
 
+
+
+
+newline
+
+```{r webshot, eval=FALSE}
+#tempfile = tempfile(pattern = "widgetToPng_", tmpdir ="tempfiles")
+name_shot <- "DT-cpi"
+filePathHTML = paste0("pic/webshot/",name_shot,".html")
+filePathPNG  = paste0("pic/webshot/",name_shot,".png")
+
+htmlwidgets::saveWidget(widget = widget, file = filePathHTML) # at this stage the html is complete
+
+webshot(url = filePathHTML, file = filePathPNG, selector = ".dataTables_wrapper")
+
+# remove html files and dir
+dir_rm<- paste0("pic/webshot/",name_shot,"_files")
+file.remove(filePathHTML)
+unlink(dir_rm, recursive = T)
+```
+
+
+```{r, eval=T, fig.cap= "胡华平计量经济学（课程编号：3133101）"}
+include_graphics("pic/course/econometrics-nwafu-course.png",
+                        error = FALSE )
+```
 
 # 作业任务
 
@@ -192,6 +255,7 @@ task_counter <- function() {
     i
   }
 }
+
 n_task <- task_counter()
 
 ```
