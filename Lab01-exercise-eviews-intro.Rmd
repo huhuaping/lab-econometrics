@@ -1,0 +1,201 @@
+---
+title: "Exercise Lab `r stringr::str_pad(params$hand_out$lab_num,2,'left','0')` 课程作业"
+subtitle: " `r glue::glue('{params$hand_out$name_chn}')` "
+author: "任课教师：胡华平"
+date: "`r Sys.Date()`"
+#knit: `r source("R/_render_public.R")`
+knit: (function(inputFile, encoding) { 
+  outFile <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(inputFile));
+  out_dir <- 'public';
+  rmarkdown::render(inputFile,
+                    encoding=encoding,
+                     output_file=file.path(dirname(inputFile), out_dir, outFile)) })
+params:
+  hand_out:
+    value:
+      lab_num: 1
+      name_chn: EViews基本操作（家庭消费案例）
+      name_eng: EViews-basic-cpi
+  hw_start: '2021-11-03'
+  hw_end: '2021-11-23'
+output:
+  bookdown::word_document2:
+    fig_caption: yes
+    toc: no
+    toc_depth: 4
+    number_sections: true
+    global_numbering: true
+    reference_docx: template/template-word-lab-exrecise.docx
+  bookdown::pdf_document2:
+    latex_engine: xelatex
+    template: template/HWTemplate.tex
+    fig_caption: yes
+    includes:
+      in_header: latex/header.tex
+      before_body: latex/preamble.tex
+    toc: no
+    toc_depth: 5
+    number_sections: yes
+    keep_tex: yes
+  bookdown::html_document2:
+    number_sections: no
+    toc: yes
+    fig_caption: yes
+    toc_float: yes
+    mathjax: local
+    self_contained: no
+    highlight: tango
+    theme: united
+  word_document:
+    toc: no
+    toc_depth: '4'
+    reference_docx: template/template-word-lab-exrecise.docx
+  html_document: default
+always_allow_html: yes
+documentclass: article
+classoption:
+- (landscape
+- a4paper)
+- (portrait
+- a4paper)
+fontsize: 12pt
+thanks: 请确保按要求独立完成，遵守诚信规范！
+pagestyle: headings
+---
+
+```{r global_options, echo=F,message=FALSE,warning=F}
+source("R/set-global-only.R", encoding = "UTF-8")
+source("R/load-pkg.R", encoding = "UTF-8")
+require(tidyverse)
+require(magrittr)
+require(glue)
+require(here)
+require(openxlsx)
+require(knitr)
+
+library(DT)
+library(webshot)
+library(htmlwidgets)
+```
+
+</br>
+
+学生姓名：_________；学生学号：___________；专业班级：__________
+
+</br>
+
+
+# 作业提交
+
+```{r, echo=FALSE}
+start <- as.Date(params$hw_start)
+start_line <- glue::glue("{start}（{weekdays(start)}）24:00:00")
+end <- as.Date(params$hw_end)
+end_line <- glue::glue("{end}（{weekdays(end)}）24:00:00")
+```
+
+**作业发布时间**：`r start_line`
+
+**提交截止时间**：`r end_line`
+
+**作业提交材料**：
+
+1) 根据作业要求，完成手写纸质答题纸一份，按要求填写姓名和学号。
+
+2) 根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），文件命名为："姓名_学号.docx"。
+
+\newpage
+
+# 作业提示
+
+## 实验参考材料
+
+（1）【校内权限】在线教育综合平台（需校内登陆，网址[https://eol.nwafu.edu.cn/meol/index.do](https://eol.nwafu.edu.cn/meol/index.do)）：
+
+《计量经济学》课程【实验课】指导书（**pdf版**）
+
+```{r, fig.cap= "胡华平计量经济学（课程编号：3133101）"}
+knitr::include_graphics("pic/course/econometrics-nwafu-course.png")
+```
+
+
+（2）【校外公开】胡华平个人网站（免费开放）：
+
+a.计量经济学【实验课】指导书《计量经济学实验设计与应用：EViews软件实现》（**链接**[https://book.huhuaping.com/](https://book.huhuaping.com/)）。请参看“第1章 EViews 软件入门与基本操作”。
+
+b.计量经济学【理论课】课件（**链接**[https://home.huhuaping.com/course-econometrics/schedule-theory/](https://home.huhuaping.com/course-econometrics/schedule-theory/)）
+
+
+## 如何在word中编辑数学公式？
+
+（1）如果使用Office 2003版：“插入” $\Rightarrow$“对象”$\Rightarrow$“microsoft公式3.0”
+
+（2）如使用Office 2007/2010版：“插入”$\Rightarrow$“新公式”
+
+（3）使用独立公式软件`Mathtype`，任何Office版本都可以
+
+a.在`Mathtype`中编写公式$\Rightarrow$ 确定无误后复制公式$\Rightarrow$然后粘贴到word中
+    
+b.word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打开Mathtype软件，然后按上一步骤操作，修改完成后，点击保存即可。
+
+
+
+</br>
+
+\newpage
+
+# 作业内容
+
+<!---（Gujarati2011，练习题）--->
+
+在一元线性回归的学习中，我们讨论了家庭收入（income）和消费支出（spend）案例。基于同一总体，每一个同学分别得到了自己的抽样数据（$n=10$），数据集见图\@ref(fig:data-students)。
+
+
+> **温馨提示**：
+>（1） 所有同学的X数据`income`都一样！
+>（2）每个同学的Y数据`spend`都不一样！
+>（3）请下载数据表后，找到自己的两列，并进行Excel预处理（以便导入到Eviews）。
+
+<!--- DT table first （dummy no pic show）--->
+
+```{r, screenshot.opts = list(selector = ".dataTables_wrapper")}
+# DT table first. 
+## it works and shows the webshot
+DT::datatable(head(iris))
+```
+
+
+```{r}
+file_path <- "data/lab2-monte-carlo-table-for-students-year-2021.xlsx"
+df_students <- openxlsx::read.xlsx(file_path)
+```
+
+
+```{r data-sdutents, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap="家庭收入与支出案例数据"}
+DT::datatable(df_students,
+              #caption = "家庭收入与支出案例数据",
+              options = list(
+                dom ="tip",
+                pageLength = "16"
+              ))
+```
+
+
+# 作业任务
+
+```{r task-counter}
+task_counter <- function() {
+  i <- 0
+  function() {
+    i <<- i + 1
+    i
+  }
+}
+
+n_task <- task_counter()
+
+```
+
+## 题目`r n_task()`：
+
+</br>

@@ -153,7 +153,7 @@ b.word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打
 <!---（Gujarati2011，第29-31页 练习题1.1/1.2）--->
 
 ```{r}
-data_cpi <- as_tibble(openxlsx::read.xlsx("data/exercise-Lab1-Table-1-3-CPI.xlsx"))
+data_cpi <- as_tibble(openxlsx::read.xlsx("data/exercise-Lab01-Table-CPI.xlsx"))
 n <- nrow(data_cpi)
 
 ```
@@ -196,22 +196,54 @@ n_task <- task_counter()
 
 ```
 
-## 题目`r n_task()`
+## 题目`r n_task()`：工作文件及数据导入
 
-利用所给数据计算每个国家的**年度**通货膨胀率**序列**。（答题要求：用EViews计算，将结果截图复制过来）
+（1）请大家下载作业数据文件`exercise-Lab01-Table-CPI.xlsx`到本地电脑。
+
+> **温馨提示**：a.文件尽量不要放在电脑桌面，而是保存在自己清楚的文件夹路径下（如"D://econometrics//my-dataset-file.xlsx"）；b.注意下载工具的使用，不是直接打开xlsx文件，而是要下载到本地电脑，然后再打开！
+
+答：此问不用作答，完成指定操作即可！
+
+</br>
+
+（2）建立工作文件（WF），命名为`econometric-lab01`；以及建立工作页（page），命名为`cpi`。
+
+答：此问不用作答，完成指定操作即可！
+
+</br>
+
+（3）将数据（`exercise-Lab01-Table-CPI.xlsx`）导入到刚才建好的Eviews工作文件中。
+
+答：此问不用作答，完成指定操作即可！
+
+</br>
+
+## 题目`r n_task()`：创建新序列series
+
+利用所给数据计算每个国家的**年度**通货膨胀率**序列**（series![](pic/object/Series.png)），根据国家的不同，请分别命名为新序列为`inf_japan`、`inf_german`、$\ldots$\。
 
 > **温馨提示**：通货膨胀率计算公式为：$inf.rate = \frac{CPI_t-CPI_{t-1}}{CPI_{t-1}} 100\%$。
  
+答：此问不用作答，完成指定操作即可！
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：标量对象scalar和向量对象vector操作
+
+根据所给数据计算每个国家的1980年-2005年间的**平均**通货膨胀率（放在一起），并制作成一张EViews表。（**答题要求**：用EViews计算，并在下面空白处将结果制作成**三线表**）
+
+
 答：
 
 </br>
 
 </br>
 
-## 题目`r n_task()`
+## 题目`r n_task()`：表对象table操作
 
-利用所给数据计算每个国家的1980年-2005年间的**平均**通货膨胀率（放在一起），并制作成一张EViews表。（**答题要求**：用EViews计算，并在下面空白处将结果制作成**三线表**）
-
+（1）利用所给数据计算7个国家通货膨胀率之间的**相关系数表**，并创建一个EViews表对象（table![](pic/object/Table.png)），命名为`tab_corrl`。最后将该EViews表对象“截图”复制到下面空白处。
 
 答：
 
@@ -219,9 +251,14 @@ n_task <- task_counter()
 
 </br>
 
-## 题目`r n_task()`
+（2）根据上述的EViews计算，在word答题纸的下面空白处将相关系数表进行整理，并将结果制作成**三线表**
 
-利用所给数据计算7个国家通货膨胀率之间的**相关系数表**，并制作成一张EViews表。（**答题要求**：用EViews计算，并在下面空白处将结果制作成**三线表**）
+> **温馨提示**：可以参看下面这张典型的三线表（见表\@ref(tab:table-3line)）
+
+```{r table-3line}
+knitr::kable(head(mtcars), 
+      caption = "这是一张典型的三线表")
+```
 
 
 答：
