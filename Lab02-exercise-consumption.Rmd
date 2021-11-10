@@ -92,6 +92,9 @@ start <- as.Date(params$hw_start)
 start_line <- glue::glue("{start}（{weekdays(start)}）24:00:00")
 end <- as.Date(params$hw_end)
 end_line <- glue::glue("{end}（{weekdays(end)}）24:00:00")
+
+source("R/fun_exercise_element.R", encoding = "UTF-8")
+lab.num <- params$hand_out$lab_num
 ```
 
 **作业发布时间**：`r start_line`
@@ -100,11 +103,12 @@ end_line <- glue::glue("{end}（{weekdays(end)}）24:00:00")
 
 **作业提交材料**：
 
-1) 根据作业要求，完成手写纸质答题纸一份，按要求填写姓名和学号。
+（1）根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(num= lab.num)`。
 
-2) 根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），文件命名为："姓名_学号.docx"。
+（2）根据作业要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(num= lab.num, ext='wfl')`。
 
 \newpage
+
 
 # 作业提示
 
