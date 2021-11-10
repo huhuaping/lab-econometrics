@@ -129,8 +129,62 @@ ready <- openxlsx::read.xlsx("data/lab2-mento-carlo.xlsx")
 n <- nrow(ready)
 ```
 
+## 随机数据1
 
-## 随机数据
+> 数据生成需要满足独立同分布假设！
+
+```{r}
+# helper function
+gen_pairs <- function(..){
+  ns <- nrow(df_students)
+  out <-  tibble(
+    u = rnorm(n = ns),
+    dataset = paste0("dataset",
+                     str_pad(1:ns,3,'l','0'))
+  )
+  return(out)
+}
+
+
+set.seed(20211108)
+tbl_random <- ready %>%
+  mutate(
+    data = map(
+      .x = obs, 
+      .f = gen_pairs
+      )) %>%
+  unnest(data) %>%
+  mutate(Ydata = spend+u) 
+```
+
+## 发布作业数据1
+
+> 数据进行了4位小数显示（四舍五入），与原始数据略有差异
+
+```{r}
+# give the head for output
+vars_sel <- c("dataset", "class", "id", "name", 
+              "obs", "income", "Ydata")
+vars_chn <-c("数据集", "班级", "学号", "姓名", 
+              "样本", "收入", "支出")
+# get all exercise data table
+tbl_exercise <- tbl_random %>%
+  left_join(., df_students, by = "dataset") %>%
+  #mutate(spend = format(spend, digits = 2,
+                        #nsmall = 2, trim =T)) %>%
+  mutate(Ydata = round(Ydata,4)) %>%
+  select(all_of(vars_sel)) %>%
+  arrange(dataset, obs) %>%
+  rename_all(., ~all_of(vars_chn))
+
+# write table for lab exercise
+file_path <- glue("data/lab2-monte-carlo-table-for-students-year-{teach_year}.xlsx")
+openxlsx::write.xlsx(tbl_exercise, file_path,overwrite = T)
+```
+
+## 随机数据2
+
+> 这种数据生成机制，不能需要满足独立同分布假设！
 
 ```{r}
 # helper function
@@ -152,7 +206,7 @@ tbl_random <- df_students %>%
 ```
 
 
-## 发布作业数据
+## 发布作业数据2
 
 > 数据进行了4位小数显示（四舍五入），与原始数据略有差异
 
