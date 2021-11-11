@@ -104,7 +104,7 @@ lab_topic <- paste0(
   "lab",
   str_pad(params$hand_out$lab_num,
           2,'l','0'),
-  '_',params$topic)
+  '-',params$topic)
 ```
 
 **作业发布时间**：`r start_line`
@@ -160,17 +160,81 @@ b.word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打
 
 # 作业内容
 
-<!---（Gujarati2011，第29-31页 练习题1.1/1.2）--->
+<!---prepare data for students---->
 
 ```{r}
+# get students information
+source("R/get_students.R", encoding = "UTF-8")
+
+files_students <- "data/students-list-2021.xlsx"
+id_year <- 2019
+n_add <- 5
+df_students <- get_students(
+  file = files_students, 
+  id_year = id_year, 
+  n_add = 5)
+
+```
+
+```{r}
+source("R/generate_rdm_df.R", encoding = "UTF-8")
+
 file_path <- "data/exercise-Lab01-Table-CPI.xlsx"
-data_cpi <- as_tibble(openxlsx::read.xlsx(file_path))
-n <- nrow(data_cpi)
+df_cpi <- openxlsx::read.xlsx(here(file_path)) %>%
+  # make sure 
+  add_column(obs = 1:nrow(.)) %>%
+  select(obs, everything(.))
+n <- nrow(df_cpi)
+```
 
-names_state <- sort(names(data_cpi)[-1])
-names_state_cpi <- glue("cpi_{names_state}") 
 
-file_data <- basename(file_path) 
+```{r}
+cols_rdm <- names(df_cpi)[c(-1,-2)]
+set.seed(20211108)
+
+# call external function
+df_handout <- gen_rdm_df(
+  df_info = df_students,
+  df_basic = df_cpi,
+  cols = cols_rdm
+  ) 
+
+# give the head for output
+vars_sel <- c("dataset", "class", "id", "name", 
+              "obs","year", sort(cols_rdm))
+vars_chn <-c("数据集", "班级", "学号", "姓名", 
+              "obs","year", sort(cols_rdm))
+# get all exercise data table
+
+df_exercise <- df_handout %>%
+  unnest(data)%>%
+  mutate(
+    across(
+      .cols = all_of(cols_rdm),
+      .fns = round,
+      digits = 4
+      )
+    ) %>%
+  select(all_of(vars_sel)) %>%
+  rename_all(., ~all_of(vars_chn))
+
+# write table for lab exercise
+teach_year <- 2021
+out_path <- paste0(
+  "data/",
+  lab_topic,
+  "-for-students-year-",
+  teach_year,
+  ".xlsx"
+  )
+
+```
+
+```{r, eval=FALSE}
+# run only for once
+openxlsx::write.xlsx(df_cpi,
+                     out_path,
+                     overwrite = T)
 ```
 
 
@@ -180,6 +244,10 @@ file_data <- basename(file_path)
 # DT table first. 
 ## it works and shows the webshot
 DT::datatable(head(iris))
+
+file_data <- str_replace(out_path, "data/", "")
+names_state <- sort(cols_rdm)
+names_state_cpi <- paste0("cpi_",names_state)
 ```
 
 下面的图\@ref(fig:cpi-show)给出了1980年-2005年7个工业化国家的消费价格指数（CPI）数据：
@@ -189,7 +257,7 @@ DT::datatable(head(iris))
 
 ```{r cpi-show, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap=glue("1980年-2005年7个工业化国家的CPI（n={n}）")}
 DT::datatable(
-  data_cpi, 
+  df_cpi, 
   options = list(pageLength=8,
                  dom="tip")
   )
