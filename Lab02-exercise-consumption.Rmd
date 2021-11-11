@@ -25,7 +25,7 @@ output:
     toc_depth: 4
     number_sections: true
     global_numbering: true
-    reference_docx: template/template-word-lab-exrecise.docx
+    #reference_docx: template/template-word-lab-exrecise.docx
   bookdown::pdf_document2:
     latex_engine: xelatex
     template: template/HWTemplate.tex
@@ -142,9 +142,43 @@ a.在`Mathtype`中编写公式$\Rightarrow$ 确定无误后复制公式$\Rightar
     
 b.word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打开Mathtype软件，然后按上一步骤操作，修改完成后，点击保存即可。
 
-
-
 </br>
+
+## EViews对象的命名规则
+
+
+```{r}
+# give the symbol data
+remark<-readxl::read_xlsx(path = "data/lab2-matrix-math.xlsx",sheet='symbols',range='A1:D17')
+```
+
+
+```{r remark,message=F,echo=FALSE,results='asis'}
+library("knitr")
+kable(remark,caption = "可能用到的Eviews对象的记号表达",row.names=FALSE)
+```
+
+
+
+## EViews对象的命名参考
+
+```{r}
+# give the math data
+math_matrix<-readxl::read_xlsx(path = "data/lab2-matrix-math.xlsx",sheet='math',range='A1:F51')
+  ## give the eviews name data
+  var_name<-data.frame(t(math_matrix$name_eviews))
+  names(var_name)<-math_matrix$name_eng
+  ## give the math data
+  var_math<-data.frame(t(math_matrix$math))
+  names(var_math)<-math_matrix$name_eng
+
+```
+
+```{r,math-simple,message=F,echo=FALSE,results='asis'}
+knitr::kable(
+  subset(math_matrix,select = c("name_chn","cat_eng","math","name_eviews")), booktabs = TRUE,
+  caption = '计算对象、表达式及Eviews命名')
+```
 
 \newpage
 
