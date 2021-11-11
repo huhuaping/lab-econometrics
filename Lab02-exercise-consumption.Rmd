@@ -2,7 +2,7 @@
 title: "Exercise Lab `r stringr::str_pad(params$hand_out$lab_num,2,'left','0')` 课程作业"
 subtitle: " `r glue::glue('{params$hand_out$name_chn}')` "
 author: "任课教师：胡华平"
-date: "`r Sys.Date()`"
+date: "`r params$hw_start`"
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
   outFile <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(inputFile));
@@ -16,8 +16,9 @@ params:
       lab_num: 2
       name_chn: 一元回归分析过程（家庭消费案例）
       name_eng: EViews-basic-cpi
-  hw_start: '2021-11-03'
-  hw_end: '2021-11-23'
+  hw_start: '2021-11-23'
+  hw_end: '2021-11-27'
+  topic: 'consumption'
 output:
   bookdown::word_document2:
     fig_caption: yes
@@ -25,7 +26,7 @@ output:
     toc_depth: 4
     number_sections: true
     global_numbering: true
-    #reference_docx: template/template-word-lab-exrecise.docx
+    reference_docx: template/template-word-lab-exrecise.docx
   bookdown::pdf_document2:
     latex_engine: xelatex
     template: template/HWTemplate.tex
@@ -95,6 +96,12 @@ end_line <- glue::glue("{end}（{weekdays(end)}）24:00:00")
 
 source("R/fun_exercise_element.R", encoding = "UTF-8")
 lab.num <- params$hand_out$lab_num
+
+lab_topic <- paste0(
+  "lab",
+  str_pad(lab.num,
+          2,'l','0'),
+  '_',params$topic)
 ```
 
 **作业发布时间**：`r start_line`
@@ -146,6 +153,9 @@ b.word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打
 
 ## EViews对象的命名规则
 
+Eviews操作会得到各种计算结果，我们需要把计算结果以对象的形式保存在EViews的工作文件内。
+
+因此我们提前设计好了各种对象保存命名规则，以便计算过程中的连续性、一致性调用。下面表\@ref(tab:remark)给出了含义、英文单词、命名简写和示例说明。
 
 ```{r}
 # give the symbol data
@@ -154,13 +164,30 @@ remark<-readxl::read_xlsx(path = "data/lab2-matrix-math.xlsx",sheet='symbols',ra
 
 
 ```{r remark,message=F,echo=FALSE,results='asis'}
-library("knitr")
-kable(remark,caption = "可能用到的Eviews对象的记号表达",row.names=FALSE)
+name_eng <- c("index",
+              "mean",
+               "word","remark",
+              "example")
+name_chn <- c("序号",
+              "含义",
+              "英文单词","命名简写",
+              "示例")
+remark %>%
+  add_column(index = 1:nrow(.)) %>%
+  select(all_of(name_eng)) %>%
+  rename_all(., ~all_of(name_chn)) %>%
+  kable(
+    booktabs = TRUE,
+    align = "l",
+    caption = "可能用到的Eviews对象的记号表达",
+    row.names=FALSE)
 ```
 
 
 
 ## EViews对象的命名参考
+
+考虑到本次实验课内容，EViews操作运算中可能需要保存和命名各类EViews对象，下面表\@ref(tab:obj-rename)给出了命名规则，供大家在EViews操作中参照使用。
 
 ```{r}
 # give the math data
@@ -174,10 +201,39 @@ math_matrix<-readxl::read_xlsx(path = "data/lab2-matrix-math.xlsx",sheet='math',
 
 ```
 
-```{r,math-simple,message=F,echo=FALSE,results='asis'}
-knitr::kable(
-  subset(math_matrix,select = c("name_chn","cat_eng","math","name_eviews")), booktabs = TRUE,
-  caption = '计算对象、表达式及Eviews命名')
+```{r obj-rename,message=F,echo=FALSE,results='asis'}
+
+name_eng <- c("index",
+              "name_chn","math",
+              "cat_eng",
+              #"obj_logo",
+              "name_eviews")
+name_chn <- c("序号",
+              "含义","数学表达式",
+              "对象类型",
+              #"EViews对象图标",
+              "对象命名")
+# try to add object logo
+ptn <- c("series", "scalar")
+rpl <- c(paste0(
+  "![](pic/object/",
+  str_to_title(c('series', 'scalar')),
+  ")"))
+
+math_matrix %>%
+  add_column(index = 1:nrow(.)) %>%
+  mutate(
+    obj_logo = mgsub::mgsub(
+      string = cat_eng,
+      pattern =ptn,
+      replacement = rpl)
+    ) %>%
+  select(all_of(name_eng)) %>%
+  rename_all(., ~all_of(name_chn)) %>%
+  knitr::kable(
+    booktabs = TRUE,
+    align = "c",
+    caption = '计算对象、表达式及Eviews命名')
 ```
 
 \newpage
@@ -206,6 +262,8 @@ DT::datatable(head(iris))
 ```{r}
 file_path <- "data/lab2-monte-carlo-table-for-students-year-2021.xlsx"
 df_students <- openxlsx::read.xlsx(file_path)
+
+file_data <- basename(file_path) 
 ```
 
 
@@ -234,11 +292,52 @@ n_task <- task_counter()
 
 ```
 
+## 题目`r n_task()`：工作文件及数据导入
+
+（1）请大家下载本次作业数据文件（`r file_data`）到本地电脑。
+
+> **温馨提示**：a.文件尽量不要放在电脑桌面，而是保存在自己清楚的文件夹路径下（如"D://econometrics//`r file_data`"）；b.注意下载工具的使用，不是直接打开xlsx文件，而是要下载到本地电脑，然后再打开！
+
+答：此问不用作答，完成指定操作即可！
+
+</br>
+
+（2）打开EViews软件，创建工作文件（WF），命名为`r lab_topic`；以及建立工作页（page），命名为`r params$topic`。
+
+答：此问不用作答，完成指定操作即可！
+
+</br>
+
+（3）将工作文件项目保存到本地电脑`.wfl`文件，并命名为“`r  name_file(num= lab.num, ext='wfl')`”的形式。
+
+> **要求**：注意记住保存的文件夹路径，这个文件要提交到作业系统的！！！
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（4）对xlsx数据文件（`r file_data`）进行处理，只保留自己的数据行。把表头（`数据集`、`样本`、`收入`、`支出`）修改为（`dataset`、`obs`、`income`、`spend`），并删除所有其他列。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（5）导入处理后的xlsx数据到刚才建好的Eviews工作文件中，并在EViews窗口中按如下要求进行变量命名操作：
+
+> **要求**：在EViews窗口中，将原变量名（`income`和`spend`），分别重命名为（`x_upr`和`y_upr`）。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+
 ## 题目`r n_task()`：计算机自动分析
 
-运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型进行回归分析：
+运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型进行回归分析。
 
-（1）将EViews回归报告截图，粘贴在下面空白处。
+> **温馨提示**：注意参看选项，并正确设置模型。
+
+（1）在Eviews软件中，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_main`。最后截图到下列空白处。
  
 答：
 
@@ -246,7 +345,7 @@ n_task <- task_counter()
 
 </br>
 
-（2）将上述EViews分析报告，手动整理成简要报告（四行报告，形式见课件），将结果填写在下面空白处。
+（2）使用公式编辑器（或Mathtype软件），将上述EViews分析报告，手动整理成简要报告（四行报告，包括第1行样本回归方程、第2行对应的系数标准误、第3行对应的样本t统计量，以及第4行F检验值、p值、拟合优度等。具体形式见课件），将结果填写在下面空白处。
 
 答：
 
@@ -264,18 +363,22 @@ n_task <- task_counter()
 
 ## 题目`r n_task()`：Eviews制图
 
-利用Eviews将$(X,Y)$数据绘制**散点图**（scatter），并对残差序列$e_i$绘制**线图**(line plot)。
+（1）利用Eviews将$(X,Y)$数据绘制**散点图**（scatter）。，并将EViews绘图对象（graph![](pic/object/Graph.png)）保存且命名为`graph_scatter_xy`。最后将EViews绘图结果截图或复制到word下面空白处。
 
-> **温馨提示**：在Eviews中精修美化图形，然后将图形复制到如下相应空白处。
+> **温馨提示**：在Eviews中精修美化图形。
 
 
-答1：数据的散点图
-
-</br>
+答：数据的散点图
 
 </br>
 
-答2：残差的线图
+</br>
+
+（2）对残差序列$e_i$绘制**线图**(line plot)，并将EViews绘图对象（graph![](pic/object/Graph.png)）保存且命名为`graph_line_ei`。最后将EViews绘图结果截图或复制到word下面空白处。
+
+> **温馨提示**：在Eviews中精修美化图形。
+
+答：残差的线图
 
 </br>
 
@@ -283,15 +386,17 @@ n_task <- task_counter()
 
 ## 题目`r n_task()`：计算表FF和ff
 
-将数据导入Eviews后，请分别计算出FF原序列![](pic/object/Series.png)：$X_i; Y_i; X^2_i; Y^2_i; X_iY_i$；以及ff离差序列![](pic/object/Series.png)：$(x_i; y_i; x^2_i;y^2_i,x_iy_i)$。在Eviews软件中，以Group对象![](pic/object/Group.png)形式分别保存，并分别截图到下列空白处。
+将数据导入Eviews后，请分别计算出FF原序列![](pic/object/Series.png)：$X_i; Y_i; X^2_i; Y^2_i; X_iY_i$；以及ff离差序列![](pic/object/Series.png)：$(x_i; y_i; x^2_i;y^2_i,x_iy_i)$。在Eviews软件中，以组对象（Group![](pic/object/Group.png)）形式保存，分别命名为`group_ff_upr`和`group_ff_lwr`。最后分别截图到下列空白处。
 
-答1：FF的Group截图
+> **温馨提示**：EViews计算过程中，产生的EViews对象的命名规则和命名参考，请参照前面提供的表\@ref(tab:remark)和表\@ref(tab:obj-rename)。后续的所有题目都应如此！后面不再提示此条！
+
+答1：FF的组对象（Group![](pic/object/Group.png)）`group_ff_upr`的截图
 
 </br>
 
 </br>
 
-答2：ff的Group截图
+答2：ff的组对象（Group![](pic/object/Group.png)）`group_ff_lwr`的截图
 
 </br>
 
@@ -301,7 +406,7 @@ n_task <- task_counter()
 
 根据所给数据，利用Eviews软件，计算直线回归方程的回归系数。请在下面空白处写出公式、主要计算过程和计算结果；
 
-> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）结果保留四位小数。
+> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）结果保留四位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
 
 答：
 
@@ -315,7 +420,7 @@ $\hat{\beta}_1=$
 
 ## 题目`r n_task()`：SRF和FRM
 
-请样本回归模型（SRM）的理论表达式。并根据计算结果写出样本回归方程（SRF）的理论表达式和数值表达式。
+请写出样本回归模型（SRM）的理论表达式。并根据计算结果写出样本回归方程（SRF）的理论表达式和数值表达式。
 
 > **要求**：（1）采用公式编辑器；（2）样本回归方程（SRF）的数值表达式中，数值结果保持4位小数。
 
@@ -331,7 +436,7 @@ $\hat{\beta}_1=$
 
 ## 题目`r n_task()`：残差序列
 
-利用Eviews软件，先得到回归的残差$e_i$的序列对象![](pic/object/Series.png)`ei`，并进一步得到回归残差平方$e^2_i$的序列对象![](pic/object/Series.png)`ei_sqr`。将这两个序列构造为Group对象![](pic/object/Group.png)，并截图到下面空白处。
+利用Eviews软件，先得到回归的残差$e_i$的序列对象![](pic/object/Series.png)`ei`，并进一步得到回归残差平方$e^2_i$的序列对象![](pic/object/Series.png)`ei_sqr`。将这两个序列构造为Group对象![](pic/object/Group.png)，保存并命名为`group_resid`，最后将它截图到下面空白处。
 
 答：残差和残差平方序列的Group对象截图为：
 
@@ -343,7 +448,7 @@ $\hat{\beta}_1=$
 
 利用Eviews软件，计算回归方程的误差方差$\hat{\sigma}^2$及标准差$\hat{\sigma}$。请在下面空白处分别写出理论公式及计算结果。
 
-> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。
+> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
 
 答1：
 
@@ -360,6 +465,8 @@ $\hat{\sigma}=$
 ## 题目`r n_task()`：计算回归系数的样本方差
 
 利用Eviews软件，分别计算处斜率系数的样本方差和标准差（$S_{\hat{\beta}_2}^2$、$S_{\hat{\beta}_2}^2$），以及截距系数的样本方差和标准差（$S_{\hat{\beta}_1}$、$S_{\hat{\beta}_1}$）。请在下面空白处分别写出理论公式及计算结果。
+
+> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
 
 答：
 
@@ -384,8 +491,9 @@ $S_{\hat{\beta}_1}=$
 
 利用Eviews软件，计算得到回归方程的平方和分解式（TSS、ESS、RSS）和各自的自由度（$df_{TSS}$、$df_{RSS}$、$df_{ESS}$）<!---，并写出方差分析表--->。请在下面空白处分别写出理论公式及计算结果。
 
+> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
 
-答1：完成下述计算：
+答：完成下述计算：
 
 总平方和$TSS=$  ； 自由度$df_{TSS}=$   。
 
@@ -399,7 +507,7 @@ $S_{\hat{\beta}_1}=$
 
 利用Eviews软件，计算得到自变量$X_i$与因变量$Y_i$的相关系数，以及回归方程的判定系数。请在下面空白处分别写出理论公式及计算结果。
 
-> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。
+> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
 
 答1：相关系数$r_{(X,Y)}=$
 
@@ -413,7 +521,7 @@ $S_{\hat{\beta}_1}=$
 
 利用Eviews软件，首先请分别计算两个模型回归系数的样本t统计量值（$t^{\ast}_{\hat{\beta}}$）；然后使用EViews函数，得到给定$\alpha=0.05$时的t理论值（$t_{1-\alpha/2}(df)$）；最后根据计算结果完成对**斜率参数**的t检验过程。请在下面空白处分别写出理论公式及计算结果。
 
-> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。
+> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
 
 答1：样本t统计量值（$t^{\ast}_{\hat{\beta}}$）
 
@@ -443,7 +551,7 @@ $t_{alpha/2}(df)=$
 
 利用Eviews软件，首先请回归方程的样本F统计量值（$F^\ast$）；然后使用EViews函数，得到给定$\alpha=0.05$时的F理论值（$f_{1-\alpha}(df_1,df_2)$）；最后根据计算结果完成对回归方程整体显著性检验过程。请在下面空白处分别写出理论公式及计算结果。
 
-> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。
+> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
 
 答1：样本F统计量值
 
@@ -468,7 +576,7 @@ $f_{1-\alpha}(df_1,df_2)=$
 
 给定样本外$X_0 = 280$，请利用Eviews软件，分别计算均值和个值的点预测值。请在下面空白处分别写出理论公式及计算结果。
 
-> **温馨提示**：计算结果保留2位小数。
+> **温馨提示**：（1）计算结果保留4位小数。（2）EViews中按要求保存相关计算对象，并按规范命名。
 
 答1：均值的点预测值$E(Y|X=X_0)=$
 
@@ -483,7 +591,8 @@ $f_{1-\alpha}(df_1,df_2)=$
 
 利用Eviews软件，首先构造并得到均值预测时需要用到的样本标准差$S_{\hat{Y}_0}$；然后利用t分布（给定$\alpha =0.05$）构造出均值的区间预测。请在下面空白处分别写出理论公式及计算结果。
 
-> **温馨提示**：计算结果保留4位小数。
+> **温馨提示**：（1）计算结果保留4位小数。（2）EViews中按要求保存相关计算对象，并按规范命名。
+
 
 答1：需要用到的样本标准差$S_{\hat{Y}_0}=$
 
@@ -501,7 +610,8 @@ $f_{1-\alpha}(df_1,df_2)=$
 
 利用Eviews软件，首先构造并得到**个值预测**时需要用到的样本标准差$S_{Y_0-\hat{Y}_0}$；然后利用t分布（给定$\alpha =0.05$）构造出均值的区间预测。请在下面空白处分别写出理论公式及计算结果。
 
-> **温馨提示**：计算结果保留4位小数。
+> **温馨提示**：（1）计算结果保留4位小数。（2）EViews中按要求保存相关计算对象，并按规范命名。
+
 
 答1：需要用到的样本标准差$S_{Y_0-\hat{Y}_0}=$
 

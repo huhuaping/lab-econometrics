@@ -4,6 +4,7 @@ options(
   formatR.indent = 2, width = 55, 
   digits = 2,scipen=999, tinytex.verbose = TRUE,
   knitr.kable.NA = '',
+  kableExtra.auto_format = FALSE,
   # html widget for xaringan slide
   htmltools.dir.version = FALSE, 
   #htmltools.preserve.raw = T,

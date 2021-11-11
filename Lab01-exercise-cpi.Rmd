@@ -2,7 +2,7 @@
 title: "Exercise Lab `r stringr::str_pad(params$hand_out$lab_num,2,'left','0')` 课程作业"
 subtitle: " `r glue::glue('{params$hand_out$name_chn}')` "
 author: "任课教师：胡华平"
-date: "`r Sys.Date()`"
+date: "`r params$hw_start`"
 params:
   hand_out:
     value:
@@ -11,6 +11,7 @@ params:
       name_eng: EViews-basic-cpi
   hw_start: '2021-11-17'
   hw_end: '2021-11-20'
+  topic: 'cpi'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
   outFile <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(inputFile));
@@ -98,6 +99,12 @@ end_line <- glue::glue("{end}（{weekdays(end)}）24:00:00")
 
 source("R/fun_exercise_element.R", encoding = "UTF-8")
 lab.num <- params$hand_out$lab_num
+
+lab_topic <- paste0(
+  "lab",
+  str_pad(params$hand_out$lab_num,
+          2,'l','0'),
+  '_',params$topic)
 ```
 
 **作业发布时间**：`r start_line`
@@ -156,11 +163,14 @@ b.word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打
 <!---（Gujarati2011，第29-31页 练习题1.1/1.2）--->
 
 ```{r}
-data_cpi <- as_tibble(openxlsx::read.xlsx("data/exercise-Lab01-Table-CPI.xlsx"))
+file_path <- "data/exercise-Lab01-Table-CPI.xlsx"
+data_cpi <- as_tibble(openxlsx::read.xlsx(file_path))
 n <- nrow(data_cpi)
 
 names_state <- sort(names(data_cpi)[-1])
 names_state_cpi <- glue("cpi_{names_state}") 
+
+file_data <- basename(file_path) 
 ```
 
 
@@ -203,15 +213,15 @@ n_task <- task_counter()
 
 ## 题目`r n_task()`：工作文件及数据导入
 
-（1）请大家下载作业数据文件`exercise-Lab01-Table-CPI.xlsx`到本地电脑。
+（1）请大家下载本次作业数据文件（`r file_data`）到本地电脑。
 
-> **温馨提示**：a.文件尽量不要放在电脑桌面，而是保存在自己清楚的文件夹路径下（如"D://econometrics//my-dataset-file.xlsx"）；b.注意下载工具的使用，不是直接打开xlsx文件，而是要下载到本地电脑，然后再打开！
+> **温馨提示**：a.文件尽量不要放在电脑桌面，而是保存在自己清楚的文件夹路径下（如"D://econometrics//`r file_data`"）；b.注意下载工具的使用，不是直接打开xlsx文件，而是要下载到本地电脑，然后再打开！
 
 答：此问不用作答，完成指定操作即可！
 
 </br>
 
-（2）打开EViews软件，创建工作文件（WF），命名为`lab01_cpi`；以及建立工作页（page），命名为`cpi`。
+（2）打开EViews软件，创建工作文件（WF），命名为`r lab_topic`；以及建立工作页（page），命名为`r params$topic`。
 
 答：此问不用作答，完成指定操作即可！
 
