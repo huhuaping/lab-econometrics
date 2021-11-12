@@ -97,7 +97,6 @@ start_line <- glue::glue("{start}（{weekdays(start)}）24:00:00")
 end <- as.Date(params$hw_end)
 end_line <- glue::glue("{end}（{weekdays(end)}）24:00:00")
 
-source("R/fun_exercise_element.R", encoding = "UTF-8")
 lab.num <- params$hand_out$lab_num
 
 lab_topic <- paste0(
@@ -105,6 +104,10 @@ lab_topic <- paste0(
   str_pad(params$hand_out$lab_num,
           2,'l','0'),
   '-',params$topic)
+
+# some function to get xercercise elements
+source("R/fun_exercise_element.R", encoding = "UTF-8")
+
 ```
 
 **作业发布时间**：`r start_line`
@@ -177,8 +180,7 @@ df_students <- get_students(
 ```
 
 ```{r}
-source("R/generate_rdm_df.R", encoding = "UTF-8")
-
+# read basic ecercise data set
 file_path <- "data/exercise-Lab01-Table-CPI.xlsx"
 df_cpi <- openxlsx::read.xlsx(here(file_path)) %>%
   # make sure 
@@ -189,8 +191,11 @@ n <- nrow(df_cpi)
 
 
 ```{r}
+# create random column data
+source("R/generate_rdm_df.R", encoding = "UTF-8")
+
 cols_rdm <- names(df_cpi)[c(-1,-2)]
-set.seed(20211108)
+set.seed(20211108) # for year 2021 fall
 
 # call external function
 df_handout <- gen_rdm_df(
@@ -212,11 +217,11 @@ df_exercise <- df_handout %>%
     across(
       .cols = all_of(cols_rdm),
       .fns = round,
-      digits = 4
+      digits = 2
       )
     ) %>%
-  select(all_of(vars_sel)) %>%
-  rename_all(., ~all_of(vars_chn))
+  select(all_of(vars_sel)) #%>%
+ # rename_all(., ~all_of(vars_chn))
 
 # write table for lab exercise
 teach_year <- 2021
@@ -228,11 +233,17 @@ out_path <- paste0(
   ".xlsx"
   )
 
+# special element
+file_data <- str_replace(out_path, "data/", "")
+names_state <- sort(cols_rdm)
+names_state_cpi <- paste0("cpi_",names_state)
+cols_students <- c("dataset", "obs", "year",
+                   sort(cols_rdm))
 ```
 
 ```{r, eval=FALSE}
 # run only for once
-openxlsx::write.xlsx(df_cpi,
+openxlsx::write.xlsx(df_exercise,
                      out_path,
                      overwrite = T)
 ```
@@ -244,22 +255,27 @@ openxlsx::write.xlsx(df_cpi,
 # DT table first. 
 ## it works and shows the webshot
 DT::datatable(head(iris))
-
-file_data <- str_replace(out_path, "data/", "")
-names_state <- sort(cols_rdm)
-names_state_cpi <- paste0("cpi_",names_state)
 ```
 
-下面的图\@ref(fig:cpi-show)给出了1980年-2005年7个工业化国家的消费价格指数（CPI）数据：
+下面的图\@ref(fig:cpi-show)给出了1980年-2005年7个工业化国家（`r paste0(sort(cols_rdm),collapse = '、')`）的消费价格指数（CPI）数据：
 
-> **温馨提示**：（1）作业配套数据请在作业发布平台界面中自行下载。（2）表中CPI指数以（1982-1984=100）。
+> **温馨提示**：
+>（1）作业配套数据请在作业发布平台界面中自行下载。
+>（2）每个同学的数据都不一样（但样本数相同$n=`r n`$）。请下载数据表后，按后面作业要求找到自己的数据，并进行Excel预处理（以便导入到Eviews）。
+>（3）表中只筛选了部分学生数据作为展示，具体数据以`r file_data`为准。
+>（4）表中CPI指数以（1982-1984=100）。
 
 
-```{r cpi-show, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap=glue("1980年-2005年7个工业化国家的CPI（n={n}）")}
-DT::datatable(
-  df_cpi, 
-  options = list(pageLength=8,
-                 dom="tip")
+```{r cpi-show, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap=glue("1980-2005年7个工业化国家的CPI实验数据（n={n}）")}
+
+df_exercise %>%
+  group_by(id) %>%
+  sample_n(8,replace = FALSE) %>%
+  arrange(dataset, obs) %>%
+  DT::datatable(
+    options = list(
+      pageLength=18,
+      dom="tip")
   )
 ```
 
@@ -276,6 +292,7 @@ task_counter <- function() {
   }
 }
 n_task <- task_counter()
+
 
 ```
 
@@ -303,7 +320,13 @@ n_task <- task_counter()
 
 </br>
 
-（4）将数据（`exercise-Lab01-Table-CPI.xlsx`）导入到刚才建好的Eviews工作文件中，并在EViews窗口中按如下要求进行变量命名操作：
+（4）对xlsx数据文件（`r file_data`）进行清洗处理，只保留自己的数据行，只保留如下列：`r paste0(cols_students,collapse='、')`）。删除所有其他行和列。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（4）将清洗处理好后的数据（`r file_data`）导入到刚才建好的Eviews工作文件中，并在EViews窗口中按如下要求进行变量命名操作：
 
 > **要求**：在EViews窗口中，请将xlsx文件的原cpi变量名（`r paste0(names_state, collapse = "、")`），分别重命名为`r paste0(names_state_cpi, collapse = "、")`。最后再删除导入的原cpi变量（`r paste0(names_state, collapse = "、")`）的序列对象。
 
@@ -313,7 +336,7 @@ n_task <- task_counter()
 
 ## 题目`r n_task()`：组对象操作group
 
-根据导入的数据，在EViews中将所有国家的cpi变量，创建为一个组对象（group![](pic/object/Group.png)），并命名为`cpi_all`并保存！
+根据导入的数据，在EViews中将所有国家的cpi变量（`r paste0(names_state_cpi, collapse = "、")`），创建为一个组对象（group![](pic/object/Group.png)），并命名为`cpi_all`并保存！
 
 答：此问不用作答，完成指定操作即可！
 
@@ -325,7 +348,7 @@ n_task <- task_counter()
 
 利用所给数据计算每个国家的**年度**通货膨胀率**序列**（series![](pic/object/Series.png)），根据国家的不同，请分别命名新序列为`inf_canada`、`inf_france`、$\ldots$\等。
 
-> **温馨提示**：a.通货膨胀率计算公式为：$inf.rate = \frac{CPI_t-CPI_{t-1}}{CPI_{t-1}} 100\%$。b.滞后变量运算的EViews代码可参考`series cpi_canada_l1 = @lag(cpi_canada, 1)`，其中`@lag()`函数表示滞后运算。
+> **温馨提示**：a.通货膨胀率计算公式为：$inf.rate = \frac{CPI_t-CPI_{t-1}}{CPI_{t-1}} 100\%$。b.滞后变量运算的EViews代码可参考`series inf_canada = 100*(1- @lag(cpi_canada, 1)/cpi_canada)`，其中`@lag()`命令表示EVews的滞后变量运算。
  
 答：此问不用作答，完成指定操作即可！
 
