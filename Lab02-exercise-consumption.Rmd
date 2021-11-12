@@ -16,7 +16,7 @@ params:
       lab_num: 2
       name_chn: 一元回归分析过程（家庭消费案例）
       name_eng: EViews-basic-cpi
-  hw_start: '2021-11-23'
+  hw_start: '2021-11-24'
   hw_end: '2021-11-27'
   topic: 'consumption'
 output:
@@ -110,9 +110,11 @@ lab_topic <- paste0(
 
 **作业提交材料**：
 
-（1）根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(num= lab.num)`。
+（1）根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(type='word', num= lab.num, ext = 'docx')`。
 
-（2）根据作业要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(num= lab.num, ext='wfl')`。
+（2）根据作业要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(type='eviews', num= lab.num, ext='wfl')`。
+
+（3）根据作业要求，提交1份按要求清洗处理后的属于自己的数据文件`.xlsx文件`，提交前请将文件命名为下述格式：`r  name_file(type='excel', num= lab.num, ext='xlsx')`。
 
 \newpage
 
@@ -171,7 +173,7 @@ name_eng <- c("index",
 name_chn <- c("序号",
               "含义",
               "英文单词","命名简写",
-              "示例")
+              "EViews对象命名示例")
 remark %>%
   add_column(index = 1:nrow(.)) %>%
   select(all_of(name_eng)) %>%
@@ -260,14 +262,16 @@ DT::datatable(head(iris))
 
 
 ```{r}
-file_path <- "data/lab2-monte-carlo-table-for-students-year-2021.xlsx"
-df_students <- openxlsx::read.xlsx(file_path)
+file_path <- "data/lab02-consumption-for-students-year-2021.xlsx"
+
+df_students <- openxlsx::read.xlsx(file_path) %>%
+  rename("spend" = "Ydata")
 
 file_data <- basename(file_path) 
 ```
 
 
-```{r data-sdutents, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap="家庭收入与支出案例数据"}
+```{r data-sdutents, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap="家庭收入与支出实验数据（n10）"}
 DT::datatable(df_students,
               #caption = "家庭收入与支出案例数据",
               options = list(
@@ -308,7 +312,7 @@ n_task <- task_counter()
 
 </br>
 
-（3）将工作文件项目保存到本地电脑`.wfl`文件，并命名为“`r  name_file(num= lab.num, ext='wfl')`”的形式。
+（3）将工作文件项目保存到本地电脑`.wfl`文件，并命名为“`r  name_file(num= lab.num, type='eviews', ext='wfl')`”的形式。
 
 > **要求**：注意记住保存的文件夹路径，这个文件要提交到作业系统的！！！
 
@@ -316,13 +320,13 @@ n_task <- task_counter()
 
 </br>
 
-（4）对xlsx数据文件（`r file_data`）进行处理，只保留自己的数据行。把表头（`数据集`、`样本`、`收入`、`支出`）修改为（`dataset`、`obs`、`income`、`spend`），并删除所有其他列。
+（4）对xlsx数据文件（`r file_data`）进行数据清洗处理。只保留自己的数据行。只保留如下列：`dataset`、`obs`、`income`、`spend`）。删除所有其他行和列。
 
 答：此问不用作答，完成指定操作并确保正确即可！
 
 </br>
 
-（5）导入处理后的xlsx数据到刚才建好的Eviews工作文件中，并在EViews窗口中按如下要求进行变量命名操作：
+（5）将清洗处理好后的数据（`r file_data`）导入到刚才建好的Eviews工作文件中，并在EViews窗口中按如下要求进行变量命名操作：
 
 > **要求**：在EViews窗口中，将原变量名（`income`和`spend`），分别重命名为（`x_upr`和`y_upr`）。
 

@@ -174,11 +174,11 @@ tbl_exercise <- tbl_random %>%
                         #nsmall = 2, trim =T)) %>%
   mutate(Ydata = round(Ydata,4)) %>%
   select(all_of(vars_sel)) %>%
-  arrange(dataset, obs) %>%
-  rename_all(., ~all_of(vars_chn))
+  arrange(dataset, obs) #%>%
+  #rename_all(., ~all_of(vars_chn))
 
 # write table for lab exercise
-file_path <- glue("data/lab2-monte-carlo-table-for-students-year-{teach_year}.xlsx")
+file_path <- glue("data/lab02-consumption-for-students-year-{teach_year}.xlsx")
 openxlsx::write.xlsx(tbl_exercise, file_path,overwrite = T)
 ```
 

@@ -116,9 +116,11 @@ source("R/fun_exercise_element.R", encoding = "UTF-8")
 
 **作业提交材料**：
 
-（1）根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(num= lab.num)`。
+（1）根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(type='word', num= lab.num, ext = 'docx')`。
 
-（2）根据作业要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(num= lab.num, ext='wfl')`。
+（2）根据作业要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(type='eviews', num= lab.num, ext='wfl')`。
+
+（3）根据作业要求，提交1份按要求清洗处理后的属于自己的数据文件`.xlsx文件`，提交前请将文件命名为下述格式：`r  name_file(type='excel', num= lab.num, ext='xlsx')`。
 
 \newpage
 
@@ -312,7 +314,7 @@ n_task <- task_counter()
 
 </br>
 
-（3）将工作文件项目保存到本地电脑`.wfl`文件，并命名为“`r  name_file(num= lab.num, ext='wfl')`”的形式。
+（3）将工作文件项目保存到本地电脑`.wfl`文件，并命名为“`r  name_file(num= lab.num, type='eviews', ext='wfl')`”的形式。
 
 > **要求**：注意记住保存的文件夹路径，这个文件要提交到作业系统的！！！
 
