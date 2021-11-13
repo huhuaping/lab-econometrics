@@ -1,0 +1,470 @@
+---
+title: "Exercise Lab `r stringr::str_pad(params$hand_out$lab_num,2,'left','0')` 课程作业"
+subtitle: " `r glue::glue('{params$hand_out$name_chn}')` "
+author: "任课教师：胡华平"
+date: "`r params$hw_start`"
+params:
+  hand_out:
+    value:
+      lab_num: 4
+      name_chn: 多元回归矩阵分析：玫瑰销售案例
+      name_eng: multiple-reg-matrix
+  hw_start: '2021-12-01'
+  hw_end: '2021-12-04'
+  topic: 'rose'
+#knit: `r source("R/_render_public.R")`
+knit: (function(inputFile, encoding) { 
+  outFile <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(inputFile));
+  out_dir <- 'public';
+  rmarkdown::render(inputFile,
+                    encoding=encoding,
+                     output_file=file.path(dirname(inputFile), out_dir, outFile)) })
+output:
+  bookdown::word_document2:
+    fig_caption: yes
+    toc: no
+    toc_depth: 4
+    number_sections: true
+    global_numbering: true
+    reference_docx: template/template-word-lab-exrecise.docx
+  bookdown::html_document2:
+    number_sections: no
+    toc: yes
+    fig_caption: yes
+    toc_float: yes
+    mathjax: local
+    self_contained: no
+    highlight: tango
+    theme: united
+  bookdown::pdf_document2:
+    latex_engine: xelatex
+    template: template/HWTemplate.tex
+    fig_caption: yes
+    includes:
+      in_header: latex/header.tex
+      before_body: latex/preamble.tex
+    toc: no
+    toc_depth: 5
+    number_sections: yes
+    keep_tex: yes
+
+  word_document:
+    toc: no
+    toc_depth: '4'
+    reference_docx: template/template-word-lab-exrecise.docx
+  html_document: default
+always_allow_html: yes
+documentclass: article
+classoption:
+- (landscape
+- a4paper)
+- (portrait
+- a4paper)
+fontsize: 12pt
+thanks: 请确保按要求独立完成，遵守诚信规范！
+pagestyle: headings
+---
+
+```{r global_options, echo=F,message=FALSE,warning=F}
+source("R/set-global-only.R", encoding = "UTF-8")
+#source("R/load-pkg.R", encoding = "UTF-8")
+require(tidyverse)
+require(magrittr)
+require(glue)
+require(here)
+require(openxlsx)
+require(knitr)
+
+library(DT)
+library(webshot)
+library(htmlwidgets)
+#webshot::install_phantomjs(force = TRUE)
+#webshot::is_phantomjs_installed()
+```
+
+</br>
+
+学生姓名：_________；学生学号：___________；专业班级：__________
+
+</br>
+
+
+# 作业提交
+
+```{r, echo=FALSE}
+start <- as.Date(params$hw_start)
+start_line <- glue::glue("{start}（{weekdays(start)}）24:00:00")
+end <- as.Date(params$hw_end)
+end_line <- glue::glue("{end}（{weekdays(end)}）24:00:00")
+
+lab.num <- params$hand_out$lab_num
+
+lab_topic <- paste0(
+  "lab",
+  str_pad(params$hand_out$lab_num,
+          2,'l','0'),
+  '-',params$topic)
+
+# some function to get xercercise elements
+source("R/fun_exercise_element.R", encoding = "UTF-8")
+
+```
+
+**作业发布时间**：`r start_line`
+
+**提交截止时间**：`r end_line`
+
+**作业提交材料**：
+
+（1）根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(type='word', num= lab.num, ext = 'docx')`。
+
+（2）根据作业要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(type='eviews', num= lab.num, ext='wfl')`。
+
+（3）根据作业要求，提交1份按要求清洗处理后的属于自己的数据文件`.xlsx文件`，提交前请将文件命名为下述格式：`r  name_file(type='excel', num= lab.num, ext='xlsx')`。
+
+\newpage
+
+# 作业提示
+
+## 实验参考材料
+
+（1）【校内权限】在线教育综合平台（需校内登陆，网址[https://eol.nwafu.edu.cn/meol/index.do](https://eol.nwafu.edu.cn/meol/index.do)）：
+
+《计量经济学》课程【实验课】指导书（**pdf版**）
+
+```{r, fig.cap= "胡华平计量经济学（课程编号：3133101）"}
+knitr::include_graphics("pic/course/econometrics-nwafu-course.png")
+```
+
+
+
+（2）【校外公开】胡华平个人网站（免费开放）：
+
+a.计量经济学【实验课】指导书《计量经济学实验设计与应用：EViews软件实现》（**链接**[https://book.huhuaping.com/](https://book.huhuaping.com/)）。
+
+b.计量经济学【理论课】课件（**链接**[https://home.huhuaping.com/course-econometrics/schedule-theory/](https://home.huhuaping.com/course-econometrics/schedule-theory/)）
+
+
+## 如何在word中编辑数学公式？
+
+（1）如果使用Office 2003版：“插入” $\Rightarrow$“对象”$\Rightarrow$“microsoft公式3.0”
+
+（2）如使用Office 2007/2010版：“插入”$\Rightarrow$“新公式”
+
+（3）使用独立公式软件`Mathtype`，任何Office版本都可以
+
+a.在`Mathtype`中编写公式$\Rightarrow$ 确定无误后复制公式$\Rightarrow$然后粘贴到word中。
+    
+b.在`Word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打开Mathtype软件，然后按上一步骤操作，修改完成后，点击保存即可。
+
+</br>
+
+</br>
+
+## EViews对象的命名参考
+
+考虑到本次实验课内容，EViews操作运算中可能需要保存和命名各类EViews对象，下面表\@ref(tab:obj-rename)给出了命名规则，供大家在EViews操作中参照使用。
+
+$\mathrm{\widehat{var}-\widehat{cov}}{(\mathbf{\hat{\beta}})}$
+
+```{r}
+# give the math data
+math_matrix <-readxl::read_xlsx(path = "data/lab4-matrix-math.xlsx",sheet=1) %>%
+  mutate(index = 1:nrow(.)) 
+
+```
+
+
+
+```{r obj-multiple,message=F,echo=FALSE,results='asis'}
+
+name_eng <- c("index",
+              "name_chn","math",
+              "cat_chn","cat_eng",
+              #"obj_logo",
+              "name_eviews")
+name_chn <- c("序号",
+              "含义","数学表达式",
+              "对象类型chn","对象类型eng",
+              #"EViews对象图标",
+              "Evies对象命名")
+
+
+math_matrix %>%
+  select(all_of(name_eng)) %>%
+  rename_all(., ~all_of(name_chn)) %>%
+  knitr::kable(
+    booktabs = TRUE,
+    align = "c",
+    caption = '计算对象、表达式及Eviews命名')
+```
+
+\newpage
+
+# 作业内容
+
+<!---prepare data for students---->
+
+```{r}
+# get students information
+source("R/get_students.R", encoding = "UTF-8")
+
+files_students <- "data/students-list-2021.xlsx"
+id_year <- 2019
+n_add <- 5
+df_students <- get_students(
+  file = files_students, 
+  id_year = id_year, 
+  n_add = 5)
+
+```
+
+```{r}
+# read basic ecercise data set
+require(readxl)
+require(janitor)
+file_path <- "data/lab4-rose-demand-origin.xlsx"
+df_base <- readxl::read_excel(here(file_path),
+                              col_types = c("text",rep("numeric",5))) %>%
+  rename("quater"="YEAR") %>%
+  janitor::clean_names(case = "small_camel") %>%
+  # make sure 
+  mutate(obs = 1:nrow(.)) %>%
+  select(obs, everything(.))
+n <- nrow(df_base)
+```
+
+
+```{r}
+# create random column data
+source("R/generate_rdm_df.R", encoding = "UTF-8")
+
+cols_rdm <- c("x2", "x3", "x4")
+set.seed(20211108) # for year 2021 fall
+
+# call external function
+df_handout <- gen_rdm_df(
+  df_info = df_students,
+  df_basic = df_base,
+  cols = cols_rdm
+  ) 
+
+# give the head for output
+vars_sel <- c("dataset", "class", "id", "name", 
+              names(df_base))
+
+# get all exercise data table
+df_exercise <- df_handout %>%
+  unnest(data)%>%
+  mutate(
+    across(
+      .cols = all_of(cols_rdm),
+      .fns = round,
+      digits = 2
+      )
+    ) %>%
+  select(all_of(vars_sel)) 
+
+# write table for lab exercise
+teach_year <- 2021
+out_path <- paste0(
+  "data/",
+  lab_topic,
+  "-for-students-year-",
+  teach_year,
+  ".xlsx"
+  )
+
+# special element
+file_data <- basename(out_path)
+cols_students <- c("dataset", names(df_base))
+```
+
+```{r, eval=FALSE}
+# run only for once
+openxlsx::write.xlsx(df_exercise,
+                     out_path,
+                     overwrite = T)
+```
+
+
+<!--- DT table first （dummy no pic show）--->
+
+```{r , screenshot.opts = list(selector = ".dataTables_wrapper")}
+# DT table first. 
+## it works and shows the webshot
+DT::datatable(head(iris))
+```
+
+
+1971-1975年间美国底特律市区消费者对玫瑰的季度需求案例的实验数据，由下面的图\@ref(fig:data-show)做出了部分展示。其中变量具体定义见表\@ref(tab:tbl-vars)
+
+```{r tbl-vars}
+label_chn <-c("样本",
+  "年份.季度", "玫瑰销售量(打)",
+  "玫瑰批发价格(\\$/打)","石竹的平均批发价格(\\$/打)",
+  "家庭可支配收入(\\$/周)","时间趋势")
+df_vars <- tibble("变量"= names(df_base),
+                  "含义" = label_chn)
+
+df_vars %>%
+  kable(., align = 'c', caption = '变量定义及说明')
+
+```
+
+> **温馨提示**：
+>（1）作业配套数据请在作业发布平台界面中自行下载。
+>（2）每个同学的数据都不一样（但样本数相同$n=`r n`$）。请下载数据表后，按后面作业要求找到自己的数据，并进行Excel预处理（以便导入到Eviews）。
+>（3）表中只筛选了部分学生数据作为展示，具体数据以`r file_data`为准。
+
+
+
+```{r data-show, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap=glue("玫瑰季度需求案例的学生实验数据（n={n}）")}
+
+df_exercise %>%
+  group_by(id) %>%
+  sample_n(8,replace = FALSE) %>%
+  arrange(dataset, obs) %>%
+  DT::datatable(
+    options = list(
+      pageLength=18,
+      dom="tip")
+  )
+```
+
+
+
+# 作业任务
+
+```{r task-counter}
+task_counter <- function() {
+  i <- 0
+  function() {
+    i <<- i + 1
+    i
+  }
+}
+n_task <- task_counter()
+
+
+```
+
+## 题目`r n_task()`：工作文件及数据导入
+
+（1）请大家下载本次作业数据文件（`r file_data`）到本地电脑。
+
+> **温馨提示**：a.文件尽量不要放在电脑桌面，而是保存在自己清楚的文件夹路径下（如"D://econometrics//`r file_data`"）；b.注意下载工具的使用，不是直接打开xlsx文件，而是要下载到本地电脑，然后再打开！
+
+答：此问不用作答，完成指定操作即可！
+
+</br>
+
+（2）打开EViews软件，创建工作文件（WF），命名为`r lab_topic`；以及建立工作页（page），命名为`r params$topic`。
+
+答：此问不用作答，完成指定操作即可！
+
+</br>
+
+（3）将工作文件项目保存到本地电脑`.wfl`文件，并命名为“`r  name_file(num= lab.num, type='eviews', ext='wfl')`”的形式。
+
+> **要求**：注意记住保存的文件夹路径，这个文件要提交到作业系统的！！！
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（4）对xlsx数据文件（`r file_data`）进行清洗处理，只保留自己的数据行，只保留如下列：`r paste0(cols_students,collapse='、')`）。删除所有其他行和列。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（4）将清洗处理好后的数据（`r file_data`）导入到刚才建好的Eviews工作文件中。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+## 题目`r n_task()`：计算机自动分析
+
+
+运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型进行回归分析。
+
+> **温馨提示**：注意参看选项，并正确设置模型。
+
+（1）在Eviews软件中，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_linear`。最后截图到下列空白处。
+ 
+答：
+
+</br>
+
+</br>
+
+（2）使用公式编辑器（或Mathtype软件），将上述EViews分析报告，手动整理成简要报告（四行报告，包括第1行样本回归方程、第2行对应的系数标准误、第3行对应的样本t统计量，以及第4行F检验值、p值、拟合优度等。具体形式见课件），将结果填写在下面空白处。
+
+答：
+
+</br>
+
+</br>
+
+（3）把以上计算机“自动报告”结果与你后续“手动计算”的结果进行比较，判断后续手动计算的每一步是否正确。
+
+> **温馨提示**：此小题不用作答，仅做后面参考。（要知道，后面手动计算中，一步错步步错！）。
+
+答：此题不需要作答！仅作提示！
+
+## 题目`r n_task()`：构建几个重要变量对象
+
+（1）请在EViews中，分别创建：样本数$n$标量对象（Scalar![](pic/object/Scalar.png)），保存并命名为`n`。因变量均值$\bar{Y}$标量对象（Scalar![](pic/object/Scalar.png)），保存并命名为`avr_y`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码`scalar n=@obs(x2)`。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+（2）请在EViews中，创建元素全为1的常数序列对象（Series![](pic/object/Series.png)），保存并命名为`cst`。
+
+> **温馨提示**：可以使用EViews命令，或者也可以使用菜单操作。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+（3）请在EViews中，将如下序列对象：`r paste0("![](pic/object/Series.png)",c('cst',paste0('x',2:5)),collapse='、')`，创建为一个组对象（Group![](pic/object/Group.png)），保存并命名为`xg`。
+
+> **温馨提示**：可以使用EViews命令，或者也可以使用菜单操作。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+## 题目`r n_task()`：构造X矩阵和Y矩阵对象
+
+（1）请在EViews中，创建矩阵$\mathbf{X}$的矩阵对象（Matrix![](pic/object/Matrix.png)），保存并命名为`x`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码`matrix x=xg`。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+（2）请在EViews中，创建矩阵$\mathbf{y}$的矩阵对象（Matrix![](pic/object/Matrix.png)），保存并命名为`y`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+
+## 题目`r n_task()`：
+
+## 题目`r n_task()`：
+
+## 题目`r n_task()`：
+
+## 题目`r n_task()`：
+
+## 题目`r n_task()`：

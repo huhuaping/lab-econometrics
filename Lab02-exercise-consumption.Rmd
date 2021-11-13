@@ -66,7 +66,7 @@ pagestyle: headings
 
 ```{r global_options, echo=F,message=FALSE,warning=F}
 source("R/set-global-only.R", encoding = "UTF-8")
-source("R/load-pkg.R", encoding = "UTF-8")
+#source("R/load-pkg.R", encoding = "UTF-8")
 require(tidyverse)
 require(magrittr)
 require(glue)
@@ -388,11 +388,65 @@ n_task <- task_counter()
 
 </br>
 
+## 题目`r n_task()`：构建几个重要变量对象
+
+（1）请在EViews中，创建样本数$n$标量对象（Scalar![](pic/object/Scalar.png)），保存并命名为`n`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码`scalar n=@obs(x_upr)`。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+（2）请在EViews中，分别创建：因变量$Y_i$均值的标量对象（Scalar![](pic/object/Scalar.png)），保存并命名为`y_avr_scl`。以及因变量$Y_i$均值的序列对象（Scalar![](pic/object/Series.png)），保存并命名为`y_avr_ser`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码`scalar y_avr_scl=@mean(y_upr)`，以及代码`series y_avr_ser=@mean(y_upr)`。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+（3）请在EViews中，分别创建：因变量$X_i$均值的标量对象（Scalar![](pic/object/Scalar.png)），保存并命名为`x_avr_scl`。以及因变量$X_i$均值的序列对象（Scalar![](pic/object/Series.png)），保存并命名为`x_avr_ser`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
 ## 题目`r n_task()`：计算表FF和ff
 
-将数据导入Eviews后，请分别计算出FF原序列![](pic/object/Series.png)：$X_i; Y_i; X^2_i; Y^2_i; X_iY_i$；以及ff离差序列![](pic/object/Series.png)：$(x_i; y_i; x^2_i;y^2_i,x_iy_i)$。在Eviews软件中，以组对象（Group![](pic/object/Group.png)）形式保存，分别命名为`group_ff_upr`和`group_ff_lwr`。最后分别截图到下列空白处。
+为了进行后续的计算工作，我们需要得到计算表FF和ff。请分别要要求完成下列步骤的操作。
 
 > **温馨提示**：EViews计算过程中，产生的EViews对象的命名规则和命名参考，请参照前面提供的表\@ref(tab:remark)和表\@ref(tab:obj-rename)。后续的所有题目都应如此！后面不再提示此条！
+
+```{r}
+logo <- "![](pic/object/Series.png)"
+label <- c("x_upr","y_upr","x_upr_sqr","y_upr_sqr","xy_upr")
+FF_logo <- paste0(logo, label,collapse = '、')
+label <- c("x_lwr","y_lwr","x_lwr_sqr","y_lwr_sqr","xy_lwr")
+ff_logo <- paste0(logo, label,collapse = '、')
+```
+
+
+（1）请在EViews中，分别创建$X_i; Y_i; X^2_i; Y^2_i; X_iY_i$的FF序列对象（Series![](pic/object/Series.png)），保存并分别命名为：`r  FF_logo`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码操作。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+（2）请在EViews中，分别创建$x_i; y_i; x^2_i; y^2_i; x_iy_i$的ff序列对象（Series![](pic/object/Series.png)），保存并分别命名为：`r  ff_logo`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码操作。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+
+（3）在Eviews软件中，以组对象（Group![](pic/object/Group.png)）形式保存，分别命名为`group_ff_upr`和`group_ff_lwr`。最后分别截图到下列空白处。
 
 答1：FF的组对象（Group![](pic/object/Group.png)）`group_ff_upr`的截图
 
