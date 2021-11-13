@@ -416,7 +416,7 @@ n_task <- task_counter()
 
 ## 题目`r n_task()`：构建几个重要变量对象
 
-（1）请在EViews中，分别创建：样本数$n$标量对象（Scalar![](pic/object/Scalar.png)），保存并命名为`n`。因变量均值$\bar{Y}$标量对象（Scalar![](pic/object/Scalar.png)），保存并命名为`avr_y`。
+（1）请在EViews中，分别创建：a.样本数$n$标量对象（Scalar），保存并命名为![](pic/object/Scalar.png)`n`。b.因变量均值$\bar{Y}$标量对象（Scalar），保存并命名为![](pic/object/Scalar.png)`avr_y`。
 
 > **温馨提示**：可以在EViews命令窗口中使用代码`scalar n=@obs(x2)`。
 
@@ -424,7 +424,7 @@ n_task <- task_counter()
 
 </br>
 
-（2）请在EViews中，创建元素全为1的常数序列对象（Series![](pic/object/Series.png)），保存并命名为`cst`。
+（2）请在EViews中，创建元素全为1的常数序列对象（Series），保存并命名为![](pic/object/Series.png)`cst`。
 
 > **温馨提示**：可以使用EViews命令，或者也可以使用菜单操作。
 
@@ -432,17 +432,29 @@ n_task <- task_counter()
 
 </br>
 
-（3）请在EViews中，将如下序列对象：`r paste0("![](pic/object/Series.png)",c('cst',paste0('x',2:5)),collapse='、')`，创建为一个组对象（Group![](pic/object/Group.png)），保存并命名为`xg`。
+（3）请在EViews中，将如下序列对象：`r paste0("![](pic/object/Series.png)",c('cst',paste0('x',2:5)),collapse='、')`，创建为一个组对象（Group），保存并命名为![](pic/object/Group.png)`xg`。
 
 > **温馨提示**：可以使用EViews命令，或者也可以使用菜单操作。
 
 答：此题不需要作答，完成指定操作并确保正确即可！
 
 </br>
+
+（4）请在EViews中，将回归方程的残差$e_i$分别提取并保存为两类EViews对象：a.将回归方程的残差$e_i$分别提取为序列对象，保存并命名为![](pic/object/Series.png)`ei_ser`。b.将回归方程的残差$e_i$分别提取为矩阵对象，保存并命名为![](pic/object/Matrix.png)`ei_mat`。
+
+> **温馨提示**：a.可以使用EViews命令，或者也可以使用菜单操作。b.做完线性回归分析后，立刻提取回归残差![](pic/object/Series.png)`resid`。c.Eviews执行代码可分别参考：`series ei_ser=resid`，以及`matrix ei_mat=resid`。
+
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+（）。
+
 
 ## 题目`r n_task()`：构造X矩阵和Y矩阵对象
 
-（1）请在EViews中，创建矩阵$\mathbf{X}$的矩阵对象（Matrix![](pic/object/Matrix.png)），保存并命名为`x`。
+（1）请在EViews中，创建矩阵$\mathbf{X}$的矩阵对象（Matrix），保存并命名为![](pic/object/Matrix.png)`x`。
 
 > **温馨提示**：可以在EViews命令窗口中使用代码`matrix x=xg`。
 
@@ -450,7 +462,7 @@ n_task <- task_counter()
 
 </br>
 
-（2）请在EViews中，创建矩阵$\mathbf{y}$的矩阵对象（Matrix![](pic/object/Matrix.png)），保存并命名为`y`。
+（2）请在EViews中，创建矩阵$\mathbf{y}$的矩阵对象（Matrix），保存并命名为![](pic/object/Matrix.png)`y`。
 
 > **温馨提示**：可以在EViews命令窗口中使用代码。
 
@@ -459,12 +471,170 @@ n_task <- task_counter()
 </br>
 
 
-## 题目`r n_task()`：
+## 题目`r n_task()`：回归系数矩阵理论表达
 
-## 题目`r n_task()`：
+利用矩阵计算理论公式，先计算得到几个重要矩阵（后面分析还要用到），最后利用矩阵运算计算得出回归系数向量。依次完成如下操作和提问。
 
-## 题目`r n_task()`：
+$$\begin{align}
+Y_i&=\hat{\beta}_1+\hat{\beta}_2X_{2i}+\hat{\beta}_3X_{3i}+\hat{\beta}_4X_{4i}+\hat{\beta}_5X_{5i}+u_i && \text{(linear)} (\#eq:mod-linear)
+\end{align}$$
 
-## 题目`r n_task()`：
+（1）给定样本回归模型，请写出样本回归模型的矩阵表达式，以及各矩阵的具体形式。
 
-## 题目`r n_task()`：
+答a：填写补充样本回归模型的矩阵表达式：
+
+$$\begin{alignat}{4}
+\mathbf{y} &= &\mathbf{X}&\mathbf{\hat{\beta}}&+&\mathbf{e}\\
+(\quad \times \quad) &  &{(\quad \times \quad)} &{(\quad \times 1)}&+&{(\quad \times 1)}
+\end{alignat}$$
+
+答b：填写补充矩阵$\boldsymbol{y}$的具体表达式：
+
+$$\begin{equation}
+\mathbf{y}=
+  \begin{bmatrix}
+  \quad \\  \quad \\  \cdots \\  \quad \\ \quad \\
+  \end{bmatrix}
+\end{equation}$$
+
+答c：填写补充矩阵$\boldsymbol{X}$的具体表达式：
+
+$$\begin{equation}
+\boldsymbol{X} =
+  \begin{bmatrix}
+  \quad &  \quad & \quad & \quad &  \quad \\
+  \quad &  \quad & \quad & \quad &  \quad \\
+  \cdots &  \cdots & \cdots & \cdots &  \cdots \\
+  \quad &  \quad & \quad & \quad &  \quad \\
+  \quad &  \quad & \quad & \quad &  \quad
+  \end{bmatrix}
+\end{equation}$$
+
+答c：填写补充矩阵$\boldsymbol{\hat{\beta}}$和$\boldsymbol{e}$的具体表达式：
+
+$$\begin{equation}
+ \boldsymbol{\hat{\beta}} =
+  \begin{bmatrix}
+  \quad \\  \quad \\  \vdots \\  \quad \\
+  \end{bmatrix}
+; \quad \quad
+\boldsymbol{e} =  
+  \begin{bmatrix}
+  \quad \\  \quad \\  \vdots \\  \quad \\
+  \end{bmatrix}
+\end{equation}$$
+
+
+## 题目`r n_task()`：计算回归系数向量
+
+（1）请写出线性回归模型\@ref(eq:mod-linear)，斜率系数的矩阵理论计算公式：
+
+答：$\boldsymbol{\hat{\beta}}=$
+
+</br>
+
+（2）根据上述矩阵计算公式，请分步骤计算得到如下几个重要矩阵对象：a.得到重要矩阵$\boldsymbol{X'X}$，保存并命名为![](pic/object/Matrix.png)`xtx`。b.得到重要矩阵$\boldsymbol{(X'X)^{-1}}$，保存并命名为![](pic/object/Matrix.png)`xtxi`。c.得到重要矩阵$\boldsymbol{X'y}$，保存并命名为![](pic/object/Matrix.png)`xty`。
+
+> **温馨提示**：可以在EViews命令窗口中使用如下参考代码。
+
+```
+matrix xtx=@transpose(x)*x  '得到重要矩阵$X'X$
+matrix xtxi=@inverse(xtx)   '得到重要矩阵$(X'X)^{-1}$
+matrix xty=@transpose(x)*y  '得到重要矩阵$X'y$
+```
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（3）根据理论公式，在EViews中请创建并计算回归系数$\boldsymbol{\hat{\beta}}$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`beta_hat`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码`matrix beta_hat=xtxi*xty`。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+## 题目`r n_task()`：计算回归方程的误差方差及标准差
+
+（1）请写出线性回归模型\@ref(eq:mod-linear)，回归误差方差和标准差的矩阵理论公式：
+
+答：补充完整下列理论公式：
+
+$$\begin{align}
+\hat{\sigma}^2&=\frac{\sum{e_i^2}}{n-k}=\frac{\mathbf{y'y-\hat{\beta}'X'y}}{n-k}\\
+\hat{\sigma}&=
+\end{align}$$
+
+</br>
+
+（2）根据理论公式，请创建并计算回归方程的误差方差$\hat{\sigma}^2$的标量对象，保存并命名为![](pic/object/Scalar.png)`sgm_hat_sqr`。
+
+> **温馨提示**：有两种EViews操作方法。方法a：利用公式$\sum{e_i^2}=\boldsymbol{e^{\prime}e}$，则需要用到回归方程的残差$e_i$矩阵对象![](pic/object/Matrix.png)`ei_mat`（前面题目已完成）。方法b：利用上述矩阵理论计算公式，其中需要用到因变量均值$\bar{Y}$标量对象![](pic/object/Scalar.png)`avr_y`（见前面题目已完成）。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（3）根据理论公式，请在EViews中创建并计算回归方程的误差标准差$\hat{\sigma}$的标量对象，保存并命名为![](pic/object/Scalar.png)`sgm_hat`。
+
+> **温馨提示**：开根号运算$\sqrt{\quad}$，可以在EViews命令窗口中使用代码`scalar sgm_hat=@sqr(sgm_hat_sqr)`
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+
+## 题目`r n_task()`：计算回归系数的方差协方差矩阵
+
+（1）请写出在符合**N-CLRM**假设情况下，回归系数的方差协方差矩阵的理论表达式。
+
+答：
+
+$$\begin{align}
+\widehat{var}\_\widehat{cov}(\mathbf{\hat{\beta}})=
+\end{align}$$
+
+（2）根据上述理论公式，在EViews中请创建并计算回归系数的样本方差协方差矩阵$\widehat{var}\_\widehat{cov}(\mathbf{\hat{\beta}})$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`s2_varcov_beta_hat`。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（3）进一步地，在EViews中请提取上述回归系数的样本方差协方差矩阵$\widehat{var}\_\widehat{cov}(\mathbf{\hat{\beta}})$的对角线元素，创建回归系数样本方差$S^2_{\boldsymbol{\hat{\beta}}}$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`s2_beta_hat`。
+
+
+> **温馨提示**：提取矩阵对角线元素的操作，可以在EViews命令窗口中使用代码`matrix s2_beta_hat=@getmaindiagonal(s2_varcov_beta_hat) `
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（4）进一步地，请在EViews中创建并计算回归系数的误差标准差$S_{\boldsymbol{\hat{\beta}}}$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`s_beta_hat`。
+
+> **温馨提示**：开根号运算$\sqrt{\quad}$，可以在EViews命令窗口中使用代码`matrix s_beta_hat=@sqr(s2_beta_hat)`
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+
+## 题目`r n_task()`：平方和分解
+
+（1）在线性回归模型\@ref(eq:mod-linear)下，平方和分解的矩阵理论表达式。
+
+> **温馨提示**：$n\bar{Y}^2$为计算矫正因子，后续计算会用到。
+
+答：（答案已给出，后续问题回答供参照）
+
+$$\begin{align}
+Adj:  &\quad  n\bar{Y}^2 \\
+TSS &=\mathbf{y'y}-n\bar{Y}^2 \\
+RSS &=\mathbf{e'e}=\mathbf{y'y-\hat{\beta}'X'y} \\
+ESS &=\mathbf{\hat{y}'\hat{y}}=\mathbf{\hat{\beta}'X'y}-n\bar{Y}^2 \\
+df_{TSS} &= n-1 \\
+df_{RSS} &= n-k \\
+df_{ESS} &=k-1
+\end{align}$$
+
+（2）
