@@ -205,7 +205,7 @@ math_matrix %>%
 
 <!---prepare data for students---->
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 # get students information
 source("R/get_students.R", encoding = "UTF-8")
 
@@ -219,7 +219,7 @@ df_students <- get_students(
 
 ```
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 # read basic ecercise data set
 require(readxl)
 require(janitor)
@@ -235,7 +235,7 @@ n <- nrow(df_base)
 ```
 
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 # create random column data
 source("R/generate_rdm_df.R", encoding = "UTF-8")
 
@@ -618,10 +618,48 @@ $$\begin{align}
 
 </br>
 
+## 题目`r n_task()`：回归系数t检验
+
+利用Eviews软件，首先请分别计算所有模型回归系数的样本t统计量值（$t^{\ast}_{\hat{\beta}}$）；然后使用EViews函数，得到给定$\alpha=0.05$时的t理论值（$t_{1-\alpha/2}(df)$）；最后根据计算结果完成对**斜率参数**的t检验过程。
+
+
+（1）请写出回归系数样本t统计量$\boldsymbol{t}^{\ast}_{\hat{\boldsymbol{\beta}}}$的矩阵理论表达式。
+
+答：请补充完整下面的样本t统计量的矩阵表达式：
+
+$\boldsymbol{t}^{\ast}_{\hat{\boldsymbol{\beta}}}=\frac{\quad}{\quad}$
+
+</br>
+
+（2）在EViews中，请回归系数样本t统计量$\boldsymbol{t}^{\ast}_{\hat{\boldsymbol{\beta}}}$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`t_str_beta_hat`。
+
+> **温馨提示**：1）请务必与EViews回归分析的自动结果进行核验，确认你的计算结果是正确的。2）可以在EViews命令窗口中使用如下代码进行操作：`matrix t_str_beta_hat=@ediv(beta_hat,s_beta_hat)`，其中`@ediv()`表示矩阵元素相除的操作函数。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+
+（3）在EViews中，创建并得到如下两个t理论查表值（给定$\alpha=0.05$）的标量对象：$t_{1-\alpha/2}(df)$和$t_{alpha/2}(df)=$。分别保存并命名为![](pic/object/Scalar.png)`t_0.975`和![](pic/object/Scalar.png)`t_0.025`。
+
+> **温馨提示**：可以在EViews命令窗口中使用如下代码进行操作：`scalar t_0.975=@qtdist(0.975,df_rss)`，其中`@qtdist()`表示得到t值查表函数。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（4）根据回归系数t检验的步骤，利用以上计算结果。请在进一步得出对全部**回归系数**的t检验结论。请在下列空白处完成作答。
+
+> **温馨提示**：1）只需要根据计算结果做出t检验的结论即可（不需要）；2）所有计算结果都保留4位小数即可。
+
+答：对**回归系数**的t检验结论是：
+
+</br>
+
 
 ## 题目`r n_task()`：平方和分解
 
-（1）在线性回归模型\@ref(eq:mod-linear)下，平方和分解的矩阵理论表达式。
+（1）在线性回归模型\@ref(eq:mod-linear)下，请写出平方和分解的矩阵理论表达式。
 
 > **温馨提示**：$n\bar{Y}^2$为计算矫正因子，后续计算会用到。
 
@@ -637,4 +675,167 @@ df_{RSS} &= n-k \\
 df_{ESS} &=k-1
 \end{align}$$
 
-（2）
+（2）请在EViews中，计算平方和矫正因子$n\bar{Y}^2$的标量对象，保存并命名为![](pic/object/Scalar.png)`mean_adj`。
+
+> **温馨提示**：提取矩阵对角线元素的操作，可以在EViews命令窗口中使用代码`scalar mean_adj=n*avr_y^2`
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（2）请计算平方和及其对应的自由度标量对象，分别命名为：![](pic/object/Scalar.png)`tss`、![](pic/object/Scalar.png)`ess`、![](pic/object/Scalar.png)`rss`；以及![](pic/object/Scalar.png)`df_tss`、![](pic/object/Scalar.png)`df_ess`、![](pic/object/Scalar.png)`df_rss`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码进行操作。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+## 题目`r n_task()`：判定系数和调整判定系数
+
+（1）在线性回归模型\@ref(eq:mod-linear)下，请分别写出判定系数$R^2$和调整判定系数$\overline{R}^2$的矩阵理论表达式。
+
+答：请补充完下面的理论公式：
+
+$$\begin{align}
+R^2&=\frac{ESS}{TSS} = \\
+\bar{R}^2 &=1-\frac{RSS/{f_{RSS}}}{TSS/{f_{TSS}}} =
+\end{align}$$
+
+</br>
+
+（2）请在EViews中，请分别写出判定系数$R^2$和调整判定系数$\overline{R}^2$的标量对象，分别保存并命名为![](pic/object/Scalar.png)`r2`和![](pic/object/Scalar.png)`r2_adj`。
+
+
+## 题目`r n_task()`：回归方程整体显著性检验
+
+利用Eviews软件，首先请回归方程的样本F统计量值（$F^\ast$）；然后使用EViews函数，得到给定$\alpha=0.05$时的F理论值（$f_{1-\alpha}(df_1,df_2)$）；最后根据计算结果完成对回归方程整体显著性检验过程。请在下面空白处分别写出理论公式及计算结果。
+
+
+（1）请在下面空白处写出样本F统计量$F^\ast=$的矩阵理论表达式。
+
+> **温馨提示**：已给出答案，不用作答，仅作提示，供后续计算使用。
+
+答：样本F统计量的理论计算公式为：
+
+$$\begin{align}
+F^{\ast} &=\frac{ESS/{f_{ESS}}}{RSS/{f_{RSS}}} =\frac{MSS_{ESS}}{MSS_{RSS}} \\
+         &=\frac{(\mathbf{\hat{\beta}X'y}-n\bar{Y}^2)/{k-1}}{{(\mathbf{y'y-\hat{\beta}'X'y})}/{n-k}} \end{align}$$
+
+</br>
+
+
+（2）在EViews中，请计算并创建样本F统计量$F^\ast=$的标量对象，保存并命名为![](pic/object/Scalar.png)`f_str`。
+
+> **温馨提示**：1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。2）EViews中按要求保存相关计算对象，并按规范命名。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+
+（3）在EViews中，（给定$\alpha=0.05$）请计算并创建样本F统计量$f_{1-\alpha}(df_1,df_2)=$的标量对象，保存并命名为![](pic/object/Scalar.png)`f_0.95`。
+
+> **温馨提示**：可以在EViews命令窗口中使用如下代码进行操作：`scalar f_0.95=@qfdist(0.95,df_ess,df_rss)`，其中`@qfdist()`表示得到F值查表函数。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+
+（4）根据回归系数F检验的步骤，利用以上计算结果。请在下列空白处写出对回归模型整体显著性F检验的结论。
+
+> **温馨提示**：1）只需要写出F检验的假设，并根据计算结果做出F检验的结论即可（不需要）；2）所有计算结果都保留4位小数即可。
+
+答：
+
+a.请写出F检验提出原假设和备择假设：$H_0=;\quad \quad H_1=$
+
+</br>
+
+b.得出F检验结论：
+
+</br>
+
+## 题目`r n_task()`：预测问题（点预测）
+
+（1）给定样本外$(x2,x3,x4,x5)=(20,4,4,200)$，请在下列空白处写出矩阵$\boldsymbol{X}_0$的具体形式。
+
+> **温馨提示**：1）注意常数项；2）注意矩阵维度。
+
+答：补充完整下列的具体矩阵形式：
+
+$$\begin{align}
+\boldsymbol{X}_0 =
+  \begin{pmatrix}
+  \quad & \quad & \quad & \quad & \quad
+  \end{pmatrix}
+\end{align}$$
+
+</br>
+
+
+（2）请在Eviews中，构建样本外$\mathbf{X}_0$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`x0`。
+
+> **温馨提示**：需要在Eviews命令窗口中依次运行，1）构造空矩阵`matrix(1,5) x0`；2）给空矩阵赋值：`x0.fill(b=r) 1,20,4,4,200`。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+
+（3）给定样本外点$\boldsymbol{X}_0$，请在下列空白处写出样本外拟合值$\hat{Y}_0$的理论矩阵计算公式。
+
+> **温馨提示**：写出矩阵理论表达式的紧凑形式即可。
+
+答：补充完整下列的具体矩阵形式：
+
+$$\begin{align}
+\hat{Y}_0 =
+\end{align}$$
+
+（4）请在Eviews中，构建样本外拟合值$\hat{Y}_0$的标量对象，保存并命名为![](pic/object/Scalar.png)`y0_hat`。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+
+## 题目`r n_task()`：预测问题（均值的区间预测）
+
+利用Eviews软件，首先构造并得到均值预测时需要用到的样本标准差$S_{\hat{Y}_0}$；然后利用t分布（给定$\alpha =0.05$）构造出均值的区间预测。请在下面空白处分别写出理论公式及计算结果。
+
+> **温馨提示**：（1）计算结果保留4位小数。（2）EViews中按要求保存相关计算对象，并按规范命名。
+
+
+答1：需要用到的样本标准差$S_{\hat{Y}_0}=$
+
+</br>
+
+答2：均值的区间预测
+
+左界值：$E(Y|X=X_0) \geq$
+
+右界值：$E(Y|X=X_0) \leq$
+
+</br>
+
+## 题目`r n_task()`：预测问题（个值的区间预测）
+
+利用Eviews软件，首先构造并得到**个值预测**时需要用到的样本标准差$S_{Y_0-\hat{Y}_0}$；然后利用t分布（给定$\alpha =0.05$）构造出均值的区间预测。请在下面空白处分别写出理论公式及计算结果。
+
+> **温馨提示**：（1）计算结果保留4位小数。（2）EViews中按要求保存相关计算对象，并按规范命名。
+
+
+答1：需要用到的样本标准差$S_{Y_0-\hat{Y}_0}=$
+
+</br>
+
+答2：**个值**的区间预测
+
+左界值：$(Y_0|X=X_0) \geq$
+
+右界值：$(Y_0|X=X_0) \leq$
+
+</br>
+
