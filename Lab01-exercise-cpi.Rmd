@@ -363,15 +363,14 @@ n_task <- task_counter()
 （1）根据前述结果，进一步计算出各个国家1980年-2005年间的**平均**通货膨胀率，将计算结果分别创建为标量对象（scalar![](pic/object/Scalar.png)），并按要求分别命名为`mean_inf_canada`、`mean_inf_france`、$\ldots$\等。
 
 
-
-答：
+答：此问不用作答，完成指定操作即可！
 
 </br>
 
 
 （2）在EView软件中，请将上述7个国家的平均通货膨胀率结果，全部依次（按国名字母顺序canada;france;germany;italy;japan;uk;usa）放到一个列向量对象中去（vector![](pic/object/Vector.png)），并将该向量命名为`vec_inf_mean`。最后将向量数值结果截图放到word下列空白处!
 
-> **提示**：向量操作的EViews代码格式如：`vector(7) vec_mean_inf(1) = inf_canada_mean`。代码具体含义请参看实验指导教材《计量经济学实验设计与应用：Eviews软件实现》的节[“1.8.1.2 批量式命令驱动”](https://book.huhuaping.com/introduction.html)。
+> **提示**：向量操作的EViews代码格式如：`vector(7) vec_mean_inf(1) = mean_inf_canada`。代码具体含义请参看实验指导教材《计量经济学实验设计与应用：Eviews软件实现》的节[“1.8.1.2 批量式命令驱动”](https://book.huhuaping.com/introduction.html)。
 
 答：
 
