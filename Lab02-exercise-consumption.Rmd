@@ -271,7 +271,7 @@ file_data <- basename(file_path)
 ```
 
 
-```{r data-sdutents, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap="家庭收入与支出实验数据（n10）"}
+```{r data-students, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap="家庭收入与支出实验数据（n10）"}
 DT::datatable(df_students,
               #caption = "家庭收入与支出案例数据",
               options = list(
@@ -321,6 +321,8 @@ n_task <- task_counter()
 </br>
 
 （4）对xlsx数据文件（`r file_data`）进行数据清洗处理。只保留自己的数据行。只保留如下列：`dataset`、`obs`、`income`、`spend`）。删除所有其他行和列。
+
+> **要求**：在EViews窗口中，将原变量名`Ydata`重命名为`spend`。
 
 答：此问不用作答，完成指定操作并确保正确即可！
 
@@ -464,7 +466,7 @@ ff_logo <- paste0(logo, label,collapse = '、')
 
 根据所给数据，利用Eviews软件，计算直线回归方程的回归系数。请在下面空白处写出公式、主要计算过程和计算结果；
 
-> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）结果保留四位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
+> **温馨提示**：（0）EViews命令窗口中可以使用代码`@sum()`进行求和计算。（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）结果保留四位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
 
 答：
 
@@ -526,7 +528,7 @@ $\hat{\sigma}=$
 
 利用Eviews软件，分别计算处斜率系数的样本方差和标准差（$S_{\hat{\beta}_2}^2$、$S_{\hat{\beta}_2}^2$），以及截距系数的样本方差和标准差（$S_{\hat{\beta}_1}$、$S_{\hat{\beta}_1}$）。请在下面空白处分别写出理论公式及计算结果。
 
-> **温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
+> **温馨提示**：（0）EViews命令窗口中可以使用代码`@sqrt()`进行开根号计算。（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
 
 答：
 
@@ -571,9 +573,9 @@ $t^{\ast}_{\hat{\beta}_1}=$
 </br>
 
 
-（3）在EViews中，创建并得到如下两个t理论查表值（给定$\alpha=0.05$）的标量对象：$t_{1-\alpha/2}(df)$和$t_{alpha/2}(df)=$。分别保存并命名为![](pic/object/Scalar.png)`t_0.975`和![](pic/object/Scalar.png)`t_0.025`。
+（3）在EViews中，创建并得到如下两个t理论查表值（给定$\alpha=0.05$）的标量对象：$t_{1-\alpha/2}(df)$和$t_{alpha/2}(df)=$。分别保存并命名为![](pic/object/Scalar.png)`t_0975`和![](pic/object/Scalar.png)`t_0025`。
 
-> **温馨提示**：可以在EViews命令窗口中使用如下代码进行操作：`scalar t_0.975=@qtdist(0.975,df_rss)`，其中`@qtdist()`表示得到t值查表函数。
+> **温馨提示**：可以在EViews命令窗口中使用如下代码进行操作：`scalar t_0975=@qtdist(0.975,df_rss)`，其中`@qtdist()`表示得到t值查表函数。
 
 答：此问不用作答，完成指定操作并确保正确即可！
 
@@ -659,9 +661,9 @@ e.得出t检验结论：
 </br>
 
 
-（3）在EViews中，（给定$\alpha=0.05$）请计算并创建样本F统计量$f_{1-\alpha}(df_1,df_2)=$的标量对象，保存并命名为![](pic/object/Scalar.png)`f_0.95`。
+（3）在EViews中，（给定$\alpha=0.05$）请计算并创建样本F统计量$f_{1-\alpha}(df_1,df_2)$的标量对象，保存并命名为![](pic/object/Scalar.png)`f_095`。
 
-> **温馨提示**：可以在EViews命令窗口中使用如下代码进行操作：`scalar f_0.95=@qfdist(0.95,df_ess,df_rss)`，其中`@qfdist()`表示得到F值查表函数。
+> **温馨提示**：可以在EViews命令窗口中使用如下代码进行操作：`scalar f_095=@qfdist(0.95,df_ess,df_rss)`，其中`@qfdist()`表示得到F值查表函数。
 
 答：此问不用作答，完成指定操作并确保正确即可！
 
