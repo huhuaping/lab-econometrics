@@ -6,12 +6,12 @@ date: "`r params$hw_start`"
 params:
   hand_out:
     value:
-      lab_num: 4
-      name_chn: 多元回归矩阵分析：玫瑰销售案例
-      name_eng: multiple-reg-matrix
+      lab_num: 5
+      name_chn: 多重共线性：最低工资保障政策
+      name_eng: multi-linearity
   hw_start: '2021-12-01'
   hw_end: '2021-12-04'
-  topic: 'rose'
+  topic: 'wage'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
   outFile <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(inputFile));
@@ -223,11 +223,10 @@ df_students <- get_students(
 # read basic ecercise data set
 require(readxl)
 require(janitor)
-file_path <- "data/lab4-rose-demand-origin.xlsx"
-df_base <- readxl::read_excel(here(file_path),
-                              col_types = c("text",rep("numeric",5))) %>%
-  rename("quater"="YEAR") %>%
-  janitor::clean_names(case = "small_camel") %>%
+file_path <- "data/Lab5-exercise-wage-policy.xlsx"
+df_base <- readxl::read_excel(here(file_path)) %>%
+  #rename("quater"="YEAR") %>%
+  #janitor::clean_names(case = "small_camel") %>%
   # make sure 
   mutate(obs = 1:nrow(.)) %>%
   select(obs, everything(.))
@@ -239,7 +238,7 @@ n <- nrow(df_base)
 # create random column data
 source("R/generate_rdm_df.R", encoding = "UTF-8")
 
-cols_rdm <- c("x2", "x3", "x4")
+cols_rdm <- paste0("X",1:8)
 set.seed(20211108) # for year 2021 fall
 
 # call external function
@@ -297,14 +296,23 @@ DT::datatable(head(iris))
 ```
 
 
-1971-1975年间美国底特律市区消费者对玫瑰的季度需求案例的实验数据，由下面的图\@ref(fig:data-show)做出了部分展示。其中变量具体定义见表\@ref(tab:tbl-vars)
+为了评价年度最低工资保障(负收入税)政策的可行性 ， 兰德公司(Rand Corporation)进行了一项研究，以评价劳动供给(平均工作小时数)对小时工资提高的反应。调研数据收集了35个员工群组的数据。我们对真实调研数据进行了随机化处理，用于本次实验学生上机操作数据，下面的图\@ref(fig:data-show)做出了部分展示。其中变量具体定义见表\@ref(tab:tbl-vars)
 
 ```{r tbl-vars}
 label_chn <-c("样本",
-  "年份.季度", "玫瑰销售量(打)",
-  "玫瑰批发价格(\\$/打)","石竹的平均批发价格(\\$/打)",
-  "家庭可支配收入(\\$/周)","时间趋势")
-df_vars <- tibble("变量"= names(df_base),
+  "年平均工作小时数", "平均小时工资，美元",
+  "配偶年均收入，美元","其他家庭成员的年均收入，美元",
+  "年均非劳动收入","平均家庭资产拥有量（银行存款等），美元",
+  "被调查者的平均年龄", "平均赡养人数",
+  "平均完成的受教育年数")
+label_eng <- c("observations",
+               "Hours","Rate",
+               "ERSP","ERNO",
+               "NEIN", "Assets",
+               "Age", "DEP",
+               "School")
+df_vars <- tibble("变量_代码"= names(df_base),
+                  "变量_英文" = label_eng,
                   "含义" = label_chn)
 
 df_vars %>%
@@ -319,7 +327,7 @@ df_vars %>%
 
 
 
-```{r data-show, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap=glue("玫瑰季度需求案例的学生实验数据（n={n}）")}
+```{r data-show, screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap=glue("最低保障工资政策案例的学生实验数据（n={n}）")}
 
 df_exercise %>%
   group_by(id) %>%
@@ -385,20 +393,61 @@ n_task <- task_counter()
 
 </br>
 
-## 题目`r n_task()`：计算机自动分析
+## 题目`r n_task()`：理论模型设置分析
+
+```{r,  eval=TRUE}
+df_cols <- df_vars %>%
+  janitor::clean_names(case = "small_camel") %>%
+  filter(bianLiangDaiMa != "obs") %>%
+  select(contains("bianLiang")) %>%
+  mutate(vars = paste0(bianLiangDaiMa,
+                       bianLiangYingWen))
+
+xvars <- df_cols$vars[-1]
+yvars <- df_cols$vars[1]
+
+```
+
+如果可以将工作小时数（$YHours$）对数据集中其他变量（$X1,\ldots,X8$）进行如下的线性建模（见模型\@ref(eq:main)）：
+
+```{r, results='asis', echo=TRUE}
+out <- xmerit::lx.psm(
+  x = xvars, y = yvars,
+  #greek.n = length(xvars)+1,
+  n.row = 3,
+  lm.label = "main",
+  lm.tag = "main",
+  no_dollar = TRUE)
+```
+
+请你对上述总体回归模型（PRM）的参数（$\beta_0,\beta_1,\ldots,\beta_9$）的理论预期（符号、大小、关系）进行判断，并给出基本的理由。
+
+> **温馨提示**：为了大家能更好地理解变量的含义，上述模型\@ref(eq:main)的变量与数据集的变量名稍有不同。此处大家正常作答即可。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：计算机自动回归分析
 
 
-运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型进行回归分析。
+运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型\@ref(eq:main)进行回归分析。
 
-> **温馨提示**：注意参看选项，并正确设置模型。
+> **温馨提示**：注意参看选项，并正确设置模型。为了大家能更好地理解变量的含义，上述模型\@ref(eq:main)的变量与数据集的变量名稍有不同。此处大家正常使用数据集中的变量名（$Y,X1,\ldots,X8$）进行操作即可。
 
-（1）在Eviews软件中，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_linear`。最后截图到下列空白处。
+（1）在Eviews软件中，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_main`。最后截图到下列空白处。
  
 答：
 
 </br>
 
 </br>
+
+<!---
 
 （2）使用公式编辑器（或Mathtype软件），将上述EViews分析报告，手动整理成简要报告（四行报告，包括第1行样本回归方程、第2行对应的系数标准误、第3行对应的样本t统计量，以及第4行F检验值、p值、拟合优度等。具体形式见课件），将结果填写在下面空白处。
 
@@ -408,11 +457,75 @@ n_task <- task_counter()
 
 </br>
 
-（3）把以上计算机“自动报告”结果与你后续“手动计算”的结果进行比较，判断后续手动计算的每一步是否正确。
+--->
+
+（2）把以上计算机“自动报告”结果与你后续“手动计算”的结果进行比较，判断后续手动计算的每一步是否正确。
 
 > **温馨提示**：此小题不用作答，仅做后面参考。（要知道，后面手动计算中，一步错步步错！）。
 
 答：此题不需要作答！仅作提示！
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：多重共线性诊断（回归报告分析）
+
+根据上述的主回归模型\@ref(eq:main)的EViews报告结果，请你分别得到t检验结论、判定系数、F检验结论。根据这些线索，请你进一步得出关于主模型是否存在多重共线性问题的初步结论。
+
+> **要求**：（1）明确给出t样本统计量、F样本统计量、判定系数的数值，并给出针对性结论；（2）相关数值结果保留4位小数。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+
+## 题目`r n_task()`：多重共线性诊断（散点矩阵图）
+
+（1）利用所给数据，计算8个自变量（$X1,\ldots,X8$）之间的**相关系数矩阵表**，并创建一个EViews表对象（table![](pic/object/Table.png)），命名为`tab_corrl`。最后将该EViews表对象“截图”复制到下面空白处。
+
+> **温馨提示**：a.应该首先创建一个组对象（group![](pic/object/Group.png)），然后再计算相关系数矩阵表（EViews菜单操作：`Quick` $\Rightarrow$ `Group Statistics` $\Rightarrow$ `Correlations`）。b.使用EViews菜单`Freeze`按钮，可以将组对象（group![](pic/object/Group.png)）转换为表对象（table![](pic/object/Table.png)）。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+（2）根据上述的EViews计算，在word答题纸的下面空白处将相关系数表进行整理，并将结果制作成**三线表**
+
+> **温馨提示**：可以参看下面这张典型的三线表（见表\@ref(tab:table-3line)）
+
+```{r tab.id="table-3line"}
+require(flextable)
+flextable(head(mtcars)) %>%
+  set_caption("这是一张典型的三线表")
+```
+
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+（3）根据上述相关系数矩阵的数值结果，请你做出模型\@ref(eq:main)是否存在多重共线性问题的初步结论。
+
+答：
+
+</br>
+
+</br>
+
+</br>
 
 ## 题目`r n_task()`：构建几个重要变量对象
 
