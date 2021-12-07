@@ -9,8 +9,8 @@ params:
       lab_num: 5
       name_chn: 多重共线性：最低工资保障政策
       name_eng: multi-linearity
-  hw_start: '2021-12-01'
-  hw_end: '2021-12-04'
+  hw_start: '2021-12-08'
+  hw_end: '2021-12-21'
   topic: 'wage'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
@@ -161,43 +161,7 @@ b.在`Word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可�
 
 </br>
 
-## EViews对象的命名参考
 
-考虑到本次实验课内容，EViews操作运算中可能需要保存和命名各类EViews对象，下面表\@ref(tab:obj-multiple)给出了命名规则，供大家在EViews操作中参照使用。
-
-
-
-```{r}
-# give the math data
-math_matrix <-readxl::read_xlsx(path = "data/lab4-matrix-math.xlsx",sheet=1) %>%
-  mutate(index = 1:nrow(.)) 
-
-```
-
-
-
-```{r obj-multiple,message=F,echo=FALSE,results='asis'}
-
-name_eng <- c("index",
-              "name_chn","math",
-              "cat_chn","cat_eng",
-              #"obj_logo",
-              "name_eviews")
-name_chn <- c("序号",
-              "含义","数学表达式",
-              "对象类型chn","对象类型eng",
-              #"EViews对象图标",
-              "Evies对象命名")
-
-
-math_matrix %>%
-  select(all_of(name_eng)) %>%
-  rename_all(., ~all_of(name_chn)) %>%
-  knitr::kable(
-    booktabs = TRUE,
-    align = "c",
-    caption = '计算对象、表达式及Eviews命名')
-```
 
 \newpage
 
@@ -340,7 +304,7 @@ df_exercise %>%
   )
 ```
 
-
+\newpage
 
 # 作业任务
 
@@ -395,7 +359,7 @@ n_task <- task_counter()
 
 ## 题目`r n_task()`：理论模型设置分析
 
-```{r,  eval=TRUE}
+```{r, warning=FALSE, message=FALSE}
 df_cols <- df_vars %>%
   janitor::clean_names(case = "small_camel") %>%
   filter(bianLiangDaiMa != "obs") %>%
@@ -410,7 +374,7 @@ yvars <- df_cols$vars[1]
 
 如果可以将工作小时数（$YHours$）对数据集中其他变量（$X1,\ldots,X8$）进行如下的线性建模（见模型\@ref(eq:main)）：
 
-```{r, results='asis', echo=TRUE}
+```{r, results='asis'}
 out <- xmerit::lx.psm(
   x = xvars, y = yvars,
   #greek.n = length(xvars)+1,
@@ -435,7 +399,7 @@ out <- xmerit::lx.psm(
 ## 题目`r n_task()`：计算机自动回归分析
 
 
-运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型\@ref(eq:main)进行回归分析。
+运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型（见式\@ref(eq:main)）进行回归分析。
 
 > **温馨提示**：注意参看选项，并正确设置模型。为了大家能更好地理解变量的含义，上述模型\@ref(eq:main)的变量与数据集的变量名稍有不同。此处大家正常使用数据集中的变量名（$Y,X1,\ldots,X8$）进行操作即可。
 
@@ -484,7 +448,7 @@ out <- xmerit::lx.psm(
 </br>
 
 
-## 题目`r n_task()`：多重共线性诊断（散点矩阵图）
+## 题目`r n_task()`：多重共线性诊断（相关系数矩阵）
 
 （1）利用所给数据，计算8个自变量（$X1,\ldots,X8$）之间的**相关系数矩阵表**，并创建一个EViews表对象（table![](pic/object/Table.png)），命名为`tab_corrl`。最后将该EViews表对象“截图”复制到下面空白处。
 
@@ -505,7 +469,8 @@ out <- xmerit::lx.psm(
 ```{r tab.id="table-3line"}
 require(flextable)
 flextable(head(mtcars)) %>%
-  set_caption("这是一张典型的三线表")
+  set_caption("这是一张典型的三线表") %>%
+  flextable::autofit()
 ```
 
 
@@ -527,480 +492,362 @@ flextable(head(mtcars)) %>%
 
 </br>
 
-## 题目`r n_task()`：构建几个重要变量对象
 
-（1）请在EViews中，分别创建：a.样本数$n$标量对象（Scalar），保存并命名为![](pic/object/Scalar.png)`n`。b.因变量均值$\bar{Y}$标量对象（Scalar），保存并命名为![](pic/object/Scalar.png)`avr_y`。
+## 题目`r n_task()`：多重共线性诊断（辅助回归）
 
-> **温馨提示**：可以在EViews命令窗口中使用代码`scalar n=@obs(x2)`。
+为了进一步诊断主模型（见式\@ref(eq:main)）是否存在多重共线性问题，我们依次尝试如下的辅助方程：
 
-答：此题不需要作答，完成指定操作并确保正确即可！
 
-</br>
+```{r , results='asis'}
+for (i in 1:length(xvars)) {
+  out <- xmerit::lx.psm(
+  x = xvars[-i], y = xvars[i],
+  #greek.n = length(xvars)+1,
+  n.row = 3,
+  lm.label = paste0("aux0",i),
+  lm.tag = paste0("aux0",i),
+  no_dollar = TRUE)
+  
+  cat("\n")
+}
 
-（2）请在EViews中，创建元素全为1的常数序列对象（Series），保存并命名为![](pic/object/Series.png)`cst`。
+```
 
-> **温馨提示**：可以使用EViews命令，或者也可以使用菜单操作。
-
-答：此题不需要作答，完成指定操作并确保正确即可！
-
-</br>
-
-（3）请在EViews中，将如下序列对象：`r paste0("![](pic/object/Series.png)",c('cst',paste0('x',2:5)),collapse='、')`，创建为一个组对象（Group），保存并命名为![](pic/object/Group.png)`xg`。
-
-> **温馨提示**：可以使用EViews命令，或者也可以使用菜单操作。
-
-答：此题不需要作答，完成指定操作并确保正确即可！
-
-</br>
-
-（4）请在EViews中，将回归方程的残差$e_i$分别提取并保存为两类EViews对象：a.将回归方程的残差$e_i$分别提取为序列对象，保存并命名为![](pic/object/Series.png)`ei_ser`。b.将回归方程的残差$e_i$分别提取为矩阵对象，保存并命名为![](pic/object/Matrix.png)`ei_mat`。
-
-> **温馨提示**：a.可以使用EViews命令，或者也可以使用菜单操作。b.做完线性回归分析后，立刻提取回归残差![](pic/object/Series.png)`resid`。c.Eviews执行代码可分别参考：`series ei_ser=resid`，以及`matrix ei_mat=resid`。
-
+（1）请你使用EViews，分别对上述8个辅助方程进行回归分析，并将方程对象![](pic/object/Equation.png)分别命名为：`r paste0("eq_aux",1:8, collapse='、')`。
 
 答：此题不需要作答，完成指定操作并确保正确即可！
 
 </br>
 
-（）。
+</br>
+
+（2）根据EViews的回归方程结果，请将主回归和辅助回归的判定系数结果依次提取出来，将数值添加到向量对象![](pic/object/Vector.png)中，保存并命名该向量对象为：`vec_R2`。最后，补充完成下表。（**要求**：结果保留4位小数）。
+
+> **温馨提示**：向量操作的EViews代码格式如：`vector(9) vec_R2(1) =eq_aux1.@r2`。
 
 
-## 题目`r n_task()`：构造X矩阵和Y矩阵对象
+答：
 
-（1）请在EViews中，创建矩阵$\mathbf{X}$的矩阵对象（Matrix），保存并命名为![](pic/object/Matrix.png)`x`。
+```{r, tab.id="tab-diag-aux"}
+diag_aux <- tibble(
+  "模型" = c( paste0("辅助模型",1:8)),
+  "编号" = c( paste0("aux",1:8)), 
+  "因变量"= c( xvars),
+  "判定系数" = rep("_____",8)
+)
 
-> **温馨提示**：可以在EViews命令窗口中使用代码`matrix x=xg`。
+diag_aux %>%
+  flextable() %>%
+  set_caption(caption = "辅助回归判定系数诊断法") %>%
+  set_table_properties(layout = "autofit",
+                       width = 1) 
+  #flextable::autofit()
+```
+
+
+</br>
+
+
+## 题目`r n_task()`：多重共线性诊断（VIF和TOL）
+
+（1）根据上述8个辅助回归的判定系数，请相应计算出各自的方差膨胀因子VIF，在EViews中将结果保存并命名为向量对象![](pic/object/Vector.png)`vec_vif`。
+
+> **温馨提示**：$VIF_j=1-R^2_j,\quad j\in 1,\cdots,8$。
 
 答：此题不需要作答，完成指定操作并确保正确即可！
 
 </br>
 
-（2）请在EViews中，创建矩阵$\mathbf{y}$的矩阵对象（Matrix），保存并命名为![](pic/object/Matrix.png)`y`。
+</br>
 
-> **温馨提示**：可以在EViews命令窗口中使用代码。
+（2）进一步地，在EViews中计算出上述8个辅助回归相应的容忍度TOL，请将结果保存并命名为向量对象![](pic/object/Vector.png)`vec_tol`。
+
+> **温馨提示**：$TOL_j=\frac{1}{VIF_j},\quad j\in 1,\cdots,8$。
 
 答：此题不需要作答，完成指定操作并确保正确即可！
 
 </br>
 
+</br>
 
-## 题目`r n_task()`：回归系数矩阵理论表达
+（3）请你利用Eviews菜单操作程序，单独得到方差膨胀因子。将结果保存并命名为表对象![](pic/object/Vector.png)`tab_vif`。最后将表对象截图到下面空白处！
 
-利用矩阵计算理论公式，先计算得到几个重要矩阵（后面分析还要用到），最后利用矩阵运算计算得出回归系数向量。依次完成如下操作和提问。
+
+> **温馨提示**：（1）对方程对象做如下操作：$\Rightarrow$  `View` $\Rightarrow$ `Coefficient Diagnostics`  $\Rightarrow$  `Variance Inflation Factors`。（2）另存为表格(table)对象![](pic/object/Vector.png)：点击`Freeze`。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+
+（3）请根据上述3个步骤的操作计算结果，补充完成如下表格的诊断数值和诊断结论。（**要求**：a.结果保留4位小数；b.简要说明诊断的依据。）。
+
+> **温馨提示**：向量操作的EViews代码格式如：`vector(9) vec_R2(1) =eq_aux1.@r2`。
+
+
+答：
+
+a.诊断的主要依据是：
+
+</br>
+
+</br>
+
+b.诊断的数值和结论见表\@ref(tab:tab-diag-vif)：
+
+</br>
+
+</br>
+
+```{r, tab.id="tab-diag-vif", results='asis',escape=T}
+
+diag_vif <- tibble(
+  #"模型" = c( paste0("辅助模型",1:8)),
+  "编号" = c( paste0("aux",1:8)), 
+  "因变量"= c( xvars),
+  "判定系数" = rep("_____",8),
+  "VIF(手算)" = rep("_____",8),
+  "TOL(手算)" = rep("_____",8),
+  "VIF(EViews)" = rep("_____",8),
+  "诊断结论"= rep("_____",8)
+)
+
+diag_vif %>%
+  flextable() %>%
+  set_caption(caption = "VIF和TOL诊断法") %>%
+  set_table_properties(layout = "autofit",
+                       width = 1) 
+
+
+```
+
+</br>
+
+## （选做）题目`r n_task()`：多重共线性诊断（系数方差分解法）
+
+（此题为**选做**）：请利用Eviews回归系数方差分解法（Coefficient Variance Decomposition）对8个自变量系数进行方差分解 (Coefficient Variance Decomposition)，分析特征值（Eigenvalue）；病态数（condition number，K）；方差分解比率（variance-decomposition proportions，VDP）（将结果截图过来）。根据上述结果，请你得出关于多重共线性的初步结论。
+
+> **温馨提示**：1）此题为选做；2）具体操作方法可以参看“实验指导网页”（[网址链接](https://book.huhuaping.com/multilinearity.html)）。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+
+## 题目`r n_task()`：多重共线性问题矫正（简单删除法）
+
+（1）若发现主模型（见式\@ref(eq:main)）存在多重共线性问题，并且尝试使用简单删除变量法来进行矫正，你会选择删除哪些变量？请简要说明你的理由。并在下列空白处写出校正后的总体回归模型。
+
+> **温馨提示**：尽量使用经济理论和实践经验，结合前面的诊断结论，做出变量的选择决策。
+
+答：
+
+a）变量删除决策和理由如下：
+
+</br>
+
+</br>
+
+b）请你写出删除部分变量后的**新模型1**（要求写“总体回归模型PRM”）。
 
 \begin{align}
-Y_i&=\hat{\beta}_1+\hat{\beta}_2X_{2i}+\hat{\beta}_3X_{3i}+\hat{\beta}_4X_{4i}+\hat{\beta}_5X_{5i}+u_i \quad \text{(linear model)} (\#eq:mod-linear)
+Y_i = \qquad \qquad \qquad \qquad \qquad \text{(eq_del)}  (\#eq:eq-del)
 \end{align}
 
-（1）给定样本回归模型，请写出样本回归模型的矩阵表达式，以及各矩阵的具体形式。
-
-答a：填写补充样本回归模型的矩阵表达式：
-
-$$\begin{alignat}{4}
-\mathbf{y} &= &\mathbf{X}&\mathbf{\hat{\beta}}&+&\mathbf{e}\\
-(\quad \times \quad) &  &{(\quad \times \quad)} &{(\quad \times 1)}&+&{(\quad \times 1)}
-\end{alignat}$$
-
-答b：填写补充矩阵$\boldsymbol{y}$的具体表达式：
-
-$$\begin{equation}
-\mathbf{y}=
-  \begin{bmatrix}
-  \quad \\  \quad \\  \cdots \\  \quad \\ \quad \\
-  \end{bmatrix}
-\end{equation}$$
-
-答c：填写补充矩阵$\boldsymbol{X}$的具体表达式：
-
-$$\begin{equation}
-\boldsymbol{X} =
-  \begin{bmatrix}
-  \quad &  \quad & \quad & \quad &  \quad \\
-  \quad &  \quad & \quad & \quad &  \quad \\
-  \cdots &  \cdots & \cdots & \cdots &  \cdots \\
-  \quad &  \quad & \quad & \quad &  \quad \\
-  \quad &  \quad & \quad & \quad &  \quad
-  \end{bmatrix}
-\end{equation}$$
-
-答c：填写补充矩阵$\boldsymbol{\hat{\beta}}$和$\boldsymbol{e}$的具体表达式：
-
-$$\begin{equation}
- \boldsymbol{\hat{\beta}} =
-  \begin{bmatrix}
-  \quad \\  \quad \\  \vdots \\  \quad \\
-  \end{bmatrix}
-; \quad \quad
-\boldsymbol{e} =  
-  \begin{bmatrix}
-  \quad \\  \quad \\  \vdots \\  \quad \\
-  \end{bmatrix}
-\end{equation}$$
-
-
-## 题目`r n_task()`：计算回归系数向量
-
-（1）请写出线性回归模型\@ref(eq:mod-linear)，斜率系数的矩阵理论计算公式：
-
-答：$\boldsymbol{\hat{\beta}}=$
+</br>
 
 </br>
 
-（2）根据上述矩阵计算公式，请分步骤计算得到如下几个重要矩阵对象：a.得到重要矩阵$\boldsymbol{X'X}$，保存并命名为![](pic/object/Matrix.png)`xtx`。b.得到重要矩阵$\boldsymbol{(X'X)^{-1}}$，保存并命名为![](pic/object/Matrix.png)`xtxi`。c.得到重要矩阵$\boldsymbol{X'y}$，保存并命名为![](pic/object/Matrix.png)`xty`。
+（2）根据你校正后的**新模型1**（见式\@ref(eq:eq-del)），在EViews中进行回归分析，保存并命名为方程对象![](pic/object/Equation.png)`eq_del`。最后将回归结果截图在下面空白处。
 
-> **温馨提示**：可以在EViews命令窗口中使用如下参考代码。
-
-```
-matrix xtx=@transpose(x)*x  '得到重要矩阵$X'X$
-matrix xtxi=@inverse(xtx)   '得到重要矩阵$(X'X)^{-1}$
-matrix xty=@transpose(x)*y  '得到重要矩阵$X'y$
-```
-
-答：此问不用作答，完成指定操作并确保正确即可！
+答：回归结果截图如下：
 
 </br>
 
-（3）根据理论公式，在EViews中请创建并计算回归系数$\boldsymbol{\hat{\beta}}$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`beta_hat`。
-
-> **温馨提示**：可以在EViews命令窗口中使用代码`matrix beta_hat=xtxi*xty`。
-
-答：此问不用作答，完成指定操作并确保正确即可！
+</br>
 
 </br>
 
-## 题目`r n_task()`：残差序列
-
-利用Eviews软件，先得到回归的残差$e_i$的序列对象，保存并命名为![](pic/object/Series.png)`ei`，并进一步得到回归残差平方$e^2_i$的序列对象，保存并命名为![](pic/object/Series.png)`ei_sqr`。
-
-答：此问不用作答，完成指定操作并确保正确即可！
-
 </br>
 
-## 题目`r n_task()`：计算回归方程的误差方差及标准差
+（2）进一步地，在EViews中对校正后的**新模型1**（见式\@ref(eq:eq-del)）进行方差膨胀因子VIF的诊断，保存并命名为表对象![](pic/object/Table.png)`tab_vif_del`，并截图到下面空白处。最后，根据对方差膨胀因子VIF的诊断，请你判断一下在第（1）问中的变量删减操作有没有显著缓解多重共线性问题？
 
-（1）请写出线性回归模型\@ref(eq:mod-linear)，回归误差方差和标准差的矩阵理论公式：
-
-答：补充完整下列理论公式：
-
-$$\begin{align}
-\hat{\sigma}^2&=\frac{\sum{e_i^2}}{n-k}=\frac{\mathbf{y'y-\hat{\beta}'X'y}}{n-k}\\
-\hat{\sigma}&=
-\end{align}$$
-
-</br>
-
-（2）根据理论公式，请创建并计算回归方程的误差方差$\hat{\sigma}^2$的标量对象，保存并命名为![](pic/object/Scalar.png)`sgm_hat_sqr`。
-
-> **温馨提示**：有两种EViews操作方法。方法a：利用公式$\sum{e_i^2}=\boldsymbol{e^{\prime}e}$，则需要用到回归方程的残差$e_i$矩阵对象![](pic/object/Matrix.png)`ei_mat`（前面题目已完成）。方法b：利用上述矩阵理论计算公式，其中需要用到因变量均值$\bar{Y}$标量对象![](pic/object/Scalar.png)`avr_y`（见前面题目已完成）。
-
-答：此问不用作答，完成指定操作并确保正确即可！
-
-</br>
-
-（3）根据理论公式，请在EViews中创建并计算回归方程的误差标准差$\hat{\sigma}$的标量对象，保存并命名为![](pic/object/Scalar.png)`sgm_hat`。
-
-> **温馨提示**：开根号运算$\sqrt{\quad}$，可以在EViews命令窗口中使用代码`scalar sgm_hat=@sqr(sgm_hat_sqr)`
-
-答：此问不用作答，完成指定操作并确保正确即可！
-
-</br>
-
-
-## 题目`r n_task()`：计算回归系数的方差协方差矩阵
-
-（1）请写出在符合**N-CLRM**假设情况下，回归系数的方差协方差矩阵的理论表达式。
+> **温馨提示**：请使用EViews自带的方差膨胀因子VIF的诊断程序进行操作。
 
 答：
 
-$$\begin{align}
-\widehat{var}\_\widehat{cov}(\mathbf{\hat{\beta}})=
-\end{align}$$
-
-（2）根据上述理论公式，在EViews中请创建并计算回归系数的样本方差协方差矩阵$\widehat{var}\_\widehat{cov}(\mathbf{\hat{\beta}})$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`s2_varcov_beta_hat`。
-
-答：此问不用作答，完成指定操作并确保正确即可！
+a）方差膨胀因子VIF的诊断截图如下：
 
 </br>
 
-（3）进一步地，在EViews中请提取上述回归系数的样本方差协方差矩阵$\widehat{var}\_\widehat{cov}(\mathbf{\hat{\beta}})$的对角线元素，创建回归系数样本方差$S^2_{\boldsymbol{\hat{\beta}}}$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`s2_beta_hat`。
+</br>
 
-
-> **温馨提示**：提取矩阵对角线元素的操作，可以在EViews命令窗口中使用代码`matrix s2_beta_hat=@getmaindiagonal(s2_varcov_beta_hat) `
-
-答：此问不用作答，完成指定操作并确保正确即可！
+b）对校正后**新模型1**（见式\@ref(eq:eq-del)）的结论是：
 
 </br>
 
-（4）进一步地，请在EViews中创建并计算回归系数的误差标准差$S_{\boldsymbol{\hat{\beta}}}$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`s_beta_hat`。
-
-> **温馨提示**：开根号运算$\sqrt{\quad}$，可以在EViews命令窗口中使用代码`matrix s_beta_hat=@sqr(s2_beta_hat)`
-
-答：此问不用作答，完成指定操作并确保正确即可！
+</br>
 
 </br>
 
-## 题目`r n_task()`：回归系数t检验
+</br>
 
-利用Eviews软件，首先请分别计算所有模型回归系数的样本t统计量值（$t^{\ast}_{\hat{\beta}}$）；然后使用EViews函数，得到给定$\alpha=0.05$时的t理论值（$t_{1-\alpha/2}(df)$）；最后根据计算结果完成对**斜率参数**的t检验过程。
+## 题目`r n_task()`：多重共线性问题矫正（逐步回归法）
 
-
-（1）请写出回归系数样本t统计量$\boldsymbol{t}^{\ast}_{\hat{\boldsymbol{\beta}}}$的矩阵理论表达式。
-
-答：请补充完整下面的样本t统计量的矩阵表达式：
-
-$\boldsymbol{t}^{\ast}_{\hat{\boldsymbol{\beta}}}=\frac{\quad}{\quad}$
+若发现主模型（见式\@ref(eq:main)）存在多重共线性问题，并且尝试使用**逐步回归法**来进行矫正。
 
 </br>
 
-（2）在EViews中，请回归系数样本t统计量$\boldsymbol{t}^{\ast}_{\hat{\boldsymbol{\beta}}}$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`t_str_beta_hat`。
+（1）在EViews中进行回归分析，请你使用**逐步回归法**进行重新建模分析，保存并命名为方程对象![](pic/object/Equation.png)`eq_step`。最后将回归结果截图在下面空白处。
 
-> **温馨提示**：1）请务必与EViews回归分析的自动结果进行核验，确认你的计算结果是正确的。2）可以在EViews命令窗口中使用如下代码进行操作：`matrix t_str_beta_hat=@ediv(beta_hat,s_beta_hat)`，其中`@ediv()`表示矩阵元素相除的操作函数。
-
-答：此问不用作答，完成指定操作并确保正确即可！
-
-</br>
+> **温馨提示**：a.可以使用“前向逐步回归法”，或“后向逐步回归法”的任意一种。b.具体操作方法可以参看“实验指导网页”（[网址链接](https://book.huhuaping.com/multilinearity.html)）。
 
 
-（3）在EViews中，创建并得到如下两个t理论查表值（给定$\alpha=0.05$）的标量对象：$t_{1-\alpha/2}(df)$和$t_{\alpha/2}(df)=$。分别保存并命名为![](pic/object/Scalar.png)`t_0975`和![](pic/object/Scalar.png)`t_0025`。
-
-> **温馨提示**：可以在EViews命令窗口中使用如下代码进行操作：`scalar t_0975=@qtdist(0.975,df_rss)`，其中`@qtdist()`表示得到t值查表函数。
-
-答：此问不用作答，完成指定操作并确保正确即可！
+答：回归结果截图如下：
 
 </br>
 
-（4）根据回归系数t检验的步骤，利用以上计算结果。请在进一步得出对全部**回归系数**的t检验结论。请在下列空白处完成作答。
+</br>
 
-> **温馨提示**：1）只需要根据计算结果做出t检验的结论即可（不需要）；2）所有计算结果都保留4位小数即可。
+（2）根据逐步回归分析的结果，请写出其最终的**新模型2**（要求写“总体回归模型PRM”）。
 
-答：对**回归系数**的t检验结论是：
+答：逐步回归的最终模型为：
+
+\begin{align}
+Y_i = \qquad \qquad \qquad \qquad \qquad \text{(eq_step)}  (\#eq:eq-step)
+\end{align}
 
 </br>
 
-
-## 题目`r n_task()`：平方和分解
-
-（1）在线性回归模型\@ref(eq:mod-linear)下，请写出平方和分解的矩阵理论表达式。
-
-> **温馨提示**：$n\bar{Y}^2$为计算矫正因子，后续计算会用到。
-
-答：（答案已给出，后续问题回答供参照）
-
-$$\begin{align}
-Adj:  &\quad  n\bar{Y}^2 \\
-TSS &=\mathbf{y'y}-n\bar{Y}^2 \\
-RSS &=\mathbf{e'e}=\mathbf{y'y-\hat{\beta}'X'y} \\
-ESS &=\mathbf{\hat{y}'\hat{y}}=\mathbf{\hat{\beta}'X'y}-n\bar{Y}^2 \\
-df_{TSS} &= n-1 \\
-df_{RSS} &= n-k \\
-df_{ESS} &=k-1
-\end{align}$$
-
-（2）请在EViews中，计算平方和矫正因子$n\bar{Y}^2$的标量对象，保存并命名为![](pic/object/Scalar.png)`mean_adj`。
-
-> **温馨提示**：提取矩阵对角线元素的操作，可以在EViews命令窗口中使用代码`scalar mean_adj=n*avr_y^2`
-
-答：此问不用作答，完成指定操作并确保正确即可！
-
 </br>
 
-（2）请计算平方和及其对应的自由度标量对象，分别命名为：![](pic/object/Scalar.png)`tss`、![](pic/object/Scalar.png)`ess`、![](pic/object/Scalar.png)`rss`；以及![](pic/object/Scalar.png)`df_tss`、![](pic/object/Scalar.png)`df_ess`、![](pic/object/Scalar.png)`df_rss`。
+（3）进一步地，在EViews中对逐步回归法校正后的**新模型2**（见式\@ref(eq:eq-step)）进行方差膨胀因子VIF的诊断，保存并命名为表对象![](pic/object/Table.png)`tab_vif_step`，并截图到下面空白处。最后，根据对方差膨胀因子VIF的诊断，请你判断一下**逐步回归法**操作有没有显著缓解多重共线性问题？
 
-> **温馨提示**：可以在EViews命令窗口中使用代码进行操作。
-
-答：此问不用作答，完成指定操作并确保正确即可！
-
-</br>
-
-## 题目`r n_task()`：判定系数和调整判定系数
-
-（1）在线性回归模型\@ref(eq:mod-linear)下，请分别写出判定系数$R^2$和调整判定系数$\overline{R}^2$的矩阵理论表达式。
-
-答：请补充完下面的理论公式：
-
-$$\begin{align}
-R^2&=\frac{ESS}{TSS} = \\
-\bar{R}^2 &=1-\frac{RSS/{f_{RSS}}}{TSS/{f_{TSS}}} =
-\end{align}$$
-
-</br>
-
-（2）请在EViews中，请分别写出判定系数$R^2$和调整判定系数$\overline{R}^2$的标量对象，分别保存并命名为![](pic/object/Scalar.png)`r2`和![](pic/object/Scalar.png)`r2_adj`。
-
-
-## 题目`r n_task()`：回归方程整体显著性检验
-
-利用Eviews软件，首先请回归方程的样本F统计量值（$F^\ast$）；然后使用EViews函数，得到给定$\alpha=0.05$时的F理论值（$f_{1-\alpha}(df_1,df_2)$）；最后根据计算结果完成对回归方程整体显著性检验过程。请在下面空白处分别写出理论公式及计算结果。
-
-
-（1）请在下面空白处写出样本F统计量$F^\ast=$的矩阵理论表达式。
-
-> **温馨提示**：已给出答案，不用作答，仅作提示，供后续计算使用。
-
-答：样本F统计量的理论计算公式为：
-
-$$\begin{align}
-F^{\ast} &=\frac{ESS/{f_{ESS}}}{RSS/{f_{RSS}}} =\frac{MSS_{ESS}}{MSS_{RSS}} \\
-         &=\frac{(\mathbf{\hat{\beta}X'y}-n\bar{Y}^2)/{k-1}}{{(\mathbf{y'y-\hat{\beta}'X'y})}/{n-k}} \end{align}$$
-
-</br>
-
-
-（2）在EViews中，请计算并创建样本F统计量$F^\ast=$的标量对象，保存并命名为![](pic/object/Scalar.png)`f_str`。
-
-> **温馨提示**：1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。2）EViews中按要求保存相关计算对象，并按规范命名。
-
-答：此问不用作答，完成指定操作并确保正确即可！
-
-</br>
-
-
-（3）在EViews中，（给定$\alpha=0.05$）请计算并创建样本F统计量$f_{1-\alpha}(df_1,df_2)=$的标量对象，保存并命名为![](pic/object/Scalar.png)`f_095`。
-
-> **温馨提示**：可以在EViews命令窗口中使用如下代码进行操作：`scalar f_095=@qfdist(0.95,df_ess,df_rss)`，其中`@qfdist()`表示得到F值查表函数。
-
-答：此问不用作答，完成指定操作并确保正确即可！
-
-</br>
-
-
-（4）根据回归系数F检验的步骤，利用以上计算结果。请在下列空白处写出对回归模型整体显著性F检验的结论。
-
-> **温馨提示**：1）只需要写出F检验的假设，并根据计算结果做出F检验的结论即可（不需要）；2）所有计算结果都保留4位小数即可。
+> **温馨提示**：请使用EViews自带的方差膨胀因子VIF的诊断程序进行操作。
 
 答：
 
-a.请写出F检验提出原假设和备择假设：$H_0=;\quad \quad H_1=$
+a）方差膨胀因子VIF的诊断截图如下：
 
 </br>
 
-b.得出F检验结论：
+</br>
+
+b）对逐步回归法校正后**新模型2**（见式\@ref(eq:eq-step)）的结论是：
 
 </br>
 
-## 题目`r n_task()`：预测问题（点预测）
+</br>
 
-（1）给定样本外$(X2,X3,X4,X5)=(6,8,200,20)$，请在下列空白处写出矩阵$\boldsymbol{X}_0$的具体形式。
-
-> **温馨提示**：1）注意常数项；2）注意矩阵维度。
-
-答：补充完整下列的具体矩阵形式：
-
-$$\begin{align}
-\boldsymbol{X}_0 =
-  \begin{pmatrix}
-  \quad & \quad & \quad & \quad & \quad
-  \end{pmatrix}
-\end{align}$$
+</br>
 
 </br>
 
 
-（2）请在Eviews中，构建样本外$\mathbf{X}_0$的矩阵对象，保存并命名为![](pic/object/Matrix.png)`x0`。
+## （选做）题目`r n_task()`：多重共线性问题矫正（主成分分析法）
 
-> **温馨提示**：需要在Eviews命令窗口中依次运行，1）构造空矩阵`matrix(1,5) x0`；2）给空矩阵赋值：`x0.fill(b=r) 1,6,8,200,20`。
+若发现主模型（见式\@ref(eq:main)）存在多重共线性问题，并且尝试使用**主成分分析法**来进行矫正。
 
-答：此问不用作答，完成指定操作并确保正确即可！
+</br>
+
+（1）在EViews中进行回归分析，请你使用**主成分分析法**进行重新建模分析，保存并命名为方程对象![](pic/object/Equation.png)`eq_pf`。最后将回归结果截图在下面空白处。
+
+> **温馨提示**：a.先要对8个自变量进行降维，得到主成分。b.再利用主成分进行回归分析。具体操作方法请自学。
+
+
+答：回归结果截图如下：
+
+</br>
+
+</br>
+
+（2）根据**主成分分析法**的结果，请写出其最终的**新模型3**（要求写“总体回归模型PRM”）。
+
+答：逐步回归的最终模型为：
+
+\begin{align}
+Y_i = \qquad \qquad \qquad \qquad \qquad \text{(eq_pf)}  (\#eq:eq-pf)
+\end{align}
+
+</br>
+
+</br>
+
+（3）进一步地，在EViews中对主成分分析法校正后的**新模型3**（见式\@ref(eq:eq-pf)）进行方差膨胀因子VIF的诊断，保存并命名为表对象![](pic/object/Table.png)`tab_vif_pf`，并截图到下面空白处。最后，根据对方差膨胀因子VIF的诊断，请你判断一下**主成分分析法**操作有没有显著缓解多重共线性问题？
+
+> **温馨提示**：请使用EViews自带的方差膨胀因子VIF的诊断程序进行操作。
+
+答：
+
+a）方差膨胀因子VIF的诊断截图如下：
+
+</br>
+
+</br>
+
+b）对**主成分分析法**校正后**新模型3**（见式\@ref(eq:eq-pf)）的结论是：
+
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+## （选做）题目`r n_task()`：多重共线性问题矫正（岭回归分析法）
+
+若发现主模型（见式\@ref(eq:main)）存在多重共线性问题，并且尝试使用**岭回归分析法**来进行矫正。
+
+> **温馨提示**：**岭回归分析法(ridge model)**需要使用EViews 12.0及以上版本（实验室安装的是EViews 10.0版本）。
+
+（1）在EViews中进行回归分析，请你使用**岭回归分析法**进行重新建模分析，保存并命名为方程对象![](pic/object/Equation.png)`eq_ridge`。最后将回归结果截图在下面空白处。
+
+> **温馨提示**：具体操作方法请自学。
+
+
+答：回归结果截图如下：
+
+</br>
+
+</br>
+
+（2）对**岭回归分析法**处理后**新模型4**的结论是：
+
+答：
+
+</br>
+
+</br>
+
+</br>
 
 </br>
 
 
-（3）给定样本外点$\boldsymbol{X}_0$，请在下列空白处写出样本外拟合值$\hat{Y}_0$的理论矩阵计算公式。
+<!---test data set--->
 
-> **温馨提示**：写出矩阵理论表达式的紧凑形式即可。
+```{r, eval=FALSE}
+df_test <- df_exercise %>%
+  filter(dataset =="dataset001")
 
-答：补充完整下列的具体矩阵形式：
+mod_main <- formula(Y~X1+X2+X3+X4+X5+X6+X7+X8)
 
-$$\begin{align}
-\hat{Y}_0 =
-\end{align}$$
-
-（4）请在Eviews中，构建样本外拟合值$\hat{Y}_0$的标量对象，保存并命名为![](pic/object/Scalar.png)`y0_hat`。
-
-答：此问不用作答，完成指定操作并确保正确即可！
-
-</br>
+est_main <- lm(formula = mod_main,
+             data = df_base)
+summary(est_main)
+```
 
 
-## 题目`r n_task()`：预测问题（均值的区间预测）
-
-利用Eviews软件，首先构造并得到均值预测时需要用到的样本标准差$S_{\hat{Y}_0}$；然后利用t分布（给定$\alpha =0.05$）构造出均值的区间预测。
-
-（1）请在下列空白处，写出$\hat{Y}_0$的样本标准差$S_{\hat{Y}_0}$的**矩阵**理论计算公式：
-
-答：$S_{\hat{Y}_0}=\quad$
-
-</br>
-
-（2）请在下列空白处，写出均值预测$E(Y|X=X_0)$的置信区间的理论计算公式：
-
-答：补充下列计算公式：
-
-$$\begin{aligned}
-  \quad \leq E(Y|X=X_0) \leq \quad 
-\end{aligned}$$
-
-（3）请在Eviews中计算并创建$\hat{Y}_0$的样本标准差$S_{\hat{Y}_0}$的标量对象，保存并命名为：![](pic/object/Scalar.png)`s_y0h`。
-
-> **温馨提示**：可以在EViews命令窗口中输入代码进行计算操作。注意开根号运算$\sqrt{\quad}$。
-
-答：完成上述指定操作并确保正确，最后将结果值誊写到下列对应处（仅填数值，并保留4位小数）：
-
-$S_{\hat{Y}_0} = \quad$
-
-</br>
-
-
-（4）请在Eviews中分别计算并创建均值预测$E(Y|X=X_0)$的置信区间的左界值和右界值的标量对象，分别保存并命名为：![](pic/object/Scalar.png)`y_exp_lft`和![](pic/object/Scalar.png)`y_exp_rht`。
-
-> **温馨提示**：可以在EViews命令窗口中输入代码进行计算操作。
-
-答：完成上述指定操作并确保正确，最后将结果值誊写到下列对应处（仅填数值，并保留4位小数）：
-
-左界值：$E(Y|X=X_0) \geq \quad$
-
-右界值：$E(Y|X=X_0) \leq \quad$
-
-</br>
-
-## 题目`r n_task()`：预测问题（个值的区间预测）
-
-利用Eviews软件，首先构造并得到个值预测时需要用到的样本标准差$S_{(Y_0 -\hat{Y}_0)}$；然后利用t分布（给定$\alpha =0.05$）构造出均值的区间预测。
-
-（1）请在下列空白处，写出$(Y_0 -\hat{Y}_0)$的样本标准差$S_{(Y_0 -\hat{Y}_0)}$的**矩阵**理论计算公式：
-
-答：$S_{(Y_0 -\hat{Y}_0)}=\quad$
-
-</br>
-
-（2）请在下列空白处，写出个值预测$(Y_0|X=X_0)$的置信区间的理论计算公式：
-
-答：补充下列计算公式：
-
-$$\begin{aligned}
-  \quad \leq (Y_0|X=X_0) \leq \quad 
-\end{aligned}$$
-
-（3）请在Eviews中计算并创建$(Y_0 -\hat{Y}_0)$的样本标准差$S_{(Y_0 -\hat{Y}_0)}$的标量对象，保存并命名为：![](pic/object/Scalar.png)`s_y0_mns_y0h`。
-
-> **温馨提示**：可以在EViews命令窗口中输入代码进行计算操作。注意开根号运算$\sqrt{\quad}$。
-
-答：完成上述指定操作并确保正确，最后将结果值誊写到下列对应处（仅填数值，并保留4位小数）：
-
-$S_{(Y_0 -\hat{Y}_0)} = \quad$
-
-</br>
-
-
-（4）请在Eviews中分别计算并创建均值预测$(Y_0|X=X_0)$的置信区间的左界值和右界值的标量对象，分别保存并命名为：![](pic/object/Scalar.png)`y_ind_lft`和![](pic/object/Scalar.png)`y_ind_rht`。
-
-> **温馨提示**：可以在EViews命令窗口中输入代码进行计算操作。
-
-答：完成上述指定操作并确保正确，最后将结果值誊写到下列对应处（仅填数值，并保留4位小数）：
-
-左界值：$(Y_0|X=X_0) \geq \quad$
-
-右界值：$(Y_0|X=X_0) \leq \quad$
-
-</br>
 
