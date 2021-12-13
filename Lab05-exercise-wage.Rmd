@@ -377,6 +377,7 @@ yvars <- df_cols$vars[1]
 ```{r, results='asis'}
 out <- xmerit::lx.psm(
   x = xvars, y = yvars,
+  begin = 0,
   #greek.n = length(xvars)+1,
   n.row = 3,
   lm.label = "main",
@@ -384,7 +385,7 @@ out <- xmerit::lx.psm(
   no_dollar = TRUE)
 ```
 
-请你对上述总体回归模型（PRM）的参数（$\beta_0,\beta_1,\ldots,\beta_9$）的理论预期（符号、大小、关系）进行判断，并给出基本的理由。
+请你对上述总体回归模型（PRM）的参数（$\beta_0,\beta_1,\ldots,\beta_8$）的理论预期（符号、大小、关系）进行判断，并给出基本的理由。
 
 > **温馨提示**：为了大家能更好地理解变量的含义，上述模型\@ref(eq:main)的变量与数据集的变量名稍有不同。此处大家正常作答即可。
 
@@ -422,6 +423,22 @@ out <- xmerit::lx.psm(
 </br>
 
 --->
+
+
+```{r, results='asis', eval=FALSE}
+mod_main <- formula(Y ~ X1+X2+X3+X4+X5+X6+X7+X8)
+
+lx_out2 <- xmerit::lx.est(
+  lm.mod = mod_main, 
+  lm.dt = df_base,
+  style = c('srm'),
+  inf = c('over','fit','Ftest'),
+  lm.label = 'test-srm',
+  no_dollar = TRUE)
+
+```
+
+
 
 （2）把以上计算机“自动报告”结果与你后续“手动计算”的结果进行比较，判断后续手动计算的每一步是否正确。
 
@@ -710,7 +727,7 @@ b）对校正后**新模型1**（见式\@ref(eq:eq-del)）的结论是：
 
 （1）在EViews中进行回归分析，请你使用**逐步回归法**进行重新建模分析，保存并命名为方程对象![](pic/object/Equation.png)`eq_step`。最后将回归结果截图在下面空白处。
 
-> **温馨提示**：a.可以使用“前向逐步回归法”，或“后向逐步回归法”的任意一种。b.具体操作方法可以参看“实验指导网页”（[网址链接](https://book.huhuaping.com/multilinearity.html)）。
+> **温馨提示**：a.可以使用“前向逐步回归法”，或“后向逐步回归法”的任意一种。b.在逐步剔除变量的参照值设置中，可以考虑`p-value = 0.05`。c.具体操作方法可以参看“实验指导网页”（[网址链接](https://book.huhuaping.com/multilinearity.html)）。
 
 
 答：回归结果截图如下：

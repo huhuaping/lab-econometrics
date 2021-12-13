@@ -1,0 +1,805 @@
+---
+title: "Exercise Lab `r stringr::str_pad(params$hand_out$lab_num,2,'left','0')` 课程作业"
+subtitle: " `r glue::glue('{params$hand_out$name_chn}')` "
+author: "任课教师：胡华平"
+date: "`r params$hw_start`"
+params:
+  hand_out:
+    value:
+      lab_num: 6
+      name_chn: 异方差问题：企业高管薪水
+      name_eng: multi-linearity
+  hw_start: '2021-12-15'
+  hw_end: '2021-12-21'
+  topic: 'ceo'
+#knit: `r source("R/_render_public.R")`
+knit: (function(inputFile, encoding) { 
+  outFile <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(inputFile));
+  out_dir <- 'public';
+  rmarkdown::render(inputFile,
+                    encoding=encoding,
+                     output_file=file.path(dirname(inputFile), out_dir, outFile)) })
+output:
+  bookdown::word_document2:
+    fig_caption: yes
+    toc: no
+    toc_depth: 4
+    number_sections: true
+    global_numbering: true
+    reference_docx: template/template-word-lab-exrecise.docx
+  bookdown::html_document2:
+    number_sections: no
+    toc: yes
+    fig_caption: yes
+    toc_float: yes
+    mathjax: local
+    self_contained: no
+    highlight: tango
+    theme: united
+  bookdown::pdf_document2:
+    latex_engine: xelatex
+    template: template/HWTemplate.tex
+    fig_caption: yes
+    includes:
+      in_header: latex/header.tex
+      before_body: latex/preamble.tex
+    toc: no
+    toc_depth: 5
+    number_sections: yes
+    keep_tex: yes
+
+  word_document:
+    toc: no
+    toc_depth: '4'
+    reference_docx: template/template-word-lab-exrecise.docx
+  html_document: default
+always_allow_html: yes
+documentclass: article
+classoption:
+- (landscape
+- a4paper)
+- (portrait
+- a4paper)
+fontsize: 12pt
+thanks: 请确保按要求独立完成，遵守诚信规范！
+pagestyle: headings
+---
+
+```{r global_options, echo=F,message=FALSE,warning=F}
+source("R/set-global-only.R", encoding = "UTF-8")
+#source("R/load-pkg.R", encoding = "UTF-8")
+require(tidyverse)
+require(magrittr)
+require(glue)
+require(here)
+require(openxlsx)
+require(knitr)
+
+library(DT)
+library(webshot)
+library(htmlwidgets)
+#webshot::install_phantomjs(force = TRUE)
+#webshot::is_phantomjs_installed()
+```
+
+</br>
+
+学生姓名：_________；学生学号：___________；专业班级：__________
+
+</br>
+
+
+# 作业提交
+
+```{r, echo=FALSE}
+start <- as.Date(params$hw_start)
+start_line <- glue::glue("{start}（{weekdays(start)}）24:00:00")
+end <- as.Date(params$hw_end)
+end_line <- glue::glue("{end}（{weekdays(end)}）24:00:00")
+
+lab.num <- params$hand_out$lab_num
+
+lab_topic <- paste0(
+  "lab",
+  str_pad(params$hand_out$lab_num,
+          2,'l','0'),
+  '-',params$topic)
+
+# some function to get xercercise elements
+source("R/fun_exercise_element.R", encoding = "UTF-8")
+
+```
+
+**作业发布时间**：`r start_line`
+
+**提交截止时间**：`r end_line`
+
+**作业提交材料**：
+
+（1）根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(type='word', num= lab.num, ext = 'docx')`。
+
+（2）根据作业要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(type='eviews', num= lab.num, ext='wfl')`。
+
+（3）根据作业要求，提交1份按要求清洗处理后的属于自己的数据文件`.xlsx文件`，提交前请将文件命名为下述格式：`r  name_file(type='excel', num= lab.num, ext='xlsx')`。
+
+\newpage
+
+# 作业提示
+
+## 实验参考材料
+
+（1）【校内权限】在线教育综合平台（需校内登陆，网址[https://eol.nwafu.edu.cn/meol/index.do](https://eol.nwafu.edu.cn/meol/index.do)）：
+
+《计量经济学》课程【实验课】指导书（**pdf版**）
+
+```{r, fig.cap= "胡华平计量经济学（课程编号：3133101）"}
+knitr::include_graphics("pic/course/econometrics-nwafu-course.png")
+```
+
+
+
+（2）【校外公开】胡华平个人网站（免费开放）：
+
+a.计量经济学【实验课】指导书《计量经济学实验设计与应用：EViews软件实现》（**链接**[https://book.huhuaping.com/](https://book.huhuaping.com/)）。
+
+b.计量经济学【理论课】课件（**链接**[https://home.huhuaping.com/course-econometrics/schedule-theory/](https://home.huhuaping.com/course-econometrics/schedule-theory/)）
+
+
+## 如何在word中编辑数学公式？
+
+（1）如果使用Office 2003版：“插入” $\Rightarrow$“对象”$\Rightarrow$“microsoft公式3.0”
+
+（2）如使用Office 2007/2010版：“插入”$\Rightarrow$“新公式”
+
+（3）使用独立公式软件`Mathtype`，任何Office版本都可以
+
+a.在`Mathtype`中编写公式$\Rightarrow$ 确定无误后复制公式$\Rightarrow$然后粘贴到word中。
+    
+b.在`Word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打开Mathtype软件，然后按上一步骤操作，修改完成后，点击保存即可。
+
+</br>
+
+</br>
+
+
+
+\newpage
+
+# 作业内容
+
+<!---prepare data for students---->
+
+```{r, warning=FALSE, message=FALSE}
+# get students information
+source("R/get_students.R", encoding = "UTF-8")
+
+files_students <- "data/students-list-2021.xlsx"
+id_year <- 2019
+n_add <- 5
+df_students <- get_students(
+  file = files_students, 
+  id_year = id_year, 
+  n_add = 5)
+
+```
+
+```{r, warning=FALSE, message=FALSE}
+# read basic ecercise data set
+require(readxl)
+require(janitor)
+file_path <- "data/Lab6-salary-ceo.xlsx"
+df_base <- readxl::read_excel(here(file_path)) %>%
+  #rename("quater"="YEAR") %>%
+  #janitor::clean_names(case = "small_camel") %>%
+  # make sure 
+  mutate(obs = 1:nrow(.)) %>%
+  select(obs, everything(.))
+n <- nrow(df_base)
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+# create random column data
+source("R/generate_rdm_df.R", encoding = "UTF-8")
+
+cols_rdm <- paste0("X",2:6)
+set.seed(20211108) # for year 2021 fall
+
+# call external function
+df_handout <- gen_rdm_df(
+  df_info = df_students,
+  df_basic = df_base,
+  cols = cols_rdm
+  ) 
+
+# give the head for output
+vars_sel <- c("dataset", "class", "id", "name", 
+              names(df_base))
+
+# get all exercise data table
+df_exercise <- df_handout %>%
+  unnest(data)%>%
+  mutate(
+    across(
+      .cols = all_of(cols_rdm),
+      .fns = round,
+      digits = 2
+      )
+    ) %>%
+  select(all_of(vars_sel)) %>% # special variables
+  mutate(X2 = if_else(X2<0.5, 0, round(X2,0)),
+         X3 = round(X3,0))
+
+# write table for lab exercise
+teach_year <- 2021
+out_path <- paste0(
+  "data/",
+  lab_topic,
+  "-for-students-year-",
+  teach_year,
+  ".xlsx"
+  )
+
+# special element
+file_data <- basename(out_path)
+cols_students <- c("dataset", names(df_base))
+```
+
+```{r, eval=FALSE}
+# run only for once
+openxlsx::write.xlsx(df_exercise,
+                     out_path,
+                     overwrite = T)
+```
+
+
+<!--- DT table first （dummy no pic show）--->
+
+```{r , eval=FALSE, screenshot.opts = list(selector = ".dataTables_wrapper")}
+# DT table first. 
+## it works and shows the webshot
+DT::datatable(head(iris))
+```
+
+
+> **温馨提示**：
+>（1）作业配套数据请在作业发布平台界面中自行下载。
+>（2）每个同学的数据都不一样（但样本数相同$n=`r n`$）。请下载数据表后，按后面作业要求找到自己的数据，并进行Excel预处理（以便导入到Eviews）。
+>（3）表中只筛选了部分学生数据作为展示，具体数据以`r file_data`为准。
+
+
+
+为了分析企业高管薪水的影响因素，我们考虑如下所示的一些变量（具体定义见表\@ref(tab:tbl-vars)）：
+
+```{r tbl-vars}
+label_chn <-c("样本",
+  "高管薪水及分红", 
+  "担任CEO年数（不足6个月视为的0）",
+  "总裁CEO的年龄",
+  "企业的总销售收入",
+  "企业的利润",
+  "企业的总资产")
+label_eng <- c("Obs",
+               "Y",
+               "X2",
+               "X3",
+               "X4",
+               "X5",
+               "X6")
+df_vars <- tibble("变量_代码"= names(df_base),
+                  #"变量_英文" = label_eng,
+                  "含义" = label_chn)
+
+df_vars %>%
+  kable(., align = 'c', caption = '变量定义及说明')
+
+```
+
+
+
+下图\@ref(fig:data-show)给出了企业高管薪水实验案例的学生上机操作数据。
+
+
+```{r data-show, warning= FALSE, message=FALSE,screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap=glue("企业高管薪水案例的学生实验数据（n={n}）")}
+
+df_exercise %>%
+  group_by(id) %>%
+  #sample_n(8,replace = FALSE) %>%
+  arrange(dataset, obs) %>%
+  DT::datatable(
+    options = list(
+      pageLength=18,
+      dom="tip")
+  )
+```
+
+\newpage
+
+# 作业任务
+
+```{r task-counter}
+task_counter <- function() {
+  i <- 0
+  function() {
+    i <<- i + 1
+    i
+  }
+}
+n_task <- task_counter()
+
+
+```
+
+## 题目`r n_task()`：工作文件及数据导入
+
+（1）请大家下载本次作业数据文件（`r file_data`）到本地电脑。
+
+> **温馨提示**：a.文件尽量不要放在电脑桌面，而是保存在自己清楚的文件夹路径下（如"D://econometrics//`r file_data`"）；b.注意下载工具的使用，不是直接打开xlsx文件，而是要下载到本地电脑，然后再打开！
+
+答：此问不用作答，完成指定操作即可！
+
+</br>
+
+（2）打开EViews软件，创建工作文件（WF），命名为`r lab_topic`；以及建立工作页（page），命名为`r params$topic`。
+
+答：此问不用作答，完成指定操作即可！
+
+</br>
+
+（3）将工作文件项目保存到本地电脑`.wfl`文件，并命名为“`r  name_file(num= lab.num, type='eviews', ext='wfl')`”的形式。
+
+> **要求**：注意记住保存的文件夹路径，这个文件要提交到作业系统的！！！
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（4）对xlsx数据文件（`r file_data`）进行清洗处理，只保留自己的数据行，只保留如下列：`r paste0(cols_students,collapse='、')`）。删除所有其他行和列。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+（4）将清洗处理好后的数据（`r file_data`）导入到刚才建好的Eviews工作文件中。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+</br>
+
+## 题目`r n_task()`：理论模型设置分析
+
+```{r, warning=FALSE, message=FALSE}
+df_cols <- df_vars %>%
+  janitor::clean_names(case = "small_camel") %>%
+  filter(bianLiangDaiMa != "obs") %>%
+  select(contains("bianLiang")) %>%
+  rename("vars"= "bianLiangDaiMa")
+
+xvars <- df_cols$vars[-1]
+yvars <- df_cols$vars[1]
+
+```
+
+如果可以将高管薪水（$Y$）对数据集中其他变量（$X2,\ldots,X6$）进行如下的线性建模（见模型\@ref(eq:main)）：
+
+```{r, results='asis'}
+out <- xmerit::lx.psm(
+  x = xvars, y = yvars,
+  begin = 1,
+  #greek.n = length(xvars)+1,
+  n.row = 3,
+  lm.label = "main",
+  lm.tag = "main",
+  no_dollar = TRUE)
+```
+
+请你对上述总体回归模型（PRM）的参数（$\beta_1,\beta_2,\ldots,\beta_6$）的理论预期（符号、大小、关系）进行判断，并给出基本的理由。
+
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：计算机自动回归分析
+
+
+运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型（见式\@ref(eq:main)）进行回归分析。在Eviews软件中，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_main`。最后截图到下列空白处。
+ 
+答：
+
+</br>
+
+</br>
+
+<!---
+
+（2）使用公式编辑器（或Mathtype软件），将上述EViews分析报告，手动整理成简要报告（四行报告，包括第1行样本回归方程、第2行对应的系数标准误、第3行对应的样本t统计量，以及第4行F检验值、p值、拟合优度等。具体形式见课件），将结果填写在下面空白处。
+
+答：
+
+</br>
+
+</br>
+
+--->
+
+
+```{r, results='asis', eval=FALSE}
+mod_main <- formula(Y ~ X2+X3+X4+X5+X6)
+
+lx_out2 <- xmerit::lx.est(
+  lm.mod = mod_main, 
+  lm.dt = df_base,
+  style = c('srm'),
+  inf = c('over','fit','Ftest'),
+  lm.label = 'test-srm'
+  no_dollar = TRUE)
+
+```
+
+
+## 题目`r n_task()`：异方差问题的诊断（回归报告分析）
+
+根据上述的主回归模型\@ref(eq:main)的EViews报告结果，请你分别得到t检验结论、判定系数、F检验结论。根据这些线索，请你进一步得出关于主模型是否存在异方差问题的初步结论。
+
+> **要求**：（1）明确给出t样本统计量、F样本统计量、判定系数的数值，并给出针对性结论；（2）相关数值结果保留4位小数。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+
+## 题目`r n_task()`：异方差问题的诊断（残差相关计算）
+
+通过对主回归模型（见式\@ref(eq:main)）的残差（$e_i$）序列模式图的观测和分析，我们可以对主回归模型是否存在异方差问题做出初步判断。请按要求得到残差序列的相关计算结果。
+
+（1）根据主回归模型的EViews操作，将模型残差$e_i$保存并命名为序列对象![](pic/object/Series.png)`ei`。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+</br>
+
+（2）在EViews中，分别计算得到残差的平方$e_i^2$、残差平方的对数$log(e_i^2)$、残差的绝对值$\mid{e_i}\mid$，分别保存并命名为序列对象：![](pic/object/Series.png)`ei_sqr`、![](pic/object/Series.png)`ei_sqr_log`、以及![](pic/object/Series.png)`ei_abs`。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+</br>
+
+（3）在EViews中，利用残差平方序列，请计算得到$\tilde{\sigma}^2$，然后保存标量对象：![](pic/object/Scalar.png)`sigma2_wave`；进一步地，计算得到$P_i$，并保存为序列对象：![](pic/object/Series.png)`Pi`。
+
+> **温馨提示**：
+
+$$\begin{align}
+\left[ P_{i}=\frac{{e_i^2}} {\tilde{\sigma}^2};\quad \tilde{\sigma}^2=\frac{\sum{e_i^2}} {n} \right]
+\end {align}$$
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+</br>
+
+（4）在EViews中，计算得到主模型的回归拟合值$\hat{Y}_i$，保存并命名为序列对象：![](pic/object/Series.png)`Y_hat`。
+
+> **温馨提示**：需要在EViews命令窗口中输出代码并执行：`Series Y_hat =@eq_main.fitted`。表示提取回归方程对象![](pic/object/Equation.png)`eq_main`的拟合值（fitted value）
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：异方差问题的诊断（残差模式图）
+
+通过对主回归模型（见式\@ref(eq:main)）的残差（$e_i$）序列模式图的观测和分析，我们可以对主回归模型是否存在异方差问题做出初步判断。请按要求绘制相关模式图。
+
+（1）在同一个图形对象内，以横轴为样本数，以纵轴为$e_i$序列和$e_i^2$序列，绘制描点图（dot plot），保存并命名该图形对象为：![](pic/object/Graph.png)`graph_resid`。最后将该EViews图形对象“截图”复制到下面空白处。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+（2）分别以$Y_i、X_i (i=2,⋯,6)$序列为横轴，以残差平方序列$e_i^2$为纵轴，请依次绘制6个散点图（scatter plot），并将图形对象分别保存和命名为![](pic/object/Graph.png)：`r paste0("scatter_",c(yvars,xvars),collapse = "、")`。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+</br>
+
+</br>
+
+（3）根据以上的残差模式图分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的异方差问题？异方差性的模式变化主要跟哪些因素存在何种关系？请简要说明理由。
+
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+
+## 题目`r n_task()`：异方差问题的诊断（Park检验法）
+
+（1）根据帕克检验（Park heteroscedastic test），结合本实验案例，请你写出一个适合本案例的帕克辅助回归模型.
+
+答：
+
+</br>
+
+\begin{equation}
+= \qquad \qquad \qquad \qquad \qquad +v_i\quad \text{(aux_park)} \quad (\#eq:aux-park)
+\end{equation}
+
+</br>
+
+</br>
+
+（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在异方差问题，请进行你所指定辅助回归（见式\@ref(eq:aux-park)）的帕克检验。保存并命名该辅助方程对象为：![](pic/object/Equation.png)`aux_park`。最后将该EViews方程对象“截图”复制到下面空白处。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+（3）根据以上的帕克检验分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的异方差问题？请简要说明理由。
+
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：异方差问题的诊断（格莱泽检验）
+
+（1）根据格莱泽检验（Glejser heteroscedastic test），结合本实验案例，请你分别写出三个**适合**本案例的格莱泽辅助回归模型（普通线性辅助模型、开根号辅助模型$\sqrt{X_i}$和倒数辅助模型$\frac{1}{X_i}$）。
+
+答：
+
+</br>
+
+\begin{align}
+&= \qquad \qquad \qquad \qquad \qquad +v_i\quad &&\text{(aux_glejer_ line)} \quad (\#eq:aux-glejer-line) \\
+&= \qquad \qquad \qquad \qquad \qquad +v_i\quad &&\text{(aux_glejer_ root)} \quad (\#eq:aux-glejer-root) \\
+&= \qquad \qquad \qquad \qquad \qquad +v_i\quad &&\text{(aux_glejer_ rep)} \quad (\#eq:aux-glejer-rep) \\
+\end{align}
+
+</br>
+
+</br>
+
+（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在异方差问题，请依次进行你所指定辅助回归（见式\@ref(eq:aux-glejer-line)、式\@ref(eq:aux-glejer-root)、\@ref(eq:aux-glejer-rep)）的格莱泽检验。分别保存并命名3个辅助方程对象为![](pic/object/Equation.png)：`r paste0("aux_glejer_",c('line','root','rep'),collapse = "、")`。最后依次将上述EViews方程对象“截图”复制到下面空白处。
+
+
+答：1）格莱泽检验的普通线性辅助方程截图：![](pic/object/Equation.png)`aux_glejer_line`
+
+</br>
+
+</br>
+
+答：2）格莱泽检验的开根号辅助方程（$\sqrt{X_i}$）截图：![](pic/object/Equation.png)`aux_glejer_root`
+
+</br>
+
+</br>
+
+答：3）格莱泽检验的倒数辅助方程（$\frac{1}{X_i}$）截图：![](pic/object/Equation.png)`aux_glejer_repo`
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+（3）根据以上的格莱泽检验分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的异方差问题？请简要说明理由。
+
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：异方差问题的诊断（BPG检验）
+
+（1）根据BPG检验（Breusch-Pagan-Goldfrey heteroscedastic test），结合本实验案例，请你写出一个适合本案例的BPG辅助回归模型：
+
+\begin{equation}
+= \qquad \qquad \qquad \qquad \qquad +v_i\qquad \text{(aux_bpg)} \quad (\#eq:aux-bpg)
+\end{equation}
+
+
+（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在异方差问题，请进行你所指定辅助回归（见式\@ref(eq:aux-bpg)）的BPG检验。保存并命名该辅助方程对象为：![](pic/object/Equation.png)`aux_bpg`。最后将该EViews方程对象“截图”复制到下面空白处。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+（3）根据以上的BPG检验分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的异方差问题？请简要说明诊断依据和理由。（**要求**：写出LM统计量的理论公式和计算结果，数值保留4位小数）
+
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+
+## 题目`r n_task()`：异方差问题的诊断（怀特检验）
+
+（1）根据怀特检验（White heteroscedastic test），结合本实验案例，请你写出一个适合本案例的怀特辅助回归模型。（**要求**：辅助模型不考虑交叉项。）
+
+答：
+
+</br>
+
+\begin{equation}
+= \qquad \qquad \qquad \qquad \qquad +v_i\qquad \text{(aux_white)} \quad (\#eq:aux-white)
+\end{equation}
+
+</br>
+
+</br>
+
+（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在异方差问题，请进行你所指定辅助回归（见式\@ref(eq:aux-white)）的怀特检验。保存并命名该辅助方程对象为：![](pic/object/Equation.png)`aux_white`。最后将该EViews方程对象“截图”复制到下面空白处。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+（3）根据以上的怀特检验分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的异方差问题？请简要说明诊断依据和理由。（**要求**：写出卡方统计量${\chi^2}^\ast$的理论公式和计算结果，数值保留4位小数）
+
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：异方差问题的矫正（WLS方法）
+
+（1）根据上述的各类异方差诊断，请你判断并写出异方差的具体模式（见式\@ref(eq:mode-hetero)）。进一步地，请你利用加权最小二乘法（WLS），构建一个适合本案例的WLS矫正方法和新模型，并从理论上证明该新模型（见式\@ref(eq:eq-wls)）。（**要求**：只写出1种你认为最可能的异方差模式，及其相应的WLS矫正方法。）
+
+答：1）异方差的具体模式是：
+
+</br>
+
+</br>
+
+\begin{align}
+var(u_i) &= \qquad \qquad \qquad \quad &&\text{(mode_hetero)} \quad (\#eq:eq-wls)
+\end{align}
+
+</br>
+
+</br>
+
+
+答：2）WLS矫正方法是：$\ldots$。新模型的证明如下：$\ldots$
+
+</br>
+
+\begin{align}
+Y^{\ast}_i &=\beta^{\ast}_1+\beta^{\ast}_2X^{\ast}_{2i}+ \cdots +\beta^{\ast}_kX^{\ast}_{ki}+v_{i} \quad \text{(eq_wls)} \quad (\#eq:eq-wls)
+\end{align}
+
+</br>
+
+</br>
+
+（2）利用EViews软件，针对你的上述异方差WLS矫正方法，请对你设定的WLS新模型（见式\@ref(eq:eq-wls)）进行回归分析。保存并命名该方程对象为：![](pic/object/Equation.png)`eq_wls`。最后将该EViews方程对象“截图”复制到下面空白处。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+（3）进一步地，请利用怀特检验法（不需要设交叉项）对你设定的上述WLS新模型（见式\@ref(eq:eq-wls)）做出诊断。请将怀特检验方程保存并命名为：![](pic/object/Equation.png)`eq_wls_white`，并截图到下列空白处。最后请你判断WLS新模型是否消除或缓解了明显的异方差问题？请简要说明理由。
+
+
+答：1）怀特检验方程截图如下：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+答：2）怀特异方差诊断结论如下：
+
+</br>
+
+</br>
+
+</br>
+
+
+## 题目`r n_task()`：异方差问题的矫正（white一致标准误矫正法）
+
+一致标准误矫正法（consistent standard errors and covariance）有时候可以对存在异方差问题时的模型标准差做出改善和矫正。
+
+
+（1）请你利用EViews，对主模型（见式\@ref(eq:main)）重新进行估计，设定“怀特一致标准误矫正”（White-Hinkley HC1 consistent standard errors and covariance）。请将“怀特一致标准误矫正”的方程保存并命名为：![](pic/object/Equation.png)`eq_hc1_white`，并截图到下列空白处。
+
+答：“怀特一致标准误矫正”的方程截图如下：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+（2）请对比对主模型（见式\@ref(eq:main)）的回归结果和“怀特一致标准误矫正”的回归结果。你能发现二者存在哪些异同之处？请简要回答并做出说明。
+
+答：二者的异同之处有：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
