@@ -6,12 +6,12 @@ date: "`r params$hw_start`"
 params:
   hand_out:
     value:
-      lab_num: 6
-      name_chn: 异方差问题：企业高管薪水
-      name_eng: multi-linearity
-  hw_start: '2021-12-15'
-  hw_end: '2021-12-21'
-  topic: 'ceo'
+      lab_num: 7
+      name_chn: 序列自相关：存货问题
+      name_eng: auto-correlation
+  hw_start: '2021-12-22'
+  hw_end: '2021-12-29'
+  topic: 'inventory'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
   outFile <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(inputFile));
@@ -187,13 +187,14 @@ df_students <- get_students(
 # read basic ecercise data set
 require(readxl)
 require(janitor)
-file_path <- "data/Lab6-salary-ceo.xlsx"
+file_path <- "data/Lab7-inventory.xlsx"
 df_base <- readxl::read_excel(here(file_path)) %>%
   #rename("quater"="YEAR") %>%
   #janitor::clean_names(case = "small_camel") %>%
   # make sure 
   mutate(obs = 1:nrow(.)) %>%
-  select(obs, everything(.))
+  select(obs, everything(.)) %>%
+  select(-X3)
 n <- nrow(df_base)
 ```
 
@@ -202,7 +203,7 @@ n <- nrow(df_base)
 # create random column data
 source("R/generate_rdm_df.R", encoding = "UTF-8")
 
-cols_rdm <- paste0("X",2:6)
+cols_rdm <- c("Y", paste0("X",2))
 set.seed(20211108) # for year 2021 fall
 
 # call external function
@@ -226,10 +227,8 @@ df_exercise <- df_handout %>%
       digits = 2
       )
     ) %>%
-  select(all_of(vars_sel)) %>% # special variables
-  mutate(X2 = if_else(X2<0.5, 0, round(X2,0)),
-         X3 = round(X3,0))
-
+  select(all_of(vars_sel)) 
+  
 # write table for lab exercise
 teach_year <- 2021
 out_path <- paste0(
@@ -269,23 +268,17 @@ DT::datatable(head(iris))
 
 
 
-为了分析企业高管薪水的影响因素，我们考虑如下所示的一些变量（具体定义见表\@ref(tab:tbl-vars)）：
+为了分析一国存货量与销售额的关系，我们考虑如下所示的一些变量（具体定义见表\@ref(tab:tbl-vars)）：
 
 ```{r tbl-vars}
 label_chn <-c("样本",
-  "高管薪水及分红", 
-  "担任CEO年数（不足6个月视为的0）",
-  "总裁CEO的年龄",
-  "企业的总销售收入",
-  "企业的利润",
-  "企业的总资产")
+  "年份", 
+  "存货（百万美元）",
+  "销售额（百万美元）")
 label_eng <- c("Obs",
+               "Year",
                "Y",
-               "X2",
-               "X3",
-               "X4",
-               "X5",
-               "X6")
+               "X2")
 df_vars <- tibble("变量_代码"= names(df_base),
                   #"变量_英文" = label_eng,
                   "含义" = label_chn)
@@ -297,10 +290,10 @@ df_vars %>%
 
 
 
-下图\@ref(fig:data-show)给出了企业高管薪水实验案例的学生上机操作数据。
+下图\@ref(fig:data-show)给出了存货与销售额实验案例的学生上机操作数据。
 
 
-```{r data-show, warning= FALSE, message=FALSE,screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap=glue("企业高管薪水案例的学生实验数据（n={n}）")}
+```{r data-show, warning= FALSE, message=FALSE,screenshot.opts = list(selector = ".dataTables_wrapper"),  fig.cap=glue("存货与销售额案例的学生实验数据（n={n}）")}
 
 df_exercise %>%
   group_by(id) %>%
@@ -308,7 +301,7 @@ df_exercise %>%
   arrange(dataset, obs) %>%
   DT::datatable(
     options = list(
-      pageLength=18,
+      pageLength=10,
       dom="tip")
   )
 ```
@@ -375,25 +368,26 @@ df_cols <- df_vars %>%
   select(contains("bianLiang")) %>%
   rename("vars"= "bianLiangDaiMa")
 
-xvars <- df_cols$vars[-1]
-yvars <- df_cols$vars[1]
+xvars <- df_cols$vars[3]
+yvars <- df_cols$vars[2]
 
 ```
 
-如果可以将高管薪水（$Y$）对数据集中其他变量（$X2,\ldots,X6$）进行如下的线性建模（见模型\@ref(eq:main)）：
+如果可以将存货（$Y$）对销售额（$X2$）进行如下的线性建模（见模型\@ref(eq:main)）：
 
 ```{r, results='asis'}
 out <- xmerit::lx.psm(
-  x = xvars, y = yvars,
+  x = log(), y = yvars,
   begin = 1,
   #greek.n = length(xvars)+1,
   n.row = 3,
+  obs= "t",
   lm.label = "main",
   lm.tag = "main",
   no_dollar = TRUE)
 ```
 
-请你对上述总体回归模型（PRM）的参数（$\beta_1,\beta_2,\ldots,\beta_6$）的理论预期（符号、大小、关系）进行判断，并给出基本的理由。
+请你对上述总体回归模型（PRM）的参数（$\beta_1,\beta_2$）的理论预期（符号、大小、关系）进行判断，并给出基本的理由。
 
 
 答：
@@ -429,12 +423,13 @@ out <- xmerit::lx.psm(
 
 
 ```{r, results='asis', eval=FALSE}
-mod_main <- formula(Y ~ X2+X3+X4+X5+X6)
+mod_main <- formula(log(Y) ~ log(X2))
 
 lx_out2 <- xmerit::lx.est(
   lm.mod = mod_main, 
   lm.dt = df_base,
   style = c('srm'),
+  obs = "t",
   inf = c('over','fit','Ftest'),
   lm.label = 'test-srm',
   no_dollar = TRUE)
@@ -442,9 +437,10 @@ lx_out2 <- xmerit::lx.est(
 ```
 
 
-## 题目`r n_task()`：异方差问题的诊断（回归报告分析）
 
-根据上述的主回归模型\@ref(eq:main)的EViews报告结果，请你分别得到t检验结论、判定系数、F检验结论。根据这些线索，请你进一步得出关于主模型是否存在异方差问题的初步结论。
+## 题目`r n_task()`：序列自相关问题的诊断（回归报告分析）
+
+根据上述的主回归模型\@ref(eq:main)的EViews报告结果，请你分别得到t检验结论、判定系数、F检验结论。根据这些线索，请你进一步得出关于主模型是否存在序列自相关问题的初步结论。
 
 > **要求**：（1）明确给出t样本统计量、F样本统计量、判定系数的数值，并给出针对性结论；（2）相关数值结果保留4位小数。
 
@@ -457,19 +453,11 @@ lx_out2 <- xmerit::lx.est(
 </br>
 
 
-## 题目`r n_task()`：异方差问题的诊断（残差相关计算）
+## 题目`r n_task()`：序列自相关问题的诊断（残差相关计算）
 
-通过对主回归模型（见式\@ref(eq:main)）的残差（$e_i$）序列模式图的观测和分析，我们可以对主回归模型是否存在异方差问题做出初步判断。请按要求得到残差序列的相关计算结果。
+通过对主回归模型（见式\@ref(eq:main)）的残差（$e_t$）序列模式图的观测和分析，我们可以对主回归模型是否存在序列自相关问题做出初步判断。请按要求得到残差序列的相关计算结果。
 
-（1）根据主回归模型的EViews操作，将模型残差$e_i$保存并命名为序列对象![](pic/object/Series.png)`ei`。
-
-答：此题不需要作答，完成指定操作并确保正确即可！
-
-</br>
-
-</br>
-
-（2）在EViews中，分别计算得到残差的平方$e_i^2$、残差平方的对数$log(e_i^2)$、残差的绝对值$\mid{e_i}\mid$，分别保存并命名为序列对象：![](pic/object/Series.png)`ei_sqr`、![](pic/object/Series.png)`ei_sqr_log`、以及![](pic/object/Series.png)`ei_abs`。
+（1）根据主回归模型的EViews操作，将模型残差$e_t$保存并命名为序列对象![](pic/object/Series.png)`et`。
 
 答：此题不需要作答，完成指定操作并确保正确即可！
 
@@ -477,13 +465,10 @@ lx_out2 <- xmerit::lx.est(
 
 </br>
 
-（3）在EViews中，利用残差平方序列，请计算得到$\tilde{\sigma}^2$，然后保存标量对象：![](pic/object/Scalar.png)`sigma2_wave`；进一步地，计算得到$P_i$，并保存为序列对象：![](pic/object/Series.png)`Pi`。
 
-> **温馨提示**：
+（2）在EViews中，请计算并得到模型残差的标准化变换序列$e_t^{\ast}$，保存并命名为序列对象![](pic/object/Series.png)`et_star`。
 
-$$\begin{align}
-\left[ P_{i}=\frac{{e_i^2}} {\tilde{\sigma}^2};\quad \tilde{\sigma}^2=\frac{\sum{e_i^2}} {n} \right]
-\end {align}$$
+> **温馨提示**：$e_t^{\ast} = \frac{e_t}{s_{e_t}}$
 
 答：此题不需要作答，完成指定操作并确保正确即可！
 
@@ -491,9 +476,8 @@ $$\begin{align}
 
 </br>
 
-（4）在EViews中，计算得到主模型的回归拟合值$\hat{Y}_i$，保存并命名为序列对象：![](pic/object/Series.png)`Y_hat`。
 
-> **温馨提示**：需要在EViews命令窗口中输出代码并执行：`eq_main.fit Y_hat`。表示提取回归方程对象![](pic/object/Equation.png)`eq_main`的拟合值（fitted value）
+（3）在EViews中，分别计算得到残差的滞后变量$e_{t-1}$和$e_{t-2}$，分别保存并命名为序列对象：![](pic/object/Series.png)`et_l1`、![](pic/object/Series.png)`et_l2`。
 
 答：此题不需要作答，完成指定操作并确保正确即可！
 
@@ -501,11 +485,20 @@ $$\begin{align}
 
 </br>
 
-## 题目`r n_task()`：异方差问题的诊断（残差模式图）
+（4）在EViews中，将上述残差相关的序列对象（![](pic/object/Series.png)`et`、![](pic/object/Series.png)`et_star`、![](pic/object/Series.png)`et_l1`、![](pic/object/Series.png)`et_l2`）一块构建为一个组对象，命名并保存为该组对象：![](pic/object/Group.png)`group_resid`。
 
-通过对主回归模型（见式\@ref(eq:main)）的残差（$e_i$）序列模式图的观测和分析，我们可以对主回归模型是否存在异方差问题做出初步判断。请按要求绘制相关模式图。
+答：此题不需要作答，完成指定操作并确保正确即可！
 
-（1）在同一个图形对象内，以横轴为样本数，以纵轴为$e_i$序列和$e_i^2$序列，绘制描点图（dot plot），保存并命名该图形对象为：![](pic/object/Graph.png)`graph_resid`。最后将该EViews图形对象“截图”复制到下面空白处。
+</br>
+
+</br>
+
+
+## 题目`r n_task()`：序列自相关问题的诊断（残差模式图）
+
+通过对主回归模型（见式\@ref(eq:main)）的残差（$e_i$）序列模式图的观测和分析，我们可以对主回归模型是否存在序列自相关问题做出初步判断。请按要求绘制相关模式图。
+
+（1）在同一个图形对象内，以横轴为样本数，以纵轴为$e_t$序列和$e_t^{\ast}$序列，绘制线图（line plot），保存并命名该图形对象为：![](pic/object/Graph.png)`graph_obs`。最后将该EViews图形对象“截图”复制到下面空白处。
 
 答：
 
@@ -515,7 +508,7 @@ $$\begin{align}
 
 </br>
 
-（2）分别以$Y_i、X_i (i=2,⋯,6)$序列为横轴，以残差平方序列$e_i^2$为纵轴，请依次绘制6个散点图（scatter plot），并将图形对象分别保存和命名为![](pic/object/Graph.png)：`r paste0("scatter_",c(yvars,xvars),collapse = "、")`。
+（2）在同一个图形对象内，以$e_t$序列为横轴，分别以残差滞后变量$e_{t-1}$和$e_{t-2}$为纵轴，绘制线图（line plot），并将图形对象分别保存和命名为![](pic/object/Graph.png)：`graph_lag`。
 
 答：此题不需要作答，完成指定操作并确保正确即可！
 
@@ -523,49 +516,7 @@ $$\begin{align}
 
 </br>
 
-（3）根据以上的残差模式图分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的异方差问题？异方差性的模式变化主要跟哪些因素存在何种关系？请简要说明理由。
-
-
-答：
-
-</br>
-
-</br>
-
-</br>
-
-</br>
-
-
-## 题目`r n_task()`：异方差问题的诊断（Park检验法）
-
-（1）根据帕克检验（Park heteroscedastic test），结合本实验案例，请你写出一个适合本案例的帕克辅助回归模型.
-
-答：
-
-</br>
-
-\begin{equation}
-= \qquad \qquad \qquad \qquad \qquad +v_i\quad \text{(aux_park)} \quad (\#eq:aux-park)
-\end{equation}
-
-</br>
-
-</br>
-
-（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在异方差问题，请进行你所指定辅助回归（见式\@ref(eq:aux-park)）的帕克检验。保存并命名该辅助方程对象为：![](pic/object/Equation.png)`aux_park`。最后将该EViews方程对象“截图”复制到下面空白处。
-
-答：
-
-</br>
-
-</br>
-
-</br>
-
-</br>
-
-（3）根据以上的帕克检验分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的异方差问题？请简要说明理由。
+（3）根据以上的残差模式图分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的序列自相关问题？请简要说明理由。
 
 
 答：
@@ -578,40 +529,33 @@ $$\begin{align}
 
 </br>
 
-## 题目`r n_task()`：异方差问题的诊断（格莱泽检验）
 
-（1）根据格莱泽检验（Glejser heteroscedastic test），结合本实验案例，请你分别写出三个**适合**本案例的格莱泽辅助回归模型（普通线性辅助模型、开根号辅助模型$\sqrt{X_i}$和倒数辅助模型$\frac{1}{X_i}$）。
+## 题目`r n_task()`：序列自相关问题的诊断（辅助回归法）
+
+（1）如果我们怀疑主模型（见式\@ref(eq:main)）的随机干扰项$u_t$具有一阶马尔可夫自相关行为（见下式\@ref(eq:AR1-PRM)），结合本实验案例，请你写出一个适合本案例的辅助回归模型（要求：写出样本回归模型SRM的形式）。
+
+
+\begin{align}
+u_t & = \hat{\rho}_1 u_{t-1}  + \epsilon_t \quad \text{(AR1, PRM)} (\#eq:AR1-PRM)
+\end{align}
+
+</br>
 
 答：
 
 </br>
 
 \begin{align}
-&= \qquad \qquad \qquad \qquad \qquad +v_i\quad &&\text{(aux_glejer_ line)} \quad (\#eq:aux-glejer-line) \\
-&= \qquad \qquad \qquad \qquad \qquad +v_i\quad &&\text{(aux_glejer_ root)} \quad (\#eq:aux-glejer-root) \\
-&= \qquad \qquad \qquad \qquad \qquad +v_i\quad &&\text{(aux_glejer_ rep)} \quad (\#eq:aux-glejer-rep) \\
+e_t & = \quad \quad \quad \quad \text{(aux_AR1)} (\#eq:aux-AR1)
 \end{align}
 
 </br>
 
 </br>
 
-（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在异方差问题，请依次进行你所指定辅助回归（见式\@ref(eq:aux-glejer-line)、式\@ref(eq:aux-glejer-root)、\@ref(eq:aux-glejer-rep)）的格莱泽检验。分别保存并命名3个辅助方程对象为![](pic/object/Equation.png)：`r paste0("aux_glejer_",c('line','root','rep'),collapse = "、")`。最后依次将上述EViews方程对象“截图”复制到下面空白处。
+（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在序列自相关问题，请进行你所指定辅助回归（见式\@ref(eq:aux-AR1)）进行检验。保存并命名该辅助方程对象为：![](pic/object/Equation.png)`aux_AR1`。最后将该EViews方程对象“截图”复制到下面空白处。
 
-
-答：1）格莱泽检验的普通线性辅助方程截图：![](pic/object/Equation.png)`aux_glejer_line`
-
-</br>
-
-</br>
-
-答：2）格莱泽检验的开根号辅助方程（$\sqrt{X_i}$）截图：![](pic/object/Equation.png)`aux_glejer_root`
-
-</br>
-
-</br>
-
-答：3）格莱泽检验的倒数辅助方程（$\frac{1}{X_i}$）截图：![](pic/object/Equation.png)`aux_glejer_repo`
+答：
 
 </br>
 
@@ -621,7 +565,7 @@ $$\begin{align}
 
 </br>
 
-（3）根据以上的格莱泽检验分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的异方差问题？请简要说明理由。
+（3）根据以上的辅助检验分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在马尔可夫一阶自相关（见式\@ref(eq:AR1-PRM)）问题？请简要说明理由。
 
 
 答：
@@ -634,58 +578,119 @@ $$\begin{align}
 
 </br>
 
-## 题目`r n_task()`：异方差问题的诊断（BPG检验）
+（4）根据以上辅助检验分析，请你得到1阶自相关系数$\hat{\rho}$。最后将该标量对象命名并保存为：![](pic/object/Scalar.png)`rho_aux`。（**要求**：写出数值结果，数值保留4位小数）
 
-（1）根据BPG检验（Breusch-Pagan-Goldfrey heteroscedastic test），结合本实验案例，请你写出一个适合本案例的BPG辅助回归模型：
+> **温馨提示**：在EViews命名窗口中输入并运行如下命令：`scalar rho_aux=0.8756`。
+
+答：$\hat{\rho}_{1,aux}=$
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：序列自相关问题的诊断（ACF和PACF法）
+
+（1）利用EViews软件，绘制残差序列的自相关（ACF）和偏相关（PACF）图表。保存并命名为表对象：![](pic/object/Table.png)`aux_CA`。最后将该EViews表对象“截图”复制到下面空白处。
+
+> **温馨提示**：需要用到`Freeze`冻结操作，另存为表对象![](pic/object/Table.png)。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+（2）根据上述ACF和PACF分析，请你请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的序列自相关问题？如果有，那么根据图形分析，它是属于那种序列自相关模式？请简要说明理由。（**要求**：写出序列自相关模式的样本回归模型SRM。）
+
+
+答：
+
+</br>
+
+
+根据ACF和PACF图形分析，自相关类型SRM应该是（见式\@ref(eq:aux-AC)）：
+
+</br>
+
+\begin{align}
+e_t & = \quad \quad \quad \quad \text{(aux_AC)} (\#eq:aux-AC)
+\end{align}
+
+</br>
+
+</br>
+
+</br>
+
+（4）根据以上ACF和PACF图形分析，请你得到1阶自相关系数$\hat{\rho}$。最后将该标量对象命名并保存为：![](pic/object/Scalar.png)`rho_AC`。（**要求**：写出数值结果，数值保留4位小数）
+
+
+答：$\hat{\rho}_{1,AC}=$
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：序列自相关问题的诊断（德宾-沃森检验法）
+
+（1）根据德宾-沃森检验法（Durbin-Watson test），结合本实验案例，请你写出德宾-沃森检验的辅助回归模型。（**要求**：写出自回归模式的样本回归模型SRM形式）
+
+答：
+
+</br>
+
+\begin{align}
+e_t & = \quad \quad \quad \quad \text{(aux_DW)} (\#eq:aux-DW)
+\end{align}
+
+</br>
+
+
+（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在序列自相关问题，请你进行德宾-沃森检验并得出自相关的诊断结论（给定查表值$d_L=, d_U=$）。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+（3）根据以上德宾-沃森检验的DW统计量，请你进一步计算出估计的自相关系数$\hat{\rho}$。最后将该标量对象命名并保存为：![](pic/object/Scalar.png)`rho_dw`。（**要求**：写出理论公式和计算结果，数值保留4位小数）
+
+
+答：$\hat{\rho}_{1,dw}$
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+
+## 题目`r n_task()`：序列自相关问题的诊断（LM检验）
+
+（1）根据拉格朗日乘数检验法（LM test），结合本实验案例，请你写出拉格朗日乘数检验辅助回归模型的理论形式。（**要求**：写成总体回归模型PRM形式。）
+
+答：
+
+</br>
 
 \begin{equation}
-= \qquad \qquad \qquad \qquad \qquad +v_i\qquad \text{(aux_bpg)} \quad (\#eq:aux-bpg)
-\end{equation}
-
-
-（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在异方差问题，请进行你所指定辅助回归（见式\@ref(eq:aux-bpg)）的BPG检验。保存并命名该辅助方程对象为：![](pic/object/Equation.png)`aux_bpg`。最后将该EViews方程对象“截图”复制到下面空白处。
-
-答：
-
-</br>
-
-</br>
-
-</br>
-
-</br>
-
-（3）根据以上的BPG检验分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的异方差问题？请简要说明诊断依据和理由。（**要求**：写出LM统计量的理论公式和计算结果，数值保留4位小数）
-
-
-答：
-
-</br>
-
-</br>
-
-</br>
-
-</br>
-
-
-## 题目`r n_task()`：异方差问题的诊断（怀特检验）
-
-（1）根据怀特检验（White heteroscedastic test），结合本实验案例，请你写出一个适合本案例的怀特辅助回归模型。（**要求**：辅助模型不考虑交叉项。）
-
-答：
-
-</br>
-
-\begin{equation}
-= \qquad \qquad \qquad \qquad \qquad +v_i\qquad \text{(aux_white)} \quad (\#eq:aux-white)
+u_t= \qquad \qquad \qquad \qquad \qquad +\epsilon_t \qquad \text{(aux_LM)} \quad (\#eq:aux-LM)
 \end{equation}
 
 </br>
 
 </br>
 
-（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在异方差问题，请进行你所指定辅助回归（见式\@ref(eq:aux-white)）的怀特检验。保存并命名该辅助方程对象为：![](pic/object/Equation.png)`aux_white`。最后将该EViews方程对象“截图”复制到下面空白处。
+（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在序列自相关问题，请进行拉格朗日乘数检验（LM test）（见式\@ref(eq:aux-LM)）。保存并命名该辅助方程对象为：![](pic/object/Equation.png)`aux_LM`。最后将该EViews方程对象“截图”复制到下面空白处。
 
 答：
 
@@ -697,20 +702,58 @@ $$\begin{align}
 
 </br>
 
-（3）根据以上的怀特检验分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的异方差问题？请简要说明诊断依据和理由。（**要求**：写出卡方统计量${\chi^2}^\ast$的理论公式和计算结果，数值保留4位小数）
+（3）根据以上的拉格朗日乘数检验（LM test）分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的序列自相关问题？请简要说明诊断依据和理由。（**要求**：写出卡方统计量${\chi^2}^\ast$的理论公式和计算结果，数值保留4位小数）
 
+> **温馨提示**：卡方查表值的EViews命令为：`scalar chi_LM = @qchisq(0.05, freedom)`。
+
+答：拉格朗日统计量$LM\equiv {\chi^2}^{\ast}=$
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+（4）根据以上拉格朗日乘数检验（LM test）分析，请你进一步计算出估计的1阶自相关系数$\hat{\rho}$。最后将该标量对象命名并保存为：![](pic/object/Scalar.png)`rho_LM`。（**要求**：写出计算结果，数值保留4位小数）
+
+
+答：$\hat{\rho}_{1,LM}$
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：序列自相关问题的矫正（广义差分法）
+
+如果主回归模型（见式\@ref(eq:main)）存在1阶序列自相关情形，也即：
+
+\begin{align}
+Y_t & =\beta_1+\beta_2X_{2t}+u_{t} && \text{PRM} \\
+u_t & =\rho u_{t-1}+\varepsilon_t && \text{AR(1)} \\
+\end{align}
+
+
+请你根据上述四种诊断方法：辅助回归（见式\@ref(eq:aux-AR1)）、AC/PAC分析（见式\@ref(eq:aux-AC)）、DW检验（见式\@ref(eq:aux-DW)）、LM检验（见式\@ref(eq:aux-LM)），以及初步估计得到的1阶自相关系数$\hat{\rho}$，依次写出它们1阶序列自相关模式的样本回归模型（SRM）。（**要求**：写出系数的具体数值，保留4位小数。）
 
 答：
 
 </br>
 
-</br>
+\begin{align}
+e_t & =\quad e_{t-1}+v_t && \text{(aux_AR1)} \\
+e_t & =\quad e_{t-1}+v_t && \text{(aux_AC)} \\
+e_t & =\quad e_{t-1}+v_t && \text{(aux_DW)} \\
+e_t & =\quad e_{t-1}+v_t && \text{(aux_LM)} \\
+\end{align}
 
 </br>
 
 </br>
 
-## 题目`r n_task()`：异方差问题的矫正（WLS方法）
+
+## 题目`r n_task()`：序列自相关问题的矫正（基于辅助回归的广义差分法）
 
 （1）根据上述的各类异方差诊断，请你判断并写出异方差的具体模式（见式\@ref(eq:mode-hetero)）。进一步地，请你利用加权最小二乘法（WLS），构建一个适合本案例的WLS矫正方法和新模型，并从理论上证明该新模型（见式\@ref(eq:eq-wls)）。（**要求**：只写出1种你认为最可能的异方差模式，及其相应的WLS矫正方法。）
 
@@ -753,7 +796,7 @@ Y^{\ast}_i &=\beta^{\ast}_1+\beta^{\ast}_2X^{\ast}_{2i}+ \cdots +\beta^{\ast}_kX
 
 </br>
 
-（3）进一步地，请利用怀特检验法（不需要设交叉项）对你设定的上述WLS新模型（见式\@ref(eq:eq-wls)）做出诊断。请将怀特检验方程保存并命名为：![](pic/object/Equation.png)`eq_wls_white`，并截图到下列空白处。最后请你判断WLS新模型是否消除或缓解了明显的异方差问题？请简要说明理由。
+（3）进一步地，请利用怀特检验法（不需要设交叉项）对你设定的上述WLS新模型（见式\@ref(eq:eq-wls)）做出诊断。请将怀特检验方程保存并命名为：![](pic/object/Equation.png)`eq_wls_white`，并截图到下列空白处。最后请你判断WLS新模型是否消除或缓解了明显的序列自相关问题？请简要说明理由。
 
 
 答：1）怀特检验方程截图如下：
@@ -775,9 +818,9 @@ Y^{\ast}_i &=\beta^{\ast}_1+\beta^{\ast}_2X^{\ast}_{2i}+ \cdots +\beta^{\ast}_kX
 </br>
 
 
-## 题目`r n_task()`：异方差问题的矫正（white一致标准误矫正法）
+## 题目`r n_task()`：序列自相关问题的矫正（white一致标准误矫正法）
 
-一致标准误矫正法（consistent standard errors and covariance）有时候可以对存在异方差问题时的模型标准差做出改善和矫正。
+一致标准误矫正法（consistent standard errors and covariance）有时候可以对存在序列自相关问题时的模型标准差做出改善和矫正。
 
 
 （1）请你利用EViews，对主模型（见式\@ref(eq:main)）重新进行估计，设定“怀特一致标准误矫正”（White-Hinkley HC1 consistent standard errors and covariance）。请将“怀特一致标准误矫正”的方程保存并命名为：![](pic/object/Equation.png)`eq_hc1_white`，并截图到下列空白处。
