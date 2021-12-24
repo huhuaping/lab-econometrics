@@ -1,0 +1,50 @@
+
+{
+	"commands" : 
+	[
+		"import(link) D:\\github\\Rexam\\data\\dummy-salary-car.xlsx range=\"Sheet 1\" colhead=0 na=\"#N/A\" @smpl @all"
+	],
+	"description" : "",
+	"label" : "auto",
+	"workbook_meta" : 
+	{
+		"_name" : "d:\\github\\lab-econometrics\\eviews\\car.wf1",
+		"_pages" : 
+		[
+			
+			{
+				"_frequency" : "U",
+				"_last_update" : [ 738146.3383217593, "12/23/2021 08:07" ],
+				"_name" : "salary",
+				"_obj_count" : 3,
+				"_objects" : 
+				[
+					
+					{
+						"_data_type" : "integer",
+						"_name" : "@DATE",
+						"_obs_max" : 397,
+						"_obs_min" : 1,
+						"_type" : "INDEX"
+					},
+					
+					{
+						"_name" : "C",
+						"_type" : "COEF"
+					},
+					
+					{
+						"_name" : "RESID",
+						"_type" : "SERIES"
+					},
+					
+					{
+						"_name" : "SERIES01",
+						"_type" : "SERIES"
+					}
+				],
+				"_obs_count" : 397
+			}
+		]
+	}
+}

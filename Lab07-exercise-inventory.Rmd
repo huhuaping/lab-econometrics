@@ -377,7 +377,7 @@ yvars <- df_cols$vars[2]
 
 ```{r, results='asis'}
 out <- xmerit::lx.psm(
-  x = log(), y = yvars,
+  x = xvars, y = yvars,
   begin = 1,
   #greek.n = length(xvars)+1,
   n.row = 3,
@@ -648,7 +648,7 @@ e_t & = \quad \quad \quad \quad \text{(aux_DW)} (\#eq:aux-DW)
 </br>
 
 
-（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在序列自相关问题，请你进行德宾-沃森检验并得出自相关的诊断结论（给定查表值$d_L=, d_U=$）。
+（2）利用EViews软件，针对主模型（见式\@ref(eq:main)）是否存在序列自相关问题，请你进行德宾-沃森检验并得出自相关的诊断结论（给定$\alpha=0.01$DW的理论查表值$d_L=1.246, d_U=1.344$）。（理论查表值可以参看：[pdf链接](https://www3.nd.edu/~wevans1/econ30331/Durbin_Watson_tables.pdf)）
 
 答：
 
@@ -727,15 +727,29 @@ u_t= \qquad \qquad \qquad \qquad \qquad +\epsilon_t \qquad \text{(aux_LM)} \quad
 
 ## 题目`r n_task()`：序列自相关问题的矫正（广义差分法）
 
-如果主回归模型（见式\@ref(eq:main)）存在1阶序列自相关情形，也即：
+（1）如果主回归模型（见式\@ref(eq:main)）存在1阶序列自相关情形，也即：
 
 \begin{align}
 Y_t & =\beta_1+\beta_2X_{2t}+u_{t} && \text{PRM} \\
 u_t & =\rho u_{t-1}+\varepsilon_t && \text{AR(1)} \\
 \end{align}
 
+请你证明，在使用广义差分方程法后，新模型将满足经典正态线性模型假设，因而不再存在随机干扰项序列自相关的问题。
 
-请你根据上述四种诊断方法：辅助回归（见式\@ref(eq:aux-AR1)）、AC/PAC分析（见式\@ref(eq:aux-AC)）、DW检验（见式\@ref(eq:aux-DW)）、LM检验（见式\@ref(eq:aux-LM)），以及初步估计得到的1阶自相关系数$\hat{\rho}$，依次写出它们1阶序列自相关模式的样本回归模型（SRM）。（**要求**：写出系数的具体数值，保留4位小数。）
+答：新模型的证明如下：$\ldots$
+
+</br>
+
+\begin{align}
+Y^{\ast}_t &=\beta^{\ast}_1+\beta^{\ast}_2X^{\ast}_{2t}+ v_{t} \quad \text{(eq_gde)} \quad (\#eq:eq-gde)
+\end{align}
+
+</br>
+
+</br>
+
+
+（2）请你根据前述四种诊断方法：辅助回归（见式\@ref(eq:aux-AR1)）、AC/PAC分析（见式\@ref(eq:aux-AC)）、DW检验（见式\@ref(eq:aux-DW)）、LM检验（见式\@ref(eq:aux-LM)），以及初步估计得到的1阶自相关系数$\hat{\rho}$，依次写出它们1阶序列自相关模式的样本回归模型（SRM）。（**要求**：写出系数的具体数值，保留4位小数。）
 
 答：
 
@@ -755,36 +769,7 @@ e_t & =\quad e_{t-1}+v_t && \text{(aux_LM)} \\
 
 ## 题目`r n_task()`：序列自相关问题的矫正（基于辅助回归的广义差分法）
 
-（1）根据上述的各类异方差诊断，请你判断并写出异方差的具体模式（见式\@ref(eq:mode-hetero)）。进一步地，请你利用加权最小二乘法（WLS），构建一个适合本案例的WLS矫正方法和新模型，并从理论上证明该新模型（见式\@ref(eq:eq-wls)）。（**要求**：只写出1种你认为最可能的异方差模式，及其相应的WLS矫正方法。）
-
-答：1）异方差的具体模式是：
-
-</br>
-
-</br>
-
-\begin{align}
-var(u_i) &= \qquad \qquad \qquad \quad &&\text{(mode_hetero)} \quad (\#eq:eq-wls)
-\end{align}
-
-</br>
-
-</br>
-
-
-答：2）WLS矫正方法是：$\ldots$。新模型的证明如下：$\ldots$
-
-</br>
-
-\begin{align}
-Y^{\ast}_i &=\beta^{\ast}_1+\beta^{\ast}_2X^{\ast}_{2i}+ \cdots +\beta^{\ast}_kX^{\ast}_{ki}+v_{i} \quad \text{(eq_wls)} \quad (\#eq:eq-wls)
-\end{align}
-
-</br>
-
-</br>
-
-（2）利用EViews软件，针对你的上述异方差WLS矫正方法，请对你设定的WLS新模型（见式\@ref(eq:eq-wls)）进行回归分析。保存并命名该方程对象为：![](pic/object/Equation.png)`eq_wls`。最后将该EViews方程对象“截图”复制到下面空白处。
+（1）请你根据辅助回归（见式\@ref(eq:aux-AR1)）得到的序列自相关系数的估计量$\hat{\rho}_{aux}$，在EViews软件中，对你设定的广义差分法新模型进行回归分析。保存并命名该方程对象为：![](pic/object/Equation.png)`eq_adj_aux`。最后将该EViews方程对象“截图”复制到下面空白处。
 
 答：
 
@@ -796,10 +781,33 @@ Y^{\ast}_i &=\beta^{\ast}_1+\beta^{\ast}_2X^{\ast}_{2i}+ \cdots +\beta^{\ast}_kX
 
 </br>
 
-（3）进一步地，请利用怀特检验法（不需要设交叉项）对你设定的上述WLS新模型（见式\@ref(eq:eq-wls)）做出诊断。请将怀特检验方程保存并命名为：![](pic/object/Equation.png)`eq_wls_white`，并截图到下列空白处。最后请你判断WLS新模型是否消除或缓解了明显的序列自相关问题？请简要说明理由。
+（2）进一步地，请利用拉格朗日乘数检验法（LM test），对上述广义差分法矫正的新模型的回归方程（![](pic/object/Equation.png)`eq_adj_aux`）做出诊断。请将拉格朗日乘数检验方程保存并命名为：![](pic/object/Table.png)`test_adj_aux`，并截图到下列空白处。最后请你判断广义差分变换后的新模型是否消除或缓解了明显的序列自相关问题？请简要说明理由。
 
 
-答：1）怀特检验方程截图如下：
+答：1）拉格朗日乘数检验方程截图如下：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+答：2）序列自相关问题诊断结论如下：
+
+</br>
+
+</br>
+
+</br>
+
+
+## 题目`r n_task()`：序列自相关问题的矫正（基于DW检验的广义差分法）
+
+（1）请你根据DW检验（见式\@ref(eq:aux-DW)）得到的序列自相关系数的估计量$\hat{\rho}_{dw}$，在EViews软件中，对你设定的广义差分法新模型进行回归分析。保存并命名该方程对象为：![](pic/object/Equation.png)`eq_adj_dw`。最后将该EViews方程对象“截图”复制到下面空白处。
+
+答：
 
 </br>
 
@@ -809,7 +817,10 @@ Y^{\ast}_i &=\beta^{\ast}_1+\beta^{\ast}_2X^{\ast}_{2i}+ \cdots +\beta^{\ast}_kX
 
 </br>
 
-答：2）怀特异方差诊断结论如下：
+（2）进一步地，请利用拉格朗日乘数检验法（LM test），对上述广义差分法矫正的新模型的回归方程（![](pic/object/Equation.png)`eq_adj_dw`）做出诊断。请将拉格朗日乘数检验方程保存并命名为：![](pic/object/Table.png)`test_adj_dw`，并截图到下列空白处。最后请你判断广义差分变换后的新模型是否消除或缓解了明显的序列自相关问题？请简要说明理由。
+
+
+答：1）拉格朗日乘数检验方程截图如下：
 
 </br>
 
@@ -817,17 +828,100 @@ Y^{\ast}_i &=\beta^{\ast}_1+\beta^{\ast}_2X^{\ast}_{2i}+ \cdots +\beta^{\ast}_kX
 
 </br>
 
+</br>
 
-## 题目`r n_task()`：序列自相关问题的矫正（white一致标准误矫正法）
+答：2）序列自相关问题诊断结论如下：
+
+</br>
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：序列自相关问题的矫正（基于LM检验的广义差分法）
+
+（1）请你根据LM检验（见式\@ref(eq:aux-LM)）得到的序列自相关系数的估计量$\hat{\rho}_{lm}$，在EViews软件中，对你设定的广义差分法新模型进行回归分析。保存并命名该方程对象为：![](pic/object/Equation.png)`eq_adj_lm`。最后将该EViews方程对象“截图”复制到下面空白处。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+（2）进一步地，请利用拉格朗日乘数检验法（LM test），对上述广义差分法矫正的新模型的回归方程（![](pic/object/Equation.png)`eq_adj_LM`）做出诊断。请将拉格朗日乘数检验方程保存并命名为：![](pic/object/Table.png)`test_adj_LM`，并截图到下列空白处。最后请你判断广义差分变换后的新模型是否消除或缓解了明显的序列自相关问题？请简要说明理由。
+
+
+答：1）拉格朗日乘数检验方程截图如下：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+答：2）序列自相关问题诊断结论如下：
+
+</br>
+
+</br>
+
+</br>
+
+## 题目`r n_task()`：序列自相关问题的矫正（基迭代方法的广义差分法）
+
+（1）请你采用迭代估计方法（iteration method），分析序列自相关系数的估计量$\hat{\rho}_{itr}$。在EViews软件中，请你重新估计带有AR(1)项的回归方程。保存并命名该方程对象为：![](pic/object/Equation.png)`eq_itr`。最后将该EViews方程对象“截图”复制到下面空白处。
+
+> **温馨提示**：a.在EViews命令窗口中，进行如下方程设置：`y c x2 ar(1)`。b.`Options`里设置，$\Rightarrow$ `ARMA`选项 $\Rightarrow$ `Method` 下拉选择 `GLS`；c.`Optimization`里设置，$\Rightarrow$ `Optimization method` 下拉选择 `BFGS`。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+（2）根据以上迭代估计方法，请你进一步计算出估计的1阶自相关系数$\hat{\rho}$。最后将该标量对象命名并保存为：![](pic/object/Scalar.png)`rho_itr`。（**要求**：写出计算结果，数值保留4位小数）
+
+
+答：$\hat{\rho}_{1,itr}=$
+
+</br>
+
+</br>
+
+</br>
+
+（3）请你根据上迭代估计方法（见式\@ref(eq:eq_itr)）得到的序列自相关系数的估计量$\hat{\rho}_{1,itr}$。在EViews软件中，对你设定的广义差分法新模型进行回归分析。保存并命名该方程对象为：![](pic/object/Equation.png)`eq_adj_itr`。最后将该EViews方程对象“截图”复制到下面空白处。
+
+答：
+
+</br>
+
+</br>
+
+</br>
+
+</br>
+
+
+
+## 题目`r n_task()`：序列自相关问题的矫正（Newey-West一致标准误矫正法）
 
 一致标准误矫正法（consistent standard errors and covariance）有时候可以对存在序列自相关问题时的模型标准差做出改善和矫正。
 
 
-（1）请你利用EViews，对主模型（见式\@ref(eq:main)）重新进行估计，设定“怀特一致标准误矫正”（White-Hinkley HC1 consistent standard errors and covariance）。请将“怀特一致标准误矫正”的方程保存并命名为：![](pic/object/Equation.png)`eq_hc1_white`，并截图到下列空白处。
+（1）请你利用EViews，对主模型（见式\@ref(eq:main)）重新进行估计，设定“尼威-威斯特一致标准误矫正”（(Newey-West consistent standard errors and covariance）。请将“尼威-威斯特一致标准误矫正”的方程保存并命名为：![](pic/object/Equation.png)`eq_adj_nw`，并截图到下列空白处。
 
-答：“怀特一致标准误矫正”的方程截图如下：
-
-</br>
+答：“尼威-威斯特一致标准误矫正”的方程截图如下：
 
 </br>
 
@@ -835,7 +929,9 @@ Y^{\ast}_i &=\beta^{\ast}_1+\beta^{\ast}_2X^{\ast}_{2i}+ \cdots +\beta^{\ast}_kX
 
 </br>
 
-（2）请对比对主模型（见式\@ref(eq:main)）的回归结果和“怀特一致标准误矫正”的回归结果。你能发现二者存在哪些异同之处？请简要回答并做出说明。
+</br>
+
+（2）请对比对主模型（见式\@ref(eq:main)）的回归结果和“尼威-威斯特一致标准误矫正”的回归结果。你能发现二者存在哪些异同之处？请简要回答并做出说明。
 
 答：二者的异同之处有：
 
