@@ -498,7 +498,7 @@ lx_out2 <- xmerit::lx.est(
 
 通过对主回归模型（见式\@ref(eq:main)）的残差（$e_i$）序列模式图的观测和分析，我们可以对主回归模型是否存在序列自相关问题做出初步判断。请按要求绘制相关模式图。
 
-（1）在同一个图形对象内，以横轴为样本数，以纵轴为$e_t$序列和$e_t^{\ast}$序列，绘制线图（line plot），保存并命名该图形对象为：![](pic/object/Graph.png)`graph_obs`。最后将该EViews图形对象“截图”复制到下面空白处。
+（1）在同一个图形对象内，以横轴为样本数，以纵轴为$e_t$序列和$e_t^{\ast}$序列，绘制点图（dot plot），保存并命名该图形对象为：![](pic/object/Graph.png)`graph_obs`。最后将该EViews图形对象“截图”复制到下面空白处。
 
 答：
 
@@ -508,7 +508,7 @@ lx_out2 <- xmerit::lx.est(
 
 </br>
 
-（2）在同一个图形对象内，以$e_t$序列为横轴，分别以残差滞后变量$e_{t-1}$和$e_{t-2}$为纵轴，绘制线图（line plot），并将图形对象分别保存和命名为![](pic/object/Graph.png)：`graph_lag`。
+（2）在同一个图形对象内，以$e_t$序列为横轴，分别以残差滞后变量$e_{t-1}$和$e_{t-2}$为纵轴，绘制散点图（scatter plot），并将图形对象分别保存和命名为![](pic/object/Graph.png)：`graph_lag`。
 
 答：此题不需要作答，完成指定操作并确保正确即可！
 
@@ -704,9 +704,26 @@ u_t= \qquad \qquad \qquad \qquad \qquad +\epsilon_t \qquad \text{(aux_LM)} \quad
 
 （3）根据以上的拉格朗日乘数检验（LM test）分析，请你初步判断主模型（见式\@ref(eq:main)）是否存在明显的序列自相关问题？请简要说明诊断依据和理由。（**要求**：写出卡方统计量${\chi^2}^\ast$的理论公式和计算结果，数值保留4位小数）
 
-> **温馨提示**：卡方查表值的EViews命令为：`scalar chi_LM = @qchisq(0.05, freedom)`。
+> **温馨提示**：a.卡方查表值的EViews命令为：`scalar chi_LM = @qchisq(0.95, freedom)`。b.理论上{$\chi^2}^{\ast}=(n-p)R^2$。实际EViews操作中，EViews的LM检验报告会对缺失样本数进行提前处理，所以会显示`Obs*R-squared`$=n*R^2$，而且下面会有一行提示“Presample Missing value lagged residuals set to zero”。具体可以参看EViews[说明](http://www.eviews.com/help/helpintro.html#page/content%2Ftesting-Residual_Diagnostics.html%23ww182888)。
+
 
 答：拉格朗日统计量$LM\equiv {\chi^2}^{\ast}=$
+
+```{r}
+library(lmtest)
+aux_lm <- formula(Y~X2)
+
+fit_lm <- lm(aux_lm, data = df_base)
+smry_lm <- summary(fit_lm)
+
+test_lm <- bgtest(aux_lm,order = 1,data = df_base)
+
+#scales::number(test_lm$statistic,0.0001)
+
+
+
+```
+
 
 </br>
 
