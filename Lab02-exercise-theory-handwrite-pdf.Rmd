@@ -10,8 +10,8 @@ params:
       lab_num: 2
       name_chn: '一元回归OLS方法的分析过程'
       name_eng: "simple-reg-process"
-  hw_start: "2021-11-03"
-  hw_end: "2021-11-23"
+  hw_start: "2022-10-10"
+  hw_end: "2022-11-07"
 output: 
   bookdown::pdf_document2:
     latex_engine: xelatex
