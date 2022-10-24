@@ -9,8 +9,8 @@ params:
       lab_num: 1
       name_chn: EViews基本操作：工业化国家CPI案例
       name_eng: EViews-basic-cpi
-  hw_start: '2021-11-17'
-  hw_end: '2021-11-20'
+  hw_start: '2022-10-24'
+  hw_end: '2022-11-08'
   topic: 'cpi'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
@@ -171,8 +171,8 @@ b.在`Word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可�
 # get students information
 source("R/get_students.R", encoding = "UTF-8")
 
-files_students <- "data/students-list-2021.xlsx"
-id_year <- 2019
+files_students <- "data/students-list-2022.xlsx"
+id_year <- 2020
 n_add <- 5
 df_students <- get_students(
   file = files_students, 
@@ -226,7 +226,7 @@ df_exercise <- df_handout %>%
  # rename_all(., ~all_of(vars_chn))
 
 # write table for lab exercise
-teach_year <- 2021
+teach_year <- 2022
 out_path <- paste0(
   "data/",
   lab_topic,
@@ -253,7 +253,7 @@ openxlsx::write.xlsx(df_exercise,
 
 <!--- DT table first （dummy no pic show）--->
 
-```{r check-dataset0, screenshot.opts = list(selector = ".dataTables_wrapper")}
+```{r check-dataset0, eval=FALSE, screenshot.opts = list(selector = ".dataTables_wrapper")}
 # DT table first. 
 ## it works and shows the webshot
 DT::datatable(head(iris))

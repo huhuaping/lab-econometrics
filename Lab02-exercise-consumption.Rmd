@@ -16,8 +16,8 @@ params:
       lab_num: 2
       name_chn: 一元回归分析过程（家庭消费案例）
       name_eng: EViews-basic-cpi
-  hw_start: '2021-11-24'
-  hw_end: '2021-11-27'
+  hw_start: '2022-10-24'
+  hw_end: '2022-11-15'
   topic: 'consumption'
 output:
   bookdown::word_document2:
@@ -254,7 +254,7 @@ math_matrix %>%
 
 <!--- DT table first （dummy no pic show）--->
 
-```{r, screenshot.opts = list(selector = ".dataTables_wrapper")}
+```{r,eval=FALSE, screenshot.opts = list(selector = ".dataTables_wrapper")}
 # DT table first. 
 ## it works and shows the webshot
 DT::datatable(head(iris))
@@ -262,7 +262,7 @@ DT::datatable(head(iris))
 
 
 ```{r}
-file_path <- "data/lab02-consumption-for-students-year-2021.xlsx"
+file_path <- "data/lab02-consumption-for-students-year-2022.xlsx"
 
 df_students <- openxlsx::read.xlsx(file_path) %>%
   rename("spend" = "Ydata")

@@ -217,7 +217,7 @@ $$\begin{aligned}
 \hat{Y}_0 - t_{1-\alpha/2}(df_{RSS}) \ast S_{\hat{Y}_0} 
 & \leq \quad  E(Y|X=X_0) \quad \leq
 \hat{Y}_0 + t_{1-\alpha/2}(df_{RSS}) \ast S_{\hat{Y}_0} \\
-S_{\hat{Y}_0} &= \sqrt{\hat{\sigma}^2\left(\frac{1}{n}+\frac{(X_0-\bar{X})}{\sum{x_i^2}}\right)} \\
+S_{\hat{Y}_0} &= \sqrt{\hat{\sigma}^2\left(\frac{1}{n}+\frac{(X_0-\bar{X})^2}{\sum{x_i^2}}\right)} \\
 \hat{\sigma}^2&=\frac{\sum{e^2_i}}{(n-k)} 
 \end{aligned}$$
 
