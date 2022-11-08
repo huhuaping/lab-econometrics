@@ -423,10 +423,11 @@ knitr::kable(head(mtcars),
 
 利用EViews软件，绘制其他6个国家通货膨胀率对美国通货膨胀率（`inf_usa`）的散点图（即以美国通货膨胀率为横轴，并以其他国家通货膨胀率为纵轴）。将以上创建的图对象（graph![](pic/object/Graph.png)）保存并命名为`graph_scatter`。并按如下要求对图形样式进行修改和美化。最后将图片复制到如下word空白处！
 
-> **要求**：a.散点图只放在一张图里；b.添加轴标题，横轴标题为`美国inflation`，纵轴标题为`其他国家inflation`；c.将图例legend，移动放置在图形的右侧。
+> **要求**：a.散点图只放在一张大图里；b.每个国家分别对美国做散点图，并作为大图里的各个子图；c.按要求保存绘图对象。
 
-> **温馨提示**：a.按住键盘键`Ctrl`，然后鼠标依次点选序列对象（series![](pic/object/Series.png)），则可以根据需要选择多个序列对象，然后鼠标右键可以构造出组对象（group![](pic/object/Group.png)）；b.鼠标点击序列对象的先后顺序，会影响序列对象在组对象里面的排序关系。c.组对象绘图时，EViews会默认排在前面的序列对象为横轴变量。
+<br>
 
+> **温馨提示**：a.按住键盘键`Ctrl`，然后鼠标依次点选序列对象（series![](pic/object/Series.png)），则可以根据需要选择多个序列对象，然后鼠标右键可以构造出组对象（group![](pic/object/Group.png)）；b.鼠标点击序列对象的先后顺序，会影响序列对象在组对象里面的排序关系。c.组对象绘图时，EViews会默认排在前面的序列对象为横轴变量。d.大图和子图的设置过程：`graph type`设置里选择散点图`scatter` $\Rightarrow$ `Detail`里设置下拉选择`Multiple graph - First VS all`实现子图效果。
 
 
 答：按要求完成操作，并请将做好的图片复制到下处：
