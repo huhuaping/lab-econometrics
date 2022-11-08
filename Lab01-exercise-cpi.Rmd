@@ -350,7 +350,7 @@ n_task <- task_counter()
 
 利用所给数据计算每个国家的**年度**通货膨胀率**序列**（series![](pic/object/Series.png)），根据国家的不同，请分别命名新序列为`inf_canada`、`inf_france`、$\ldots$\等。
 
-> **温馨提示**：a.通货膨胀率计算公式为：$inf.rate = \frac{CPI_t-CPI_{t-1}}{CPI_{t-1}} 100\%$。b.滞后变量运算的EViews代码可参考`series inf_canada = 100*(1- @lag(cpi_canada, 1)/cpi_canada)`，其中`@lag()`命令表示EVews的滞后变量运算。
+> **温馨提示**：a.通货膨胀率计算公式为：$inf.rate = \frac{CPI_t-CPI_{t-1}}{CPI_{t-1}} 100\%=(\frac{CPI_t}{CPI_{t-1}}-1) 100\%$。b.滞后变量运算的EViews代码可参考`series inf_canada = 100*(cpi_canada /  @lag(cpi_canada, 1) -1)`，其中`@lag()`命令表示EVews的滞后变量运算。
  
 答：此问不用作答，完成指定操作即可！
 
