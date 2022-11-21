@@ -24,7 +24,7 @@ get_students <- function(file, id_year, n_add){
     rename_all(., ~all_of(names_eng)) %>%
     tibble::add_row(id = glue("{id_year}00000{1:n_add}"),
                     name = glue("跟班0{1:n_add}"),
-                    class=rep("农管1903",n_add)) %>%
+                    class=rep("跟班3",n_add)) %>%
     mutate(class_f = factor(str_extract(class, "(\\d{1})$"))) %>%
     arrange(class_f, id) %>%
     add_column(

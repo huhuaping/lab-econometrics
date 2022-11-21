@@ -9,8 +9,8 @@ params:
       lab_num: 4
       name_chn: 多元回归矩阵分析：玫瑰销售案例
       name_eng: multiple-reg-matrix
-  hw_start: '2021-12-01'
-  hw_end: '2021-12-04'
+  hw_start: '2022-11-21'
+  hw_end: '2021-11-22'
   topic: 'rose'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
@@ -209,7 +209,7 @@ math_matrix %>%
 # get students information
 source("R/get_students.R", encoding = "UTF-8")
 
-files_students <- "data/students-list-2021.xlsx"
+files_students <- "data/students-list-2022.xlsx"
 id_year <- 2019
 n_add <- 5
 df_students <- get_students(
@@ -240,7 +240,7 @@ n <- nrow(df_base)
 source("R/generate_rdm_df.R", encoding = "UTF-8")
 
 cols_rdm <- c("x2", "x3", "x4")
-set.seed(20211108) # for year 2021 fall
+set.seed(20221121) # for year 2022 fall
 
 # call external function
 df_handout <- gen_rdm_df(
@@ -266,7 +266,7 @@ df_exercise <- df_handout %>%
   select(all_of(vars_sel)) 
 
 # write table for lab exercise
-teach_year <- 2021
+teach_year <- 2022
 out_path <- paste0(
   "data/",
   lab_topic,
@@ -290,7 +290,7 @@ openxlsx::write.xlsx(df_exercise,
 
 <!--- DT table first （dummy no pic show）--->
 
-```{r , screenshot.opts = list(selector = ".dataTables_wrapper")}
+```{r , screenshot.opts = list(selector = ".dataTables_wrapper"), eval=FALSE}
 # DT table first. 
 ## it works and shows the webshot
 DT::datatable(head(iris))
