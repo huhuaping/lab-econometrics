@@ -10,7 +10,7 @@ params:
       name_chn: 多元回归矩阵分析：玫瑰销售案例
       name_eng: multiple-reg-matrix
   hw_start: '2022-11-21'
-  hw_end: '2021-11-22'
+  hw_end: '2022-11-22'
   topic: 'rose'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
@@ -74,7 +74,7 @@ require(glue)
 require(here)
 require(openxlsx)
 require(knitr)
-
+require(lubridate)
 library(DT)
 library(webshot)
 library(htmlwidgets)
@@ -210,7 +210,7 @@ math_matrix %>%
 source("R/get_students.R", encoding = "UTF-8")
 
 files_students <- "data/students-list-2022.xlsx"
-id_year <- 2019
+id_year <- 2020
 n_add <- 5
 df_students <- get_students(
   file = files_students, 

@@ -9,8 +9,8 @@ params:
       lab_num: 3
       name_chn: 函数形式选择：家庭食物支出案例
       name_eng: function-sel-food
-  hw_start: '2021-12-01'
-  hw_end: '2021-12-04'
+  hw_start: '2022-11-21'
+  hw_end: '2022-11-29'
   topic: 'food'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
@@ -74,7 +74,7 @@ require(glue)
 require(here)
 require(openxlsx)
 require(knitr)
-
+require(lubridate)
 library(DT)
 library(webshot)
 library(htmlwidgets)
@@ -210,8 +210,8 @@ math_matrix %>%
 # get students information
 source("R/get_students.R", encoding = "UTF-8")
 
-files_students <- "data/students-list-2021.xlsx"
-id_year <- 2019
+files_students <- "data/students-list-2022.xlsx"
+id_year <- 2020
 n_add <- 5
 df_students <- get_students(
   file = files_students, 
@@ -265,7 +265,7 @@ df_exercise <- df_handout %>%
  # rename_all(., ~all_of(vars_chn))
 
 # write table for lab exercise
-teach_year <- 2021
+teach_year <- 2022
 out_path <- paste0(
   "data/",
   lab_topic,
