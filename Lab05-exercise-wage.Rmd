@@ -9,8 +9,10 @@ params:
       lab_num: 5
       name_chn: 多重共线性：最低工资保障政策
       name_eng: multi-linearity
-  hw_start: '2021-12-08'
-  hw_end: '2021-12-21'
+  hw_start: '2022-11-27'
+  hw_end: '2022-11-29'
+  id_year: '2020'
+  teach_year: '2022'
   topic: 'wage'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
@@ -105,7 +107,7 @@ lab_topic <- paste0(
           2,'l','0'),
   '-',params$topic)
 
-# some function to get xercercise elements
+# some function to get exorcise elements
 source("R/fun_exercise_element.R", encoding = "UTF-8")
 
 ```
@@ -172,9 +174,12 @@ b.在`Word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可�
 ```{r, warning=FALSE, message=FALSE}
 # get students information
 source("R/get_students.R", encoding = "UTF-8")
+id_year <- params$id_year
+teach_year <- params$teach_year
+files_students <- paste0("data/students-list-",
+                         teach_year,
+                         ".xlsx")
 
-files_students <- "data/students-list-2021.xlsx"
-id_year <- 2019
 n_add <- 5
 df_students <- get_students(
   file = files_students, 
@@ -203,7 +208,7 @@ n <- nrow(df_base)
 source("R/generate_rdm_df.R", encoding = "UTF-8")
 
 cols_rdm <- paste0("X",1:8)
-set.seed(20211108) # for year 2021 fall
+set.seed(20221127) # for year 2021 fall
 
 # call external function
 df_handout <- gen_rdm_df(
@@ -229,7 +234,6 @@ df_exercise <- df_handout %>%
   select(all_of(vars_sel)) 
 
 # write table for lab exercise
-teach_year <- 2021
 out_path <- paste0(
   "data/",
   lab_topic,
@@ -253,7 +257,7 @@ openxlsx::write.xlsx(df_exercise,
 
 <!--- DT table first （dummy no pic show）--->
 
-```{r , screenshot.opts = list(selector = ".dataTables_wrapper")}
+```{r , screenshot.opts = list(selector = ".dataTables_wrapper"), eval=FALSE}
 # DT table first. 
 ## it works and shows the webshot
 DT::datatable(head(iris))
