@@ -18,6 +18,8 @@ params:
       name_eng: EViews-basic-cpi
   hw_start: '2022-10-24'
   hw_end: '2022-11-15'
+  id_year: '2020'
+  teach_year: '2022'
   topic: 'consumption'
 output:
   bookdown::word_document2:

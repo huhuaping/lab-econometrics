@@ -11,6 +11,8 @@ params:
       name_eng: function-sel-food
   hw_start: '2022-11-21'
   hw_end: '2022-11-29'
+  id_year: '2020'
+  teach_year: '2022'
   topic: 'food'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
@@ -210,8 +212,12 @@ math_matrix %>%
 # get students information
 source("R/get_students.R", encoding = "UTF-8")
 
-files_students <- "data/students-list-2022.xlsx"
-id_year <- 2020
+teach_year <- params$teach_year
+id_year <- params$id_year
+
+files_students <- paste0("data/students-list-",
+                         teach_year,
+                         ".xlsx")
 n_add <- 5
 df_students <- get_students(
   file = files_students, 
@@ -265,7 +271,6 @@ df_exercise <- df_handout %>%
  # rename_all(., ~all_of(vars_chn))
 
 # write table for lab exercise
-teach_year <- 2022
 out_path <- paste0(
   "data/",
   lab_topic,
@@ -637,7 +642,7 @@ $$\begin{alignedat}{3}
 
 </br>
 
-（2）（步骤2）：然后，利用矩阵要素相乘的方法（参看计算表\@ref(tab:tbl-calcu)和上述提示），构建并计算1个$(7 \times 1)$的向量对象![](pic/object/Vector.png)，保存并命名为`b_point`，用于存放点弹性的计算量值（参看计算表\@ref(tab:tbl-calcu)）。 请将向量对象![](pic/object/Vector.png)`b_point`的结果复制或截图到如下空白处。
+（2）（步骤2）：然后，利用矩阵要素相乘的方法（参看计算表\@ref(tab:tbl-calcu)和上述提示），构建并计算1个$(7 \times 1)$的向量对象![](pic/object/Vector.png)，保存并命名为`b_point`，用于存放点斜率的计算量值（参看计算表\@ref(tab:tbl-calcu)）。 请将向量对象![](pic/object/Vector.png)`b_point`的结果复制或截图到如下空白处。
 
 > **温馨提示**：在EViews命令窗口中输入如下代码`vector(7) b_result=@emult(beta2_hat, c_m)`，可以得到最终结果。其中`@emult()`命令表示“矩阵元素相乘”($\odot$)。
 `

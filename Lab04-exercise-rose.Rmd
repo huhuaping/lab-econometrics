@@ -11,6 +11,8 @@ params:
       name_eng: multiple-reg-matrix
   hw_start: '2022-11-21'
   hw_end: '2022-11-22'
+  id_year: '2020'
+  teach_year: '2022'
   topic: 'rose'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
@@ -209,8 +211,12 @@ math_matrix %>%
 # get students information
 source("R/get_students.R", encoding = "UTF-8")
 
-files_students <- "data/students-list-2022.xlsx"
-id_year <- 2020
+id_year <- params$id_year
+teach_year <- params$teach_year
+files_students <- paste0("data/students-list-",
+                         teach_year,
+                         ".xlsx")
+
 n_add <- 5
 df_students <- get_students(
   file = files_students, 
@@ -266,7 +272,6 @@ df_exercise <- df_handout %>%
   select(all_of(vars_sel)) 
 
 # write table for lab exercise
-teach_year <- 2022
 out_path <- paste0(
   "data/",
   lab_topic,

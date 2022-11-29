@@ -18,6 +18,8 @@ params:
       name_eng: mote-pre-simulation
   hw_start: '2021-11-03'
   hw_end: '2021-11-23'
+  id_year: '2020'
+  teach_year: '2022'
 output:
   bookdown::word_document2:
     fig_caption: yes
@@ -83,16 +85,20 @@ require(openxlsx)
 # 学生信息
 
 ```{r}
-id_year <- 2020
-teach_year <- 2022
+id_year <- params$id_year
+teach_year <- params$teach_year
 n_add <- 5
 names_chn <- c("学号", "姓名", "分组", "班级")
 names_eng <- c("id", "name", "group", "class")
-df_students<- openxlsx::read.xlsx("data/students-list-2022.xlsx") %>%
+
+files_students <- paste0("data/students-list-",
+                         teach_year,
+                         ".xlsx")
+df_students<- openxlsx::read.xlsx(xlsxFile = files_students) %>%
   rename_all(., ~all_of(names_eng)) %>%
   tibble::add_row(id = glue("{id_year}00000{1:n_add}"),
                   name = glue("跟班0{1:n_add}"),
-                  class=rep("跟班2003",n_add)) %>%
+                  class=rep("跟班03",n_add)) %>%
   mutate(class_f = factor(str_extract(class, "(\\d{1})$"))) %>%
   arrange(class_f, id) %>%
   add_column(
