@@ -9,8 +9,10 @@ params:
       lab_num: 7
       name_chn: 序列自相关：存货问题
       name_eng: auto-correlation
-  hw_start: '2021-12-22'
-  hw_end: '2021-12-29'
+  hw_start: '2022-12-04'
+  hw_end: '2022-12-13'
+  id_year: '2020'
+  teach_year: '2022'
   topic: 'inventory'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
@@ -173,8 +175,12 @@ b.在`Word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可�
 # get students information
 source("R/get_students.R", encoding = "UTF-8")
 
-files_students <- "data/students-list-2021.xlsx"
-id_year <- 2019
+id_year <- params$id_year
+teach_year <- params$teach_year
+files_students <- paste0("data/students-list-",
+                         teach_year,
+                         ".xlsx")
+
 n_add <- 5
 df_students <- get_students(
   file = files_students, 
@@ -230,7 +236,6 @@ df_exercise <- df_handout %>%
   select(all_of(vars_sel)) 
   
 # write table for lab exercise
-teach_year <- 2021
 out_path <- paste0(
   "data/",
   lab_topic,

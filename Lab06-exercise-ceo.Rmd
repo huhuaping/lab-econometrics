@@ -8,9 +8,11 @@ params:
     value:
       lab_num: 6
       name_chn: 异方差问题：企业高管薪水
-      name_eng: multi-linearity
-  hw_start: '2021-12-15'
-  hw_end: '2021-12-21'
+      name_eng: hetero-scadasticity
+  hw_start: '2022-12-04'
+  hw_end: '2022-12-06'
+  id_year: '2020'
+  teach_year: '2022'
   topic: 'ceo'
 #knit: `r source("R/_render_public.R")`
 knit: (function(inputFile, encoding) { 
@@ -173,8 +175,12 @@ b.在`Word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可�
 # get students information
 source("R/get_students.R", encoding = "UTF-8")
 
-files_students <- "data/students-list-2021.xlsx"
-id_year <- 2019
+id_year <- params$id_year
+teach_year <- params$teach_year
+files_students <- paste0("data/students-list-",
+                         teach_year,
+                         ".xlsx")
+
 n_add <- 5
 df_students <- get_students(
   file = files_students, 
@@ -203,7 +209,7 @@ n <- nrow(df_base)
 source("R/generate_rdm_df.R", encoding = "UTF-8")
 
 cols_rdm <- paste0("X",2:6)
-set.seed(20211108) # for year 2021 fall
+set.seed(20221204) # for year 2021 fall
 
 # call external function
 df_handout <- gen_rdm_df(
@@ -231,7 +237,6 @@ df_exercise <- df_handout %>%
          X3 = round(X3,0))
 
 # write table for lab exercise
-teach_year <- 2021
 out_path <- paste0(
   "data/",
   lab_topic,
