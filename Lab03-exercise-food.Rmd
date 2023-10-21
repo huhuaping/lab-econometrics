@@ -484,7 +484,7 @@ ln(Y_i) & =\beta_1+\beta_2/X_i+u_i &&\text{(m7)} &&(\#eq:m7)
 
 </br>
 
-（4）构建线性对数回归模型\@ref(eq:m4)，利用数据在EViews软件中进行回归分析操作，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_m4`。最后截图到下列空白处。
+（4）构建线性到对数回归模型\@ref(eq:m4)，利用数据在EViews软件中进行回归分析操作，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_m4`。最后截图到下列空白处。
  
 答：
 
@@ -492,7 +492,7 @@ ln(Y_i) & =\beta_1+\beta_2/X_i+u_i &&\text{(m7)} &&(\#eq:m7)
 
 </br>
 
-（5）构建对数线性回归模型\@ref(eq:m5)，利用数据在EViews软件中进行回归分析操作，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_m5`。最后截图到下列空白处。
+（5）构建对数到线性回归模型\@ref(eq:m5)，利用数据在EViews软件中进行回归分析操作，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_m5`。最后截图到下列空白处。
  
 答：
 
@@ -500,7 +500,7 @@ ln(Y_i) & =\beta_1+\beta_2/X_i+u_i &&\text{(m7)} &&(\#eq:m7)
 
 </br>
 
-（6）构建奥数回归模型\@ref(eq:m6)，利用数据在EViews软件中进行回归分析操作，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_m6`。最后截图到下列空白处。
+（6）构建倒数回归模型\@ref(eq:m6)，利用数据在EViews软件中进行回归分析操作，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_m6`。最后截图到下列空白处。
  
 答：
 
@@ -508,7 +508,7 @@ ln(Y_i) & =\beta_1+\beta_2/X_i+u_i &&\text{(m7)} &&(\#eq:m7)
 
 </br>
 
-（7）构建过对数倒数回归模型\@ref(eq:m7)，利用数据在EViews软件中进行回归分析操作，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_m7`。最后截图到下列空白处。
+（7）构建对数倒数回归模型\@ref(eq:m7)，利用数据在EViews软件中进行回归分析操作，以方程对象（Equation![](pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_m7`。最后截图到下列空白处。
  
 答：
 

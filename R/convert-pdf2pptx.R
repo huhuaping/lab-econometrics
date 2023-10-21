@@ -1,7 +1,7 @@
 
 # see github [repo](https://github.com/jirilukavsky/pdf2pptx)
 
-#devtools::install_github("jirilukavsky/pdf2pptx")
+#renv::install("jirilukavsky/pdf2pptx")
 
 
 require(pdf2pptx)
