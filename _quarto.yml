@@ -1,0 +1,65 @@
+project:
+  type: website
+  output-dir: _site
+  post-render: 
+    - R/copy-post-sync.R
+  render: 
+    - index.qmd
+    - lab00-intro.qmd
+    - lab01-eviews/lab01-eviews-cpi.qmd
+    - lab01-eviews/task01-eviews-cpi.qmd
+    - lab01-eviews/tips01-eviews-cpi.qmd
+
+metadata-files:
+  - _crossref.yml
+  
+execute:
+  freeze: auto
+
+filters: 
+  - lua/newtablink.lua
+  - lua/linebreak.lua
+  
+website:
+  title: "计量实验作业"
+  site-url: https://www.huhuaping.com
+  favicon: pic/logo/hu-text-removebg.png
+
+  navbar:
+    left:
+      - href: index.qmd
+        text: 前言
+    right:
+      - icon: stack-overflow
+        text: "主站|Kevin Hu"
+        href: https://www.huhuaping.com
+        target: _blank
+
+
+  page-footer:
+    left: "© Copyright 2023 Kevin Hu. Except where otherwise noted, all text and images licensed CC-BY-NC 4.0."  
+  
+  sidebar:
+    - title: "实验作业"
+      style: "docked"
+      #background: light
+      collapse-level: 2
+      contents:
+        # navigation items
+        - index.qmd
+        - lab00-intro.qmd       # intro
+        - section: "实验作业"
+          contents:
+            - lab01-eviews/task01-eviews-cpi.qmd
+        - section: "实验参考"
+          contents:
+            - lab01-eviews/tips01-eviews-cpi.qmd
+
+format:
+  html:
+    theme: [sandstone, scss/_variables.scss]
+    css: scss/styles.css
+    toc: true
+
+
+

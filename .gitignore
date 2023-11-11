@@ -2,5 +2,10 @@
 .Rhistory
 .RData
 .Ruserdata
-public/*
 *.log
+
+/.quarto/
+
+public/*
+_site/**
+_site_sync/**

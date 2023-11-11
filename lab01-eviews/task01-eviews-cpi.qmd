@@ -1,0 +1,72 @@
+---
+title: "实验01：EViews入门"
+
+params:
+  hand_out:
+    value:
+      lab_num: "01"
+      name_chn: 'EViews基础操作'
+      name_eng: "eviews-basic"
+  hw_start: "2023-09-11"
+  hw_end: "2023-09-24"
+  topic: 'eviews-basic'
+  class: 'academic'
+  id_year: '2022'
+  teach_year: '2023'
+  term: '2023'
+  course_id:
+    value:
+      academic: '6132001'
+      major: 'pd7134001'
+      under: '123456'
+---
+
+```{r}
+#| label: setup-pkg
+#| echo: false
+#| warning: false
+
+library(here)
+source(here("R/set-global-only.R"))
+source(here("R/load-pkg-homework.R"))
+require(fontawesome)
+
+# some function to get exercise elements
+source(here("R/fun_exercise_element.R"), encoding = "UTF-8")
+
+# Generate lab information with parameters
+source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
+
+```
+
+
+## 实验1：EViews基础及实证应用
+
+### 实验材料
+
+（1）实验目标：EViews菜单；EViews基本操作；CPI案例；实证分析过程。
+
+（2）实验任务：题目及答题纸.docx文件下载（[lab01-eviews-cpi.docx](lab01-eviews-cpi.docx)）
+
+（3）实验数据集：.xlsx数据文件下载（[lab02-dataset.zip](dataset/lab01-dataset-`r params$teach_year`/lab01-dataset-`r params$teach_year`.zip)）
+
+# 实验提交
+
+
+**实验发布时间**：`r start_line`
+
+**提交截止时间**：`r end_line`
+
+**实验提交材料**：
+
+（1）根据实验要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(type='word', num= lab.num, ext = 'docx')`。
+
+（2）根据实验要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(type='eviews', num= lab.num, ext='wfl')`。
+
+**实验提交方式**：
+
+- 按上述要求命名各个文件，然后将全部实验提交材料压缩为zip格式，并命名为：`r  paste0("lab",params$hand_out$lab_num, "-专业班级-姓名-学号.zip")`（如：`r paste0("lab",params$hand_out$lab_num,"-国贸2101-张帅帅-2021120208.zip")`）
+
+- 发送上述zip文件到电子邮箱：huhuaping01\@qq.com。请填写“邮件主题”为：`r  paste0("lab",params$hand_out$lab_num, "-专业班级-姓名-学号")`（如：`r paste0("lab",params$hand_out$lab_num,"-国贸2101-张帅帅-2021120208")`）。
+
+- 点击发送邮件！你将收到一份邮件已收到的“自动回复”！

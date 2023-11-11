@@ -1,0 +1,17 @@
+
+crossref:
+  # table and figure
+  fig-title: 图     # (default is "Figure")
+  tbl-title: 表     # (default is "Table")
+  title-delim: ":"   # (default is ":")
+  fig-prefix: 图   # (default is "Figure")
+  tbl-prefix: 表    # (default is "Table")
+  ref-hyperlink: true # (default is true)
+  sec-prefix: 节
+  eq-prefix: 式
+  thm-title: 定理
+  thm-prefix: 定理
+  def-title: 定义
+  def-prefix: 定义
+  exr-title: 习题
+  exr-prefix: 习题

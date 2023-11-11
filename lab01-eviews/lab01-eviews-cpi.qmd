@@ -1,0 +1,352 @@
+---
+title: "实验01：EViews入门"
+subtitle: "工业化国家CPI案例的应用"
+
+params:
+  hand_out:
+    value:
+      lab_num: "01"
+      name_chn: 'EViews基础操作'
+      name_eng: "eviews-basic"
+  hw_start: "2023-11-11"
+  hw_end: "2023-11-24"
+  topic: 'cpi'
+  class: 'academic'
+  id_year: '2021'
+  teach_year: '2023'
+  term: '2023'
+  course_id:
+    value:
+      academic: '6132001'
+      major: 'pd7134001'
+      under: '123456'
+
+format:
+  docx:
+    #output-file: homework02-test.docx
+    number-sections: true
+    highlight-style: github
+    reference-doc: ../template/template-word-lab-exrecise.docx
+---
+
+
+```{r}
+#| label: setup-pkg
+#| echo: false
+#| warning: false
+library(here)
+source(here("R/set-global-only.R"))
+source(here("R/load-pkg-homework.R"))
+
+# some function to get exercise elements
+source(here("R/fun_exercise_element.R"), encoding = "UTF-8")
+
+# Generate lab information with parameters
+source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
+
+```
+
+<br>
+
+学生姓名：_________；学生学号：___________；专业班级：__________
+
+<br>
+
+
+# 作业提交
+
+
+**作业发布时间**：`r start_line`
+
+**提交截止时间**：`r end_line`
+
+**作业提交材料**：
+
+（1）根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(type='word', num= lab.num, ext = 'docx')`。
+
+（2）根据作业要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(type='eviews', num= lab.num, ext='wfl')`。
+
+**作业提交方式**：
+
+- 按上述要求命名各个文件，然后将全部作业提交材料压缩为zip格式，并命名为：`r  paste0("lab",params$hand_out$lab_num, "-专业班级-姓名-学号.zip")`（如：`r paste0("lab",params$hand_out$lab_num,"-国贸2101-张帅帅-2021120208.zip")`）
+
+- 发送上述zip文件到电子邮箱：huhuaping01\@qq.com。请填写“邮件主题”为：`r  paste0("lab",params$hand_out$lab_num, "-专业班级-姓名-学号")`（如：`r paste0("lab",params$hand_out$lab_num,"-国贸2101-张帅帅-2021120208")`）。
+
+- 点击发送邮件！你将收到一份邮件已收到的“自动回复”！
+
+\newpage
+
+# 作业案例
+
+
+```{r}
+#| label: gen-dataset
+#| eval: false
+#| echo: false
+
+# prepare data for students
+## run only once
+# source(here("lab01-eviews/lab01-gen-dataset.R"))
+```
+
+
+```{r}
+# read basic exercise data set
+file_path <- here("data/exercise-Lab01-Table-CPI.xlsx")
+df_cpi <- openxlsx::read.xlsx(file_path) %>%
+  select(year, sort(names(.)[-1])) %>%
+  # make sure 
+  add_column(obs = 1:nrow(.), .before = "year") 
+
+n <- nrow(df_cpi)
+```
+
+## 变量说明
+
+本实验案例研究工业化国家的消费价格指数（CPI）的关系，相关变量定义见 @tbl-vars 。
+
+```{r}
+#| label: tbl-vars
+#| tbl-cap: '变量定义及说明'
+#| warning: false
+
+vars_sel <- names(df_cpi)
+# for text referring
+names_state <-  vars_sel[-(1:2)]
+names_state_cpi <- paste0("cpi_", names_state)
+
+label_chn <-  c("观测", "年份", "加拿大cpi", 
+               "法国cpi", "德国cpi", "意大利cpi",
+               "日本cpi", "英国cpi", "美国cpi")
+
+label_def <-  c("序号", "年度", 
+                rep("定量变量", 7))
+
+label_eng <-c(vars_sel)
+
+df_vars <- tibble("变量_代码"= label_eng,
+                  "变量_中文" = label_chn,
+                  "定义和取值" = label_def)
+
+df_vars %>%
+  knitr::kable(., align = 'c')
+```
+
+## 数据说明
+
+1980年-2005年7个工业化国家的消费价格指数（CPI）数据见下面 @fig-cpi-show ：
+
+
+> **重要说明**：
+
+- 每一个同学的数据集都不同。
+
+- 数据文件利用学号进行命名，例如`r glue("lab01-dataset
+-{params$teach_year}-2021056325.xlsx")`。
+
+- 大家根据自己的学号，使用相应的数据集。
+
+- 考虑到部分同学的学号没有在系统里，我虚拟了5个学号（从`2021000001`-`2021000005`）。这部分同学可以任意使用其中的一份数据集开始自己的作业。
+
+```{r}
+#| label: fig-cpi-show
+#| fig-cap: !expr 'glue("1980-2005年7个工业化国家的CPI数据（n={n}）")'
+
+df_cpi %>%
+  DT::datatable(
+    options = list(
+      pageLength = 9,
+      dom="tip")
+  )
+```
+
+> 说明：CPI指数以（1982-1984=100）
+
+# 作业任务
+
+```{r}
+#| label: task-counter
+
+task_counter <- function() {
+  i <- 0
+  function() {
+    i <<- i + 1
+    i
+  }
+}
+n_task <- task_counter()
+
+```
+
+## 任务`r n_task()`：工作文件及数据导入
+
+（1）请大家下载本次作业数据文件`r  glue("lab01-dataset-{params$teach_year}.zip")`到本地电脑。
+
+> **温馨提示**：a.文件尽量不要放在电脑桌面，而是保存在自己清楚的文件夹路径下（如"D://econometrics//lab01//"）；b.注意下载工具的使用，不是直接打开xlsx文件，而是要下载到本地电脑，然后再打开！
+
+答：此问不用作答，完成指定操作即可！
+
+<br>
+
+（2）打开EViews软件，创建工作文件（WF），命名为`r lab_topic`；以及建立工作页（page），命名为`r params$topic`。
+
+答：此问不用作答，完成指定操作即可！
+
+<br>
+
+（3）将工作文件项目保存到本地电脑`.wfl`文件，并命名为“`r  name_file(num= lab.num, type='eviews', ext='wfl')`”的形式。
+
+> **要求**：注意记住保存的文件夹路径，这个文件要提交到作业系统的！！！
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+
+<br>
+
+（4）将数据集导入到刚才建好的Eviews工作文件中，并在EViews窗口中按如下要求进行变量命名操作：
+
+> **要求**：在EViews窗口中，请将xlsx文件的原cpi变量名（`r paste0(names_state, collapse = "、")`），分别重命名为`r paste0(names_state_cpi, collapse = "、")`。最后再删除导入的原cpi变量（`r paste0(names_state, collapse = "、")`）的序列对象。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+## 任务`r n_task()`：组对象操作group
+
+根据导入的数据，在EViews中将所有国家的cpi变量（`r paste0(names_state_cpi, collapse = "、")`），创建为一个组对象（group![](../pic/object/Group.png)），并命名为`cpi_all`并保存！
+
+答：此问不用作答，完成指定操作即可！
+
+<br>
+
+<br>
+
+## 任务`r n_task()`：创建新序列series
+
+利用所给数据计算每个国家的**年度**通货膨胀率**序列**（series![](../pic/object/Series.png)），根据国家的不同，请分别命名新序列为`inf_canada`、`inf_france`、$\ldots$\等。
+
+> **温馨提示**：a.通货膨胀率计算公式为：$inf.rate = \frac{CPI_t-CPI_{t-1}}{CPI_{t-1}} 100\%=(\frac{CPI_t}{CPI_{t-1}}-1) 100\%$。b.滞后变量运算的EViews代码可参考`series inf_canada = 100*(cpi_canada /  @lag(cpi_canada, 1) -1)`，其中`@lag()`命令表示EVews的滞后变量运算。
+ 
+答：此问不用作答，完成指定操作即可！
+
+<br>
+
+<br>
+
+## 任务`r n_task()`：标量对象scalar和向量对象vector操作
+
+（1）根据前述结果，进一步计算出各个国家1980年-2005年间的**平均**通货膨胀率，将计算结果分别创建为标量对象（scalar![](../pic/object/Scalar.png)），并按要求分别命名为`mean_inf_canada`、`mean_inf_france`、$\ldots$\等。
+
+
+答：此问不用作答，完成指定操作即可！
+
+<br>
+
+
+（2）在EView软件中，请将上述7个国家的平均通货膨胀率结果，全部依次（按国名字母顺序canada;france;germany;italy;japan;uk;usa）放到一个列向量对象中去（vector![](../pic/object/Vector.png)），并将该向量命名为`vec_inf_mean`。最后将向量数值结果截图放到word下列空白处!
+
+> **提示**：向量操作的EViews代码格式如：`vector(7) vec_mean_inf(1) = mean_inf_canada`。代码具体含义请参看实验指导教材《计量经济学实验设计与应用：Eviews软件实现》的节[“1.8.1.2 批量式命令驱动”](https://book.huhuaping.com/introduction.html)。
+
+答：
+
+<br>
+
+<br>
+
+## 任务`r n_task()`：表对象table操作
+
+（1）利用所给数据计算7个国家通货膨胀率之间的**相关系数矩阵表**，并创建一个EViews表对象（table![](../pic/object/Table.png)），命名为`tab_corrl`。最后将该EViews表对象“截图”复制到下面空白处。
+
+> **温馨提示**：a.应该首先创建一个组对象（group![](../pic/object/Group.png)），然后再计算相关系数矩阵表（EViews菜单操作：`Quick` $\Rightarrow$ `Group Statistics` $\Rightarrow$ `Correlations`）。b.使用EViews菜单`Freeze`按钮，可以将组对象（group![](../pic/object/Group.png)）转换为表对象（table![](../pic/object/Table.png)）。
+
+答：
+
+<br>
+
+<br>
+
+（2）根据上述的EViews计算，在word答题纸的下面空白处将相关系数表进行整理，并将结果制作成**三线表**
+
+> **温馨提示**：可以参看下面这张典型的三线表（见表 @tbl-3line ）
+
+```{r}
+#| label: tbl-3line
+#| tbl-cap: "这是一张典型的三线表"
+
+knitr::kable(head(mtcars),  align = "c")
+```
+
+<br>
+
+答：
+
+<br>
+
+<br>
+
+<br>
+
+## 任务`r n_task()`：描点图dot
+
+利用EViews软件，绘制七个国家的通货膨胀率对年份的描点图（即以年份为横轴，并以通货膨胀率为纵轴）。将以上创建的图对象（graph![](../pic/object/Graph.png)）保存并命名为`graph_dot`。并按如下要求对图形样式进行修改和美化。最后将图片复制到如下word空白处！
+
+> **要求**：a.所有国家都放在一张图里；b.添加轴标题，横轴标题为`年份year`，纵轴标题为`通货膨胀率inflation rate`；c.横轴标签axis（年份变量）默认是2位数年份格式（如`80`），请修改为4位数年份格式（如`1980`）；d.将图例legend，移动放置在图形的右侧。
+
+
+答：按要求完成操作，并请将做好的图片复制到下处：
+
+<br>
+
+<br>
+
+## 任务`r n_task()`：散点图scatter
+
+利用EViews软件，绘制其他6个国家通货膨胀率对美国通货膨胀率（`inf_usa`）的散点图（即以美国通货膨胀率为横轴，并以其他国家通货膨胀率为纵轴）。将以上创建的图对象（graph![](../pic/object/Graph.png)）保存并命名为`graph_scatter`。并按如下要求对图形样式进行修改和美化。最后将图片复制到如下word空白处！
+
+> **要求**：a.散点图只放在一张大图里；b.每个国家分别对美国做散点图，并作为大图里的各个子图；c.按要求保存绘图对象。
+
+<br>
+
+> **温馨提示**：a.按住键盘键`Ctrl`，然后鼠标依次点选序列对象（series![](../pic/object/Series.png)），则可以根据需要选择多个序列对象，然后鼠标右键可以构造出组对象（group![](../pic/object/Group.png)）；b.鼠标点击序列对象的先后顺序，会影响序列对象在组对象里面的排序关系。c.组对象绘图时，EViews会默认排在前面的序列对象为横轴变量。d.大图和子图的设置过程：`graph type`设置里选择散点图`scatter` $\Rightarrow$ `Detail`里设置下拉选择`Multiple graph - First VS all`实现子图效果。
+
+
+答：按要求完成操作，并请将做好的图片复制到下处：
+
+<br>
+
+<br>
+
+
+
+## 任务`r n_task()`：经济分析
+
+你从这 7个国家的通货膨胀率中能得出什么初步的结论？
+
+答：
+
+<br>
+
+<br>
+
+## 任务`r n_task()`：统计分析
+
+哪个国家的通货膨胀率波动最大？如果需要用到统计指标来衡量这种波动性，你觉得在Eviews中可以创建哪些描述性统计量或分析手段？
+
+答：
+
+<br>
+
+<br>
+
+
+## 任务`r n_task()`：结论分析
+
+如果你发现这6个国家的通货膨胀率与美国的通货膨胀率同向变化，那是否表明美国的通货膨胀导致了其他国家的通货膨胀？ 为什么？
+
+答：
+
+<br>
+
+<br>

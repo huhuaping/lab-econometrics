@@ -1,0 +1,14 @@
+{
+  "hash": "6ca8c608b016efd3d5b6774c54c40aad",
+  "result": {
+    "markdown": "---\ntitle: \"Exercise Lab 02 课程作业（答题纸）\"\nsubtitle: \"一元回归OLS方法的分析过程\"\nauthor: \"任课教师：胡华平\"\ndate: \"2023-11-11\"\noutput: \n  bookdown::word_document2: \n    fig_caption:  true\n    toc: no\n    toc_depth: 4\n    section_numbering: true\n    reference_docx: ../template/template-handwrite-answer-sheet.docx\n---\n\n\n\n\n</br>\n\n学生姓名：_______________；学生学号：_______________；专业班级：_______________；\n\n</br>\n\n# 作业提交\n\n**提交材料**：\n\n- 根据作业要求，完成手写纸质答题纸一份，按要求填写姓名和学号。\n\n- 根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），文件命名为：\"姓名_学号.docx\"。\n\n\n**截止时间**：\n\n- 2021年11月16日（周二）\n\n\n\\newpage\n\n\n# 作答区域\n\n请在下面空白处按要求开始作答：\n\n</br>\n\n\n\\newpage",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

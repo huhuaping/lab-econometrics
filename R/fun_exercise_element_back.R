@@ -13,7 +13,7 @@
 #' 
 name_file <- function(num = 0, type,
                       id_demo ="2019000001", 
-                      name_demo ="张三", ext ="docx"){
+                      name_demo = "张三", ext = "docx"){
   name_file <- paste0(
     "lab",
     stringr::str_pad(num,2,'left','0'

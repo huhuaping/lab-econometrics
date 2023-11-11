@@ -31,7 +31,7 @@ get_students <- function(file, id_year, n_add){
       dataset = paste0(
         "dataset", 
         str_pad(1:nrow(.),width = 3,
-                side = "left",pad = "0")),
+                side = "l",pad = "0")),
       .before = "id") 
   return(out)
 }
