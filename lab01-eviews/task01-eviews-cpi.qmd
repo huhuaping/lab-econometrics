@@ -7,8 +7,8 @@ params:
       lab_num: "01"
       name_chn: 'EViews基础操作'
       name_eng: "eviews-basic"
-  hw_start: "2023-09-11"
-  hw_end: "2023-09-24"
+  hw_start: "2023-11-11"
+  hw_end: "2023-11-27"
   topic: 'eviews-basic'
   class: 'academic'
   id_year: '2022'

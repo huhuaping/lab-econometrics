@@ -9,7 +9,7 @@ params:
       name_chn: 'EViews基础操作'
       name_eng: "eviews-basic"
   hw_start: "2023-11-11"
-  hw_end: "2023-11-24"
+  hw_end: "2023-11-27"
   topic: 'cpi'
   class: 'academic'
   id_year: '2021'
@@ -38,13 +38,18 @@ library(here)
 source(here("R/set-global-only.R"))
 source(here("R/load-pkg-homework.R"))
 
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
 # some function to get exercise elements
 source(here("R/fun_exercise_element.R"), encoding = "UTF-8")
-
 # Generate lab information with parameters
 source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
-
 ```
+
 
 <br>
 
