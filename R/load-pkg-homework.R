@@ -12,6 +12,7 @@ library("xaringanExtra")
 library("knitr")
 library("ggplot2")
 library("DT")
+library("gt")
 library("latex2exp")
 
 # tidy
