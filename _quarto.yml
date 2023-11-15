@@ -11,6 +11,10 @@ project:
     - lab01-eviews/tips01-eviews-cpi.qmd
     - lab02-consumption/lab02-consumption.qmd
     - lab02-consumption/task02-consumption.qmd
+    - lab03-models/lab03-models.qmd
+    - lab03-models/task03-models.qmd
+    - lab04-multireg/lab04-multireg.qmd
+    - lab04-multireg/task04-multireg.qmd
 
 metadata-files:
   - _crossref.yml
@@ -51,6 +55,8 @@ website:
           contents:
             - lab01-eviews/task01-eviews-cpi.qmd
             - lab02-consumption/task02-consumption.qmd
+            - lab03-models/task03-models.qmd
+            - lab04-multireg/task04-multireg.qmd
         - section: "参考提示"
           contents:
             - lab01-eviews/tips01-eviews-cpi.qmd

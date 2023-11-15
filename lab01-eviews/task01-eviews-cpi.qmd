@@ -48,9 +48,9 @@ source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
 
 （1）实验目标：EViews菜单；EViews基本操作；CPI案例；实证分析过程。
 
-（2）实验任务：题目及答题纸.docx文件下载（请登陆西北农林科技大学在线教育综合平台）[lab01-eviews-cpi.docx](lab01-eviews-cpi.docx)
+（2）实验任务：题目及答题纸.docx文件下载`lab01-eviews-cpi.docx`（请登陆西北农林科技大学在线教育综合平台）[.](lab01-eviews-cpi.docx)
 
-（3）实验数据集：.xlsx数据文件下载（请登陆西北农林科技大学在线教育综合平台）[lab01-dataset.zip](dataset/lab01-dataset-`r params$teach_year`/lab01-dataset-`r params$teach_year`.zip)
+（3）实验数据集：.xlsx数据文件下载`lab01-dataset.zip`（请登陆西北农林科技大学在线教育综合平台）[.](dataset/lab01-dataset-`r params$teach_year`/lab01-dataset-`r params$teach_year`.zip)
 
 ### 实验提交
 

@@ -1,6 +1,6 @@
 ---
-title: "实验02：一元回归"
-subtitle: "家庭消费案例"
+title: "实验03：函数形式"
+subtitle: "食物支出案例"
 author: "任课教师：胡华平"
 date: "`r params$hw_start`"
 
@@ -10,12 +10,12 @@ execute:
 params:
   hand_out:
     value:
-      lab_num: 2
-      name_chn: 一元回归
-      name_eng: simple-reg
-  hw_start: '2023-11-20'
-  hw_end: '2023-11-27'
-  topic: 'consumption'
+      lab_num: 3
+      name_chn: 函数形式
+      name_eng: models
+  hw_start: '2023-11-27'
+  hw_end: '2023-12-04'
+  topic: 'models'
   class: 'under'
   id_year: '2021'
   teach_year: '2023'
@@ -46,15 +46,15 @@ source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
 ```
 
 
-## 实验2：一元回归及实证应用
+## 实验3：模型函数形式及实证应用
 
 ### 实验材料
 
 （1）实验目标：一元回归；OLS估计；预测；消费案例。
 
-（2）实验任务：题目及答题纸.docx文件下载`lab02-consumption.docx`（请登陆西北农林科技大学在线教育综合平台）[.](lab02-consumption.docx)
+（2）实验任务：题目及答题纸.docx文件下载`lab03-models.docx`（请登陆西北农林科技大学在线教育综合平台）[.](lab03-models.docx)
 
-（3）实验数据集：.xlsx数据文件下载`lab02-dataset.zip`（请登陆西北农林科技大学在线教育综合平台）[.](dataset/lab02-dataset-`r params$teach_year`/lab02-dataset-`r params$teach_year`.zip)
+（3）实验数据集：.xlsx数据文件下载`lab03-dataset.zip`（请登陆西北农林科技大学在线教育综合平台）[.](dataset/lab03-dataset-`r params$teach_year`/lab03-dataset-`r params$teach_year`.zip)
 
 ### 实验提交
 

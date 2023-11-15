@@ -85,8 +85,6 @@ source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
 - 请按上述要求命名各个提交文件。 系统提交页面中，务必让每个上传文件之间换行，保持提交页面布局美观！
 
 
-\newpage
-
 
 # 作业提示
 
