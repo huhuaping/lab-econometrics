@@ -1,19 +1,23 @@
 ---
-title: "实验01：EViews入门"
-subtitle: "工业国家CPI案例"
+title: "实验02：一元回归"
+subtitle: "家庭消费案例"
 author: "任课教师：胡华平"
 date: "`r params$hw_start`"
+
+execute: 
+  echo: false
+
 params:
   hand_out:
     value:
-      lab_num: "01"
-      name_chn: 'EViews基础操作'
-      name_eng: "eviews-basic"
-  hw_start: "2023-11-13"
-  hw_end: "2023-11-20"
-  topic: 'eviews-basic'
+      lab_num: 2
+      name_chn: 一元回归
+      name_eng: simple-reg
+  hw_start: '2023-11-20'
+  hw_end: '2023-11-27'
+  topic: 'consumption'
   class: 'under'
-  id_year: '2022'
+  id_year: '2021'
   teach_year: '2023'
   term: '2023'
   course_id:
@@ -42,15 +46,15 @@ source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
 ```
 
 
-## 实验1：EViews基础及实证应用
+## 实验2：一元回归及实证应用
 
 ### 实验材料
 
-（1）实验目标：EViews菜单；EViews基本操作；CPI案例；实证分析过程。
+（1）实验目标：一元回归；OLS估计；预测；消费案例。
 
-（2）实验任务：题目及答题纸.docx文件下载（请登陆西北农林科技大学在线教育综合平台）[lab01-eviews-cpi.docx](lab01-eviews-cpi.docx)
+（2）实验任务：题目及答题纸.docx文件下载（请登陆西北农林科技大学在线教育综合平台）[lab02-consumption.docx](lab02-consumption.docx)
 
-（3）实验数据集：.xlsx数据文件下载（请登陆西北农林科技大学在线教育综合平台）[lab01-dataset.zip](dataset/lab01-dataset-`r params$teach_year`/lab01-dataset-`r params$teach_year`.zip)
+（3）实验数据集：.xlsx数据文件下载（请登陆西北农林科技大学在线教育综合平台）[lab02-dataset.zip](dataset/lab02-dataset-`r params$teach_year`/lab02-dataset-`r params$teach_year`.zip)
 
 ### 实验提交
 

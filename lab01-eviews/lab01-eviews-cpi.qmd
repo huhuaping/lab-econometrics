@@ -1,6 +1,8 @@
 ---
 title: "实验01：EViews入门"
 subtitle: "工业化国家CPI案例的应用"
+author: "任课教师：胡华平"
+date: "`r params$hw_start`"
 
 params:
   hand_out:
@@ -8,10 +10,10 @@ params:
       lab_num: "01"
       name_chn: 'EViews基础操作'
       name_eng: "eviews-basic"
-  hw_start: "2023-11-11"
-  hw_end: "2023-11-27"
+  hw_start: "2023-11-13"
+  hw_end: "2023-11-20"
   topic: 'cpi'
-  class: 'academic'
+  class: 'under'
   id_year: '2021'
   teach_year: '2023'
   term: '2023'
@@ -19,7 +21,7 @@ params:
     value:
       academic: '6132001'
       major: 'pd7134001'
-      under: '123456'
+      under: '3133101'
 
 format:
   docx:
@@ -61,23 +63,24 @@ source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
 # 作业提交
 
 
-**作业发布时间**：`r start_line`
+**实验发布时间**：`r start_line`
 
 **提交截止时间**：`r end_line`
 
-**作业提交材料**：
+**实验提交材料**：
 
-（1）根据作业要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(type='word', num= lab.num, ext = 'docx')`。
+（1）根据实验要求，完成Office Word电子文档一份`.docx文件`（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(type='word', num= lab.num, ext = 'docx')`。
 
-（2）根据作业要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(type='eviews', num= lab.num, ext='wfl')`。
+（2）根据实验要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(type='eviews', num= lab.num, ext='wfl')`。
 
-**作业提交方式**：
+（3）根据实验要求，完成EViews相关操作，保存并提交1份EViews编程代码文件`.prg文件`，提交前请将文件命名为下述格式：`r  name_file(type='code', num= lab.num, ext='prg')`。
 
-- 按上述要求命名各个文件，然后将全部作业提交材料压缩为zip格式，并命名为：`r  paste0("lab",params$hand_out$lab_num, "-专业班级-姓名-学号.zip")`（如：`r paste0("lab",params$hand_out$lab_num,"-国贸2101-张帅帅-2021120208.zip")`）
 
-- 发送上述zip文件到电子邮箱：huhuaping01\@qq.com。请填写“邮件主题”为：`r  paste0("lab",params$hand_out$lab_num, "-专业班级-姓名-学号")`（如：`r paste0("lab",params$hand_out$lab_num,"-国贸2101-张帅帅-2021120208")`）。
+**实验提交方式**：
 
-- 点击发送邮件！你将收到一份邮件已收到的“自动回复”！
+- 登陆西北农林科技大学[在线教育综合平台](https://eol.nwafu.edu.cn/meol/index.do) ->> 进入课程《计量经济学》（胡华平主讲，课程编号`r params$course_id$under`） ->> 进入【课程作业】进行作业资料下载和作业提交。
+
+- 请按上述要求命名各个提交文件。 系统提交页面中，务必让每个上传文件之间换行，保持提交页面布局美观！
 
 \newpage
 

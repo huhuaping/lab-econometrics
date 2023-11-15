@@ -9,6 +9,8 @@ project:
     - lab01-eviews/lab01-eviews-cpi.qmd
     - lab01-eviews/task01-eviews-cpi.qmd
     - lab01-eviews/tips01-eviews-cpi.qmd
+    - lab02-consumption/lab02-consumption.qmd
+    - lab02-consumption/task02-consumption.qmd
 
 metadata-files:
   - _crossref.yml
@@ -48,6 +50,7 @@ website:
         - section: "实验任务"
           contents:
             - lab01-eviews/task01-eviews-cpi.qmd
+            - lab02-consumption/task02-consumption.qmd
         - section: "参考提示"
           contents:
             - lab01-eviews/tips01-eviews-cpi.qmd

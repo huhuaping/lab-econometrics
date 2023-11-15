@@ -1,0 +1,798 @@
+---
+title: "实验02：一元回归"
+subtitle: "家庭消费案例"
+author: "任课教师：胡华平"
+date: "`r params$hw_start`"
+
+execute: 
+  echo: false
+
+params:
+  hand_out:
+    value:
+      lab_num: 2
+      name_chn: 一元回归
+      name_eng: simple-reg
+  hw_start: '2023-11-20'
+  hw_end: '2023-11-27'
+  topic: 'consumption'
+  class: 'under'
+  id_year: '2021'
+  teach_year: '2023'
+  term: '2023'
+  course_id:
+    value:
+      academic: '6132001'
+      major: 'pd7134001'
+      under: '3133101'
+
+format:
+  docx:
+    #output-file: homework02-test.docx
+    number-sections: true
+    highlight-style: github
+    reference-doc: ../template/template-word-lab-exrecise.docx
+---
+
+```{r}
+#| label: setup-pkg
+#| echo: false
+#| warning: false
+library(here)
+source(here("R/set-global-only.R"))
+source(here("R/load-pkg-homework.R"))
+
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+# some function to get exercise elements
+source(here("R/fun_exercise_element.R"), encoding = "UTF-8")
+# Generate lab information with parameters
+source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
+```
+
+
+<br>
+
+学生姓名：_________；学生学号：___________；专业班级：__________
+
+<br>
+
+
+# 作业提交
+
+
+**实验发布时间**：`r start_line`
+
+**提交截止时间**：`r end_line`
+
+**实验提交材料**：
+
+（1）根据实验要求，完成Office Word电子文档一份`.docx文件`（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(type='word', num= lab.num, ext = 'docx')`。
+
+（2）根据实验要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(type='eviews', num= lab.num, ext='wfl')`。
+
+（3）根据实验要求，完成EViews相关操作，保存并提交1份EViews编程代码文件`.prg文件`，提交前请将文件命名为下述格式：`r  name_file(type='code', num= lab.num, ext='prg')`。
+
+
+**实验提交方式**：
+
+- 登陆西北农林科技大学[在线教育综合平台](https://eol.nwafu.edu.cn/meol/index.do) ->> 进入课程《计量经济学》（胡华平主讲，课程编号`r params$course_id$under`） ->> 进入【课程作业】进行作业资料下载和作业提交。
+
+- 请按上述要求命名各个提交文件。 系统提交页面中，务必让每个上传文件之间换行，保持提交页面布局美观！
+
+
+\newpage
+
+
+# 作业提示
+
+## 如何在word中编辑数学公式？
+
+（1）如果使用Office 2003版：“插入” $\Rightarrow$“对象”$\Rightarrow$“microsoft公式3.0”
+
+（2）如使用Office 2007/2010版：“插入”$\Rightarrow$“新公式”
+
+（3）使用独立公式软件`Mathtype`，任何Office版本都可以
+
+a.在`Mathtype`中编写公式$\Rightarrow$ 确定无误后复制公式$\Rightarrow$然后粘贴到word中。
+    
+b.在`Word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打开Mathtype软件，然后按上一步骤操作，修改完成后，点击保存即可。
+
+<br>
+
+## EViews对象的命名规则
+
+Eviews操作会得到各种计算结果，我们需要把计算结果以对象的形式保存在EViews的工作文件内。
+
+因此我们提前设计好了各种对象保存命名规则，以便计算过程中的连续性、一致性调用。下面 @tbl-remark 给出了含义、英文单词、命名简写和示例说明。
+
+```{r}
+# give the symbol data
+remark<-readxl::read_xlsx(
+  path = here("data/lab2-matrix-math.xlsx"),
+  sheet='symbols',range='A1:D17')
+```
+
+
+```{r}
+#| label: tbl-remark
+#| tbl-cap: "可能用到的Eviews对象的记号表达"
+
+name_eng <- c("index",
+              "mean",
+               "word","remark",
+              "example")
+name_chn <- c("序号",
+              "含义",
+              "英文单词","命名简写",
+              "EViews对象命名示例")
+remark %>%
+  add_column(index = 1:nrow(.)) %>%
+  select(all_of(name_eng)) %>%
+  rename_all(., ~all_of(name_chn)) %>%
+  kable(
+    booktabs = TRUE,
+    align = "l",
+    row.names=FALSE)
+```
+
+
+
+## EViews对象的命名参考
+
+考虑到本次实验课内容，EViews操作运算中可能需要保存和命名各类EViews对象，下面 @tbl-obj-rename 给出了命名规则，供大家在EViews操作中参照使用。
+
+```{r}
+# give the math data
+math_matrix<-readxl::read_xlsx(
+  path = here("data/lab2-matrix-math.xlsx"),
+  sheet='math',range='A1:F51')
+  ## give the eviews name data
+  var_name<-data.frame(t(math_matrix$name_eviews))
+  names(var_name)<-math_matrix$name_eng
+  ## give the math data
+  var_math<-data.frame(t(math_matrix$math))
+  names(var_math)<-math_matrix$name_eng
+
+```
+
+```{r}
+#| label: tbl-obj-rename
+#| tbl-cap: "计算对象、表达式及Eviews命名"
+
+name_eng <- c("index",
+              "name_chn","math",
+              "cat_eng",
+              #"obj_logo",
+              "name_eviews")
+name_chn <- c("序号",
+              "含义","数学表达式",
+              "对象类型",
+              #"EViews对象图标",
+              "对象命名")
+# try to add object logo
+ptn <- c("series", "scalar")
+rpl <- c(paste0(
+  "![](../pic/object/",
+  str_to_title(c('series', 'scalar')),
+  ")"))
+
+math_matrix %>%
+  add_column(index = 1:nrow(.)) %>%
+  mutate(
+    obj_logo = mgsub::mgsub(
+      string = cat_eng,
+      pattern =ptn,
+      replacement = rpl)
+    ) %>%
+  select(all_of(name_eng)) %>%
+  rename_all(., ~all_of(name_chn)) %>%
+  knitr::kable(
+    booktabs = TRUE, align = "c")
+```
+
+\newpage
+
+# 作业内容
+
+<!---（Gujarati2011，练习题）--->
+
+在一元线性回归的学习中，我们讨论了家庭收入（income）和消费支出（spend）案例。基于同一总体，每一个同学分别得到了自己的抽样数据（$n=10$），数据集见 @tbl-demo 。
+
+
+```{r}
+#| label: tbl-demo
+#| tbl-cap: "家庭收入与支出实验数据（n=10）"
+file_path <- here::here("data/lab2-mento-demon.xlsx")
+df_demo <- openxlsx::read.xlsx(file_path) %>%
+  select(obs, income, Y2) %>%
+  rename("spend" = "Y2")
+
+kable(df_demo, align = "c")
+
+```
+
+我们将建立一元线性回归模型：
+
+$$
+\begin{aligned}
+spend_i = \hat{\beta}_1 + \hat{\beta}_2 income_i + e_i 
+\end{aligned}
+$$ {#eq-simple}
+
+
+
+# 作业任务
+
+```{r task-counter}
+task_counter <- function() {
+  i <- 0
+  function() {
+    i <<- i + 1
+    i
+  }
+}
+
+n_task <- task_counter()
+
+```
+
+## 题目`r n_task()`：工作文件及数据导入
+
+（1）请大家下载本次作业数据文件（压缩文件zip）到本地电脑。
+
+> **温馨提示**：a.文件尽量不要放在电脑桌面，而是保存在自己清楚的文件夹路径下（如"D://econometrics//lab02"）；b.注意下载工具的使用，不是直接打开xlsx文件，而是要下载到本地电脑，然后再打开！
+
+答：此问不用作答，完成指定操作即可！
+
+<br>
+
+（2）打开EViews软件，创建工作文件（WF），命名为`r glue("lab0{lab.num}")`；以及建立工作页（page），命名为`r params$topic`。
+
+答：此问不用作答，完成指定操作即可！
+
+<br>
+
+（3）将工作文件项目保存到本地电脑`.wfl`文件，并命名为“`r  name_file(num= lab.num, type='eviews', ext='wfl')`”的形式。
+
+> **要求**：注意记住保存的文件夹路径，这个文件要提交到作业系统的！！！
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+（4）对xlsx数据文件进行处理。只保留自己的数据行。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+（5）将处理好后的数据导入到刚才建好的Eviews工作文件中，并在EViews窗口中按如下要求进行变量命名操作：
+
+> **要求**：在EViews窗口中，将原变量名（`income`和`spend`），分别重命名为（`x_upr`和`y_upr`）。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+
+## 题目`r n_task()`：计算机自动分析
+
+运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型进行回归分析。
+
+> **温馨提示**：注意参看选项，并正确设置模型。
+
+（1）在Eviews软件中，以方程对象（Equation![](../pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_main`。最后截图到下列空白处。
+ 
+答：
+
+<br>
+
+<br>
+
+（2）使用公式编辑器（或Mathtype软件），将上述EViews分析报告，手动整理成简要报告（四行报告，包括第1行样本回归方程、第2行对应的系数标准误、第3行对应的样本t统计量，以及第4行F检验值、p值、拟合优度等。具体形式见课件），将结果填写在下面空白处。
+
+答：
+
+<br>
+
+<br>
+
+（3）把以上计算机“自动报告”结果与你后续“手动计算”的结果进行比较，判断后续手动计算的每一步是否正确。
+
+> **温馨提示**：此小题不用作答，仅做后面参考。（要知道，后面手动计算中，一步错步步错！）。
+
+答：此题不需要作答！仅作提示！
+
+
+
+## 题目`r n_task()`：Eviews制图
+
+（1）利用Eviews将$(X,Y)$数据绘制**散点图**（scatter）。，并将EViews绘图对象（graph![](../pic/object/Graph.png)）保存且命名为`graph_scatter_xy`。最后将EViews绘图结果截图或复制到word下面空白处。
+
+> **温馨提示**：在Eviews中精修美化图形。
+
+
+答：数据的散点图
+
+<br>
+
+<br>
+
+（2）对残差序列$e_i$绘制**线图**(line plot)，并将EViews绘图对象（graph![](../pic/object/Graph.png)）保存且命名为`graph_line_ei`。最后将EViews绘图结果截图或复制到word下面空白处。
+
+> **温馨提示**：在Eviews中精修美化图形。
+
+答：残差的线图
+
+<br>
+
+<br>
+
+## 题目`r n_task()`：构建几个重要变量对象
+
+（1）请在EViews中，创建样本数$n$标量对象（Scalar![](../pic/object/Scalar.png)），保存并命名为`n`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码`scalar n=@obs(x_upr)`。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+<br>
+
+（2）请在EViews中，分别创建：因变量$Y_i$均值的标量对象（Scalar![](../pic/object/Scalar.png)），保存并命名为`y_avr_scl`。以及因变量$Y_i$均值的序列对象（Scalar![](../pic/object/Series.png)），保存并命名为`y_avr_ser`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码`scalar y_avr_scl=@mean(y_upr)`，以及代码`series y_avr_ser=@mean(y_upr)`。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+<br>
+
+（3）请在EViews中，分别创建：因变量$X_i$均值的标量对象（Scalar![](../pic/object/Scalar.png)），保存并命名为`x_avr_scl`。以及因变量$X_i$均值的序列对象（Scalar![](../pic/object/Series.png)），保存并命名为`x_avr_ser`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+<br>
+
+## 题目`r n_task()`：计算表FF和ff
+
+为了进行后续的计算工作，我们需要得到计算表FF和ff。请分别要要求完成下列步骤的操作。
+
+::: {.callout-tips}
+
+**温馨提示**：EViews计算过程中，产生的EViews对象的命名规则和命名参考，请参照前面提供的 @tbl-remark 和 @tbl-obj-rename。后续的所有题目都应如此！后面不再提示此条！
+
+:::
+
+```{r}
+logo <- "![](../pic/object/Series.png)"
+label <- c("x_upr","y_upr","x_upr_sqr","y_upr_sqr","xy_upr")
+FF_logo <- paste0(logo, label,collapse = '、')
+label <- c("x_lwr","y_lwr","x_lwr_sqr","y_lwr_sqr","xy_lwr")
+ff_logo <- paste0(logo, label,collapse = '、')
+```
+
+
+（1）请在EViews中，分别创建$X_i; Y_i; X^2_i; Y^2_i; X_iY_i$的FF序列对象（Series![](../pic/object/Series.png)），保存并分别命名为：`r  FF_logo`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码操作。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+<br>
+
+（2）请在EViews中，分别创建$x_i; y_i; x^2_i; y^2_i; x_iy_i$的ff序列对象（Series![](../pic/object/Series.png)），保存并分别命名为：`r  ff_logo`。
+
+> **温馨提示**：可以在EViews命令窗口中使用代码操作。
+
+答：此题不需要作答，完成指定操作并确保正确即可！
+
+<br>
+
+
+（3）在Eviews软件中，以组对象（Group![](../pic/object/Group.png)）形式保存，分别命名为`group_ff_upr`和`group_ff_lwr`。最后分别截图到下列空白处。
+
+答1：FF的组对象（Group![](../pic/object/Group.png)）`group_ff_upr`的截图
+
+<br>
+
+<br>
+
+答2：ff的组对象（Group![](../pic/object/Group.png)）`group_ff_lwr`的截图
+
+<br>
+
+<br>
+
+## 题目`r n_task()`：计算回归系数
+
+根据所给数据，利用Eviews软件，计算直线回归方程的回归系数。请在下面空白处写出公式、主要计算过程和计算结果；
+
+::: {.callout-tips}
+
+**温馨提示**：（0）EViews命令窗口中可以使用代码`@sum()`进行求和计算。（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）结果保留四位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
+
+:::
+
+答：
+
+$\hat{\beta}_2=$
+
+<br>
+
+$\hat{\beta}_1=$
+
+<br>
+
+## 题目`r n_task()`：SRF和FRM
+
+请写出样本回归模型（SRM）的理论表达式。并根据计算结果写出样本回归方程（SRF）的理论表达式和数值表达式。
+
+> **要求**：（1）采用公式编辑器；（2）样本回归方程（SRF）的数值表达式中，数值结果保持4位小数。
+
+答1：回归模型（SRM）的理论表达式（公式）
+
+<br>
+
+答2：样本回归方程（SRF）的理论表达式和数值表达式
+
+<br>
+
+<br>
+
+## 题目`r n_task()`：残差序列
+
+利用Eviews软件，先得到回归的残差$e_i$的序列对象，保存并命名为![](../pic/object/Series.png)`ei`，并进一步得到回归残差平方$e^2_i$的序列对象，保存并命名为![](../pic/object/Series.png)`ei_sqr`。
+
+最后将这两个序列构造为Group对象![](../pic/object/Group.png)，保存并命名为`group_resid`，最后将它截图到下面空白处。
+
+答：残差和残差平方序列的Group对象截图为：
+
+<br>
+
+<br>
+
+## 题目`r n_task()`：回归误差方差和标准差
+
+利用Eviews软件，计算回归方程的误差方差$\hat{\sigma}^2$及标准差$\hat{\sigma}$。请在下面空白处分别写出理论公式及计算结果。
+
+::: {.callout-tips}
+
+**温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
+
+:::
+
+
+答1：
+
+$\hat{\sigma}^2=$
+
+<br>
+
+答2：
+
+$\hat{\sigma}=$
+
+<br>
+
+## 题目`r n_task()`：计算回归系数的样本方差
+
+利用Eviews软件，分别计算处斜率系数的样本方差和标准差（$S_{\hat{\beta}_2}^2$、$S_{\hat{\beta}_2}^2$），以及截距系数的样本方差和标准差（$S_{\hat{\beta}_1}$、$S_{\hat{\beta}_1}$）。请在下面空白处分别写出理论公式及计算结果。
+
+> **温馨提示**：（0）EViews命令窗口中可以使用代码`@sqrt()`进行开根号计算。（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
+
+答：
+
+$S_{\hat{\beta}_2}^2=$
+
+<br>
+
+$S_{\hat{\beta}_2}=$
+
+<br>
+
+$S_{\hat{\beta}_1}^2=$
+
+<br>
+
+$S_{\hat{\beta}_1}=$
+
+<br>
+
+## 题目`r n_task()`：回归系数的t检验
+
+利用Eviews软件，首先请分别计算两个模型回归系数的样本t统计量值（$t^{\ast}_{\hat{\beta}}$）；然后使用EViews函数，得到给定$\alpha=0.05$时的t理论值（$t_{1-\alpha/2}(df)$）；最后根据计算结果完成对**斜率参数**的t检验过程。请在下面空白处分别写出理论公式及计算结果。
+
+
+（1）请写出回归系数样本t统计量$t^{\ast}_{\hat{\beta}}$的矩阵表达式。
+
+答：请补充完整下面的样本t统计量的理论计算公式：
+
+$t^{\ast}_{\hat{\beta}_2}=$
+
+$t^{\ast}_{\hat{\beta}_1}=$
+
+<br>
+
+
+（2）在EViews中，请分别计算并创建回归系数样本t统计量$t^{\ast}_{\hat{\beta}_2}$和$t^{\ast}_{\hat{\beta}_1}=$的标量对象，分别保存并命名为![](../pic/object/Scalar.png)`t_str_b2_hat`和![](../pic/object/Scalar.png)`t_str_b1_hat`。
+
+::: {.callout-tips}
+
+**温馨提示**：1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。2）EViews中按要求保存相关计算对象，并按规范命名。
+
+:::
+
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+
+（3）在EViews中，创建并得到如下两个t理论查表值（给定$\alpha=0.05$）的标量对象：$t_{1-\alpha/2}(df)$和$t_{alpha/2}(df)=$。分别保存并命名为![](../pic/object/Scalar.png)`t_0975`和![](../pic/object/Scalar.png)`t_0025`。
+
+::: {.callout-tips}
+
+**温馨提示**：可以在EViews命令窗口中使用如下代码进行操作：`scalar t_0975=@qtdist(0.975,df_rss)`，其中`@qtdist()`表示得到t值查表函数。
+
+:::
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+（4）根据回归系数t检验的步骤，利用以上计算结果。请在下列空白处完成对**斜率系数**$\beta_2$的t检验过程。
+
+::: {.callout-tips}
+
+**温馨提示**：1）要求采用“五步法”写完t检验过程；2）所有计算结果都保留4位小数即可。
+
+:::
+
+
+答：对**斜率系数**$\beta_2$的t检验过程：
+
+a.写出PRM模型：
+
+<br>
+
+b.提出原假设：$H_0= \quad \quad;H_0= \quad$
+
+<br>
+
+c.构造t分布：
+
+<br>
+
+d.计算样本t统计量及t查表值：
+
+<br>
+
+e.得出t检验结论：
+
+<br>
+
+
+## 题目`r n_task()`：方差分析表
+
+利用Eviews软件，计算得到回归方程的平方和分解式（TSS、ESS、RSS）和各自的自由度（$df_{TSS}$、$df_{RSS}$、$df_{ESS}$）<!---，并写出方差分析表--->。请在下面空白处分别写出理论公式及计算结果。
+
+::: {.callout-tips}
+
+**温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
+
+:::
+
+答：完成下述计算：
+
+总平方和$TSS=$  ； 自由度$df_{TSS}=$   。
+
+回归平方和$ESS=$  ； 自由度$df_{ESS}=$   。
+
+残差平方和$RSS=$  ； 自由度$df_{RSS}=$   。
+
+<br>
+
+## 题目`r n_task()`：计算相关系数和判定系数
+
+利用Eviews软件，计算得到自变量$X_i$与因变量$Y_i$的相关系数，以及回归方程的判定系数。请在下面空白处分别写出理论公式及计算结果。
+
+::: {.callout-tips}
+
+**温馨提示**：（1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。（2）计算结果保留4位小数。（3）EViews中按要求保存相关计算对象，并按规范命名。
+
+:::
+
+答1：相关系数$r_{(X,Y)}=$
+
+<br>
+
+答2：判定系数$r^2=$
+
+<br>
+
+
+
+## 题目`r n_task()`：回归方程整体显著性检验
+
+利用Eviews软件，首先请回归方程的样本F统计量值（$F^\ast$）；然后使用EViews函数，得到给定$\alpha=0.05$时的F理论值（$f_{1-\alpha}(df_1,df_2)$）；最后根据计算结果完成对回归方程整体显著性检验过程。请在下面空白处分别写出理论公式及计算结果。
+
+
+（1）请在下面空白处写出样本F统计量$F^\ast=$的理论表达式。
+
+答：请补充完整下面的样本F统计量的理论计算公式$F^\ast=$：
+
+<br>
+
+
+（2）在EViews中，请计算并创建样本F统计量$F^\ast=$的标量对象，保存并命名为![](../pic/object/Scalar.png)`f_str`。
+
+::: {.callout-tips}
+
+**温馨提示**：1）请务必与第2题自动分析结果进行核验，确认你的计算结果是正确的。2）EViews中按要求保存相关计算对象，并按规范命名。
+
+:::
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+
+（3）在EViews中，（给定$\alpha=0.05$）请计算并创建样本F统计量$f_{1-\alpha}(df_1,df_2)$的标量对象，保存并命名为![](../pic/object/Scalar.png)`f_095`。
+
+::: {.callout-tips}
+
+**温馨提示**：可以在EViews命令窗口中使用如下代码进行操作：`scalar f_095=@qfdist(0.95,df_ess,df_rss)`，其中`@qfdist()`表示得到F值查表函数。
+
+:::
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+
+（4）根据回归系数F检验的步骤，利用以上计算结果。请在下列空白处完成对回归模型整体显著性F检验的过程。
+
+::: {.callout-tips}
+
+**温馨提示**：1）要求采用“五步法”写完F检验过程；2）所有计算结果都保留4位小数即可。
+
+:::
+
+答：
+
+a.写出PRM模型：
+
+<br>
+
+b.提出原假设和备择假设：$H_0=;\quad \quad H_1=$
+
+<br>
+
+c.构造F分布：
+
+<br>
+
+d.计算样本F统计量及F查表值：
+
+<br>
+
+e.得出F检验结论：
+
+<br>
+
+
+## 题目`r n_task()`：预测问题（点预测）
+
+给定样本外$X_0 = 280$，请利用Eviews软件，分别计算均值和个值的点预测值。请在下面空白处分别分别按要求作答。
+
+> **温馨提示**：（1）计算结果保留4位小数。（2）EViews中按要求保存相关计算对象，并按规范命名。
+
+（1）请在下列空白处，分别写出均值和个值的点预测的理论计算公式。
+
+答：补全下列理论计算公式：
+
+均值的点预测值$E(Y|X=X_0)=$
+
+个值的点预测值$(Y_0|X=X_0)=$
+
+<br>
+
+（2）请在Eviews中，构建样本外拟合值$\hat{Y}_0$的标量对象，保存并命名为![](../pic/object/Scalar.png)`y0_hat`。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+
+## 题目`r n_task()`：预测问题（均值的区间预测）
+
+利用Eviews软件，首先构造并得到均值预测时需要用到的样本标准差$S_{\hat{Y}_0}$；然后利用t分布（给定$\alpha =0.05$）构造出均值的区间预测。
+
+（1）请在下列空白处，写出$\hat{Y}_0$的样本标准差$S_{\hat{Y}_0}$的理论计算公式：
+
+答：$S_{\hat{Y}_0}=\quad$
+
+<br>
+
+（2）请在下列空白处，写出均值预测$E(Y|X=X_0)$的置信区间的理论计算公式：
+
+答：补充下列计算公式：
+
+$$
+\begin{aligned}
+  \quad \leq E(Y|X=X_0) \leq \quad 
+\end{aligned}
+$$
+
+（3）请在Eviews中计算并创建$\hat{Y}_0$的样本标准差$S_{\hat{Y}_0}$的标量对象，保存并命名为：![](../pic/object/Scalar.png)`s_y0h`。
+
+> **温馨提示**：可以在EViews命令窗口中输入代码进行计算操作。注意开根号运算$\sqrt{\quad}$。
+
+答：完成上述指定操作并确保正确，最后将结果值誊写到下列对应处（仅填数值，并保留4位小数）：
+
+$S_{\hat{Y}_0} = \quad$
+
+<br>
+
+
+（4）请在Eviews中分别计算并创建均值预测$E(Y|X=X_0)$的置信区间的左界值和右界值的标量对象，分别保存并命名为：![](../pic/object/Scalar.png)`y_exp_lft`和![](../pic/object/Scalar.png)`y_exp_rht`。
+
+> **温馨提示**：可以在EViews命令窗口中输入代码进行计算操作。
+
+答：完成上述指定操作并确保正确，最后将结果值誊写到下列对应处（仅填数值，并保留4位小数）：
+
+左界值：$E(Y|X=X_0) \geq \quad$
+
+右界值：$E(Y|X=X_0) \leq \quad$
+
+<br>
+
+## 题目`r n_task()`：预测问题（个值的区间预测）
+
+利用Eviews软件，首先构造并得到个值预测时需要用到的样本标准差$S_{(Y_0 -\hat{Y}_0)}$；然后利用t分布（给定$\alpha =0.05$）构造出均值的区间预测。
+
+（1）请在下列空白处，写出$(Y_0 -\hat{Y}_0)$的样本标准差$S_{(Y_0 -\hat{Y}_0)}$的理论计算公式：
+
+答：$S_{(Y_0 -\hat{Y}_0)}=\quad$
+
+<br>
+
+（2）请在下列空白处，写出个值预测$(Y_0|X=X_0)$的置信区间的理论计算公式：
+
+答：补充下列计算公式：
+
+$$
+\begin{aligned}
+  \quad \leq (Y_0|X=X_0) \leq \quad 
+\end{aligned}
+$$
+
+（3）请在Eviews中计算并创建$(Y_0 -\hat{Y}_0)$的样本标准差$S_{(Y_0 -\hat{Y}_0)}$的标量对象，保存并命名为：![](../pic/object/Scalar.png)`s_y0_mns_y0h`。
+
+> **温馨提示**：可以在EViews命令窗口中输入代码进行计算操作。注意开根号运算$\sqrt{\quad}$。
+
+答：完成上述指定操作并确保正确，最后将结果值誊写到下列对应处（仅填数值，并保留4位小数）：
+
+$S_{(Y_0 -\hat{Y}_0)} = \quad$
+
+<br>
+
+
+（4）请在Eviews中分别计算并创建均值预测$(Y_0|X=X_0)$的置信区间的左界值和右界值的标量对象，分别保存并命名为：![](../pic/object/Scalar.png)`y_ind_lft`和![](../pic/object/Scalar.png)`y_ind_rht`。
+
+> **温馨提示**：可以在EViews命令窗口中输入代码进行计算操作。
+
+答：完成上述指定操作并确保正确，最后将结果值誊写到下列对应处（仅填数值，并保留4位小数）：
+
+左界值：$(Y_0|X=X_0) \geq \quad$
+
+右界值：$(Y_0|X=X_0) \leq \quad$
+
+<br>
+
