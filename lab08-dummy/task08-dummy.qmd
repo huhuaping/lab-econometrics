@@ -1,6 +1,6 @@
 ---
-title: "实验07：序列自相关"
-subtitle: "存货案例"
+title: "实验08：虚拟变量"
+subtitle: "印度工人案例"
 author: "任课教师：胡华平"
 date: "`r params$hw_start`"
 
@@ -10,12 +10,12 @@ execute:
 params:
   hand_out:
     value:
-      lab_num: 7
-      name_chn: 序列自相关
-      name_eng: correlation
-  hw_start: '2023-12-18'
-  hw_end: '2023-12-25'
-  topic: 'correlation'
+      lab_num: 8
+      name_chn: 虚拟变量
+      name_eng: dummy
+  hw_start: '2023-12-25'
+  hw_end: '2024-01-01'
+  topic: 'dummy'
   class: 'under'
   id_year: '2021'
   teach_year: '2023'
@@ -46,15 +46,15 @@ source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
 ```
 
 
-## 实验7：序列自相关问题及实证应用
+## 实验8：虚拟变量模型及实证应用
 
 ### 实验材料
 
-（1）实验目标：序列自相关问题；模型诊断；模型矫正；企业存货案例。
+（1）实验目标：定性变量；虚拟变量模型；交互项；印度工人案例。
 
-（2）实验任务：题目及答题纸.docx文件下载`lab07-correlation.docx`（请登陆西北农林科技大学在线教育综合平台）[.](lab07-correlation.docx)
+（2）实验任务：题目及答题纸.docx文件下载`lab08-dummy.docx`（请登陆西北农林科技大学在线教育综合平台）[.](lab08-dummy.docx)
 
-（3）实验数据集：.xlsx数据文件下载`lab07-dataset.zip`（请登陆西北农林科技大学在线教育综合平台）[.](dataset/lab07-dataset-`r params$teach_year`/lab07-dataset-`r params$teach_year`.zip)
+（3）实验数据集：.xlsx数据文件下载`lab08-dataset.zip`（请登陆西北农林科技大学在线教育综合平台）[.](dataset/lab08-dataset-`r params$teach_year`/lab08-dataset-`r params$teach_year`.zip)
 
 ### 实验提交
 

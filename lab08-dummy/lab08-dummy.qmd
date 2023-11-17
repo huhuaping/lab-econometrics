@@ -1,0 +1,676 @@
+---
+title: "实验08：虚拟变量"
+subtitle: "印度工人案例"
+author: "任课教师：胡华平"
+date: "`r params$hw_start`"
+
+execute: 
+  echo: false
+
+params:
+  hand_out:
+    value:
+      lab_num: 8
+      name_chn: 虚拟变量
+      name_eng: dummy
+  hw_start: '2023-12-25'
+  hw_end: '2024-01-01'
+  topic: 'dummy'
+  class: 'under'
+  id_year: '2021'
+  teach_year: '2023'
+  term: '2023'
+  course_id:
+    value:
+      academic: '6132001'
+      major: 'pd7134001'
+      under: '3133101'
+
+format:
+  docx:
+    #output-file: homework02-test.docx
+    number-sections: true
+    highlight-style: github
+    reference-doc: ../template/template-word-lab-exrecise.docx
+---
+
+
+```{r}
+#| label: setup-pkg
+#| echo: false
+#| warning: false
+library(here)
+source(here("R/set-global-only.R"))
+source(here("R/load-pkg-homework.R"))
+library("fastDummies")
+```
+
+```{r}
+#| echo: false
+#| warning: false
+
+# some function to get exercise elements
+source(here("R/fun_exercise_element.R"), encoding = "UTF-8")
+# Generate lab information with parameters
+source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
+```
+
+
+<br>
+
+学生姓名：_________；学生学号：___________；专业班级：__________
+
+<br>
+
+
+# 作业提交
+
+**实验发布时间**：`r start_line`
+
+**提交截止时间**：`r end_line`
+
+**实验提交材料**：
+
+（1）根据实验要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(type='word', num= lab.num, ext = 'docx')`。
+
+（2）根据实验要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(type='eviews', num= lab.num, ext='wfl')`。
+
+（3）根据实验要求，完成EViews相关操作，保存并提交1份EViews编程代码文件`.prg文件`，提交前请将文件命名为下述格式：`r  name_file(type='code', num= lab.num, ext='prg')`。
+
+
+**实验提交方式**：
+
+- 登陆西北农林科技大学[在线教育综合平台](https://eol.nwafu.edu.cn/meol/index.do) ->> 进入课程《计量经济学》（胡华平主讲，课程编号`r params$course_id$under`） ->> 进入【课程作业】进行作业资料下载和作业提交。
+
+- 请按上述要求命名各个提交文件。 系统提交页面中，务必让每个上传文件之间换行，保持提交页面布局美观！
+
+
+# 作业提示
+
+## 如何在word中编辑数学公式？
+
+（1）如果使用Office 2003版：“插入” $\Rightarrow$“对象”$\Rightarrow$“microsoft公式3.0”
+
+（2）如使用Office 2007/2010版：“插入”$\Rightarrow$“新公式”
+
+（3）使用独立公式软件`Mathtype`，任何Office版本都可以
+
+a.在`Mathtype`中编写公式$\Rightarrow$ 确定无误后复制公式$\Rightarrow$然后粘贴到word中。
+    
+b.在`Word`中修改Mathtype形式的公式：$\Rightarrow$ 双击公式则可以打开Mathtype软件，然后按上一步骤操作，修改完成后，点击保存即可。
+
+<br>
+
+<br>
+
+\newpage
+
+# 作业内容
+
+```{r, warning=FALSE, message=FALSE}
+# read basic ecercise data set
+require(readxl)
+require(janitor)
+file_path <- "data/Lab8-indian-wage.xlsx"
+df_base <- readxl::read_excel(here(file_path)) %>%
+    mutate(edu=dplyr::recode(edu,'illiteracy' = 'ill','primary' = 'pri', 'secondary' = 'mid', 'higher'= 'hig'),
+         dpt=dplyr::recode(dpt,'temporary' = 'tem','permanent' = 'per'),
+         sex=dplyr::recode(sex,'female' = 'f','male' = 'm')
+         ) %>%
+  #rename("quater"="YEAR") %>%
+  #janitor::clean_names(case = "small_camel") %>%
+  # make sure 
+  mutate(obs = 1:nrow(.)) %>%
+  select(obs, everything(.)) 
+
+n <- nrow(df_base)
+```
+
+
+> **温馨提示**：
+>（1）作业配套数据请在作业发布平台界面中自行下载。
+>（2）每个同学的数据都不一样（但样本数相同$n=`r n`$）。请下载数据表后，按后面作业要求找到自己的数据，并进行Excel预处理（以便导入到Eviews）。
+
+
+
+
+为了分析一国存货量与销售额的关系，我们考虑如下所示的一些变量（具体定义见 @tbl-vars ）：
+
+```{r tbl-vars}
+#| label: tbl-vars
+#| tbl-cap: "变量定义及说明"
+
+label_chn<-c("工人编号","工人工资",
+             "年龄",'教育水平',
+             '合同类型','性别')
+
+label_def <-c('序号(observations)','美元/周(\\$/week)',
+          '岁(year)','ill=文盲(illiteracy)；pri=初等教育(primary)；mid=中等教育(middle)；hig=高等教育(higher)',
+          'tem=短期合同(temporary)；per=长期合同(permanent)',
+          'f=女(female)；m=男(male)')
+
+
+label_eng <- names(df_base)
+df_vars <- tibble("变量_代码"= names(df_base),
+                  "变量_中文" = label_chn,
+                  "定义和取值" = label_def)
+
+df_vars %>%
+  kable(., align = 'c')
+
+```
+
+
+
+下 @fig-data-show 给出了存货与销售额实验案例的学生上机操作数据。
+
+
+```{r}
+#| label: fig-data-show
+#| fig-cap: !expr 'glue("印度工人工资案例的学生实验数据（n={n}）")'
+
+df_base %>%
+  DT::datatable(
+    options = list(
+      pageLength=10,
+      dom="tip")
+  )
+```
+
+\newpage
+
+# 作业任务
+
+```{r task-counter}
+task_counter <- function() {
+  i <- 0
+  function() {
+    i <<- i + 1
+    i
+  }
+}
+n_task <- task_counter()
+
+
+```
+
+
+（1）请大家下载本次作业数据文件到本地电脑。
+
+> **温馨提示**：a.文件尽量不要放在电脑桌面，而是保存在自己清楚的文件夹路径下（如"D://econometrics//lab08"）；b.注意下载工具的使用，不是直接打开xlsx文件，而是要下载到本地电脑，然后再打开！
+
+答：此问不用作答，完成指定操作即可！
+
+<br>
+
+（2）打开EViews软件，创建工作文件（WF），命名为`r lab_topic`；以及建立工作页（page），命名为`r params$topic`。
+
+答：此问不用作答，完成指定操作即可！
+
+<br>
+
+（3）将工作文件项目保存到本地电脑`.wfl`文件，并命名为“`r  name_file(num= lab.num, type='eviews', ext='wfl')`”的形式。
+
+> **要求**：注意记住保存的文件夹路径，这个文件要提交到作业系统的！！！
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+（4）对xlsx数据文件进行清洗处理，只保留必要数据列：`r paste0(names(df_base),collapse='、')`）。删除其他个人信息列。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+（4）将清洗处理好后的数据导入到刚才建好的Eviews工作文件中。
+
+答：此问不用作答，完成指定操作并确保正确即可！
+
+<br>
+
+## 题目`r n_task()`：虚拟变量编码
+
+根据案例情形，数据集中存在三个定性变量$(edu_i,dpt_i,sex_i)$，我们需要依次将它们转换为各自的虚拟变量体系：
+
+```{r}
+df_dummy <- df_base %>%
+  fastDummies::dummy_cols(select_columns = c("edu","dpt","sex"))
+
+mod_poly <- formula(wage~age+I(age^2))
+
+mod_add_only <- formula(wage~edu_pri+edu_mid+edu_hig+dpt_per+sex_m)
+
+
+mod_cross_full <- formula(wage~I(dpt_per*sex_m)+I(dpt_per*edu_pri)+I(dpt_per*edu_mid)+I(dpt_per*edu_hig)+I(sex_m*edu_pri)+I(sex_m*edu_mid)+I(sex_m*edu_hig))
+
+mod_cross_sex <- formula(wage~edu_pri+edu_mid+edu_hig+dpt_per+sex_m+I(sex_m*edu_pri)+I(sex_m*edu_mid)+I(sex_m*edu_hig))
+
+
+mod_hybrid <- formula(wage~age+I(age^2)+edu_pri+edu_mid+edu_hig+dpt_per+sex_m+I(sex_m*edu_pri)+I(sex_m*edu_mid)+I(sex_m*edu_hig))
+
+```
+
+
+$$
+\begin{aligned}
+&edu \Longrightarrow  
+  \begin{cases}
+    edu\_ill  =
+    \begin{cases}
+    1, & \text{ill}\\
+    0, & \text{not ill}
+    \end{cases} \\
+    edu\_pri = 
+    \begin{cases}
+    1, & \text{pri}\\
+    0, & \text{not pri}
+    \end{cases} \\
+    edu\_mid  =
+    \begin{cases}
+    1, & \text{mid}\\
+    0, & \text{not mid}
+    \end{cases}\\
+     edu\_hig  =
+    \begin{cases}
+    1, & \text{hig}\\
+    0, & \text{not hig}
+    \end{cases}
+  \end{cases}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+&dpt \Longrightarrow  
+  \begin{cases}
+    dpt\_tem  =
+    \begin{cases}
+    1, & \text{tem}\\
+    0, & \text{not tem}
+    \end{cases} \\
+    dpt\_per = 
+    \begin{cases}
+    1, & \text{per}\\
+    0, & \text{not per}
+    \end{cases} 
+  \end{cases}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+&sex \Longrightarrow  
+  \begin{cases}
+    sex\_f  =
+    \begin{cases}
+    1, & \text{f}\\
+    0, & \text{not f}
+    \end{cases} \\
+    sex\_m = 
+    \begin{cases}
+    1, & \text{m}\\
+    0, & \text{not m}
+    \end{cases} 
+  \end{cases}
+\end{aligned}
+$$
+
+
+（1）请你按照上述规则，在EViews中 把定性变量**教育水平**$edu_i$（m=4）设置成虚拟变量体系。然后把$edu_i$序列以及其4个虚拟变量序列，以组对象的形式保存并命名为：![](../pic/object/Group.png)`group_edu`。最后将这个组对象元素截图到如下空白处。（**要求**：截图10个样本长度即可）。
+
+> **温馨提示**：在EViews命令窗口中输入并运行如下代码`series edu_ill=@recode(edu="ill",1,0)`
+
+答：截图如下
+
+<br>
+
+<br>
+
+<br>
+
+
+（2）请你按照上述规则，在EViews中 把定性变量**合同类型**$dpt_i$（m=2）设置成虚拟变量体系。然后把$dpt_i$序列以及其2个虚拟变量序列，以组对象的形式保存并命名为：![](../pic/object/Group.png)`group_dpt`。最后将这个组对象元素截图到如下空白处。（**要求**：截图10个样本长度即可）。
+
+答：截图如下
+
+<br>
+
+<br>
+
+<br>
+
+
+（3）请你按照上述规则，在EViews中 把定性变量**性别**$sex_i$（m=2）设置成虚拟变量体系。然后把$sex_i$序列以及其2个虚拟变量序列，以组对象的形式保存并命名为：![](../pic/object/Group.png)`group_sex`。最后将这个组对象元素截图到如下空白处。（**要求**：截图10个样本长度即可）。
+
+答：截图如下
+
+<br>
+
+<br>
+
+<br>
+
+
+## 题目`r n_task()`：定量变量的线性回归模型
+
+如果可以将工资变量（$wage_i$）对年龄变量（$age_i$）进行如下的线性建模（见模型 @eq-poly-model ）：
+
+
+```{r, results='asis'}
+yvars <- "wage"
+xvars <- c("age","age^2")
+out <- xmerit::qx.psm(
+  x =xvars , y = yvars,
+  begin = 1,type = "srf",
+  #greek.n = length(xvars)+1,
+  n.row = 3,
+  obs= "i",
+  lm.label = "poly-model",
+  lm.tag = "polynomial model",
+  no_dollar = FALSE)
+```
+
+（1）运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型（见式 @eq-poly-model ）进行回归分析。在Eviews软件中，以方程对象（Equation![](../pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_poly`。最后截图到下列空白处。
+
+
+答：
+
+<br>
+
+<br>
+
+```{r, results='asis', eval=FALSE}
+
+lx_out2 <- xmerit::qx.est(
+  lm.mod = mod_poly, 
+  lm.dt = df_dummy,
+  style = c('srf'),
+  obs = "i",
+  inf = c('over','fit','Ftest'),
+  lm.label = 'poly',
+  no_dollar = FALSE)
+
+```
+
+（2）根据以上模型（见式 @eq-poly-model ）的EViews回归结果，请你计算出**年龄为30岁**工人的工资的估计值。（**要求**：写出主要计算过程，结果保留2位小数。）
+
+
+答：
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+## 题目`r n_task()`：仅含定性变量模型（加法形式）
+
+（1）考虑将工资变量（$wage_i$）对三个定性变量（$edu_i,dpt_i,sex_i$）进行**加法形式**的虚拟变量线性回归建模。请你写出以**\{仅有文盲学历和临时合同的男性\}**工人为基础组的虚拟变量回归总体模型。（**要求**：回归系数参数用$\alpha_1,\alpha_2,\cdots$表示；随机干扰项用$v_i$表示）。
+
+答：
+
+$$
+\begin{aligned}
+wage_i & = \quad \quad \quad &&\text{(quality model)}
+\end{aligned}
+$$ {#eq-quality-model}
+
+
+<br>
+
+<br>
+
+<br>
+
+
+（2）运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型（见式 @eq-quality-model ）进行回归分析。在Eviews软件中，以方程对象（Equation![](../pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_quality`。最后截图到下列空白处。
+
+
+答：
+
+<br>
+
+<br>
+
+```{r, results='asis', eval=FALSE}
+
+lx_out2 <- xmerit::qx.est(
+  lm.mod = mod_add_only, 
+  lm.dt = df_dummy,
+  style = c('srf'),
+  obs = "i",
+  inf = c('over','fit','Ftest'),
+  lm.label = 'add-only',
+  no_dollar = FALSE)
+
+```
+
+
+（2）根据以上模型（见式 @eq-poly-model ）的EViews回归结果，请你计算出**\{仅有文盲学历和临时合同的男性\}**工人的工资的估计值；以及**\{有高学历和临时合同的女性\}**工人的工资的估计值。（**要求**：写出主要计算过程，结果保留2位小数。）
+
+
+答：a）**\{仅有文盲学历和临时合同的男性\}**工人的工资的估计值
+
+<br>
+
+<br>
+
+<br>
+
+b）**\{有高学历和临时合同的女性\}**工人的工资的估计值
+
+<br>
+
+<br>
+
+<br>
+
+
+## 题目`r n_task()`：仅含定性变量模型（完全乘法形式）
+
+（1）考虑将工资变量（$wage_i$）对三个定性变量（$edu_i,dpt_i,sex_i$）进行**完全乘法形式**的虚拟变量线性回归建模（也即只出现交叉项，不含独立加法项）。请你写出以**\{仅有文盲学历和临时合同的男性\}**工人为基础组的虚拟变量回归总体模型。（**要求**：回归系数参数用$\gamma_1,\gamma_2,\cdots$表示；随机干扰项用$v_i$表示）。
+
+答：
+
+$$
+\begin{aligned}
+wage_i & = \quad \quad \quad &&\text{(cross full)} 
+\end{aligned}
+$$ {#eq-cross-full}
+
+<br>
+
+<br>
+
+<br>
+
+
+（2）运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型（见式 @eq-quality-model ）进行回归分析。在Eviews软件中，以方程对象（Equation![](../pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_cross_full`。最后截图到下列空白处。
+
+
+答：
+
+<br>
+
+<br>
+
+```{r, results='asis', eval=FALSE}
+
+lx_out2 <- xmerit::qx.est(
+  lm.mod = mod_cross_full, 
+  lm.dt = df_dummy,lm.n = 2,
+  style = c('srf'),
+  obs = "i",
+  inf = c('over','fit','Ftest'),
+  lm.label = 'coss-full',
+  no_dollar = FALSE)
+
+```
+
+
+（2）根据以上模型（见式 @eq-cross-full ）的EViews回归结果，请你计算出**\{仅有文盲学历和临时合同的男性\}**工人的工资的估计值；以及**\{有高学历和临时合同的女性\}**工人的工资的估计值。（**要求**：写出主要计算过程，结果保留2位小数。）
+
+
+答：a）**\{仅有文盲学历和临时合同的男性\}**工人的工资的估计值
+
+<br>
+
+<br>
+
+<br>
+
+b）**\{有高学历和临时合同的女性\}**工人的工资的估计值
+
+<br>
+
+<br>
+
+<br>
+
+## 题目`r n_task()`：仅含定性变量模型（部分混合形式）
+
+（1）考虑将工资变量（$wage_i$）对三个定性变量（$edu_i,dpt_i,sex_i$）进行**部分混合形式**的虚拟变量线性回归建模（也即：定性变量的虚拟变量独立项加法形式进入；但明确要求$sex_i$与$edu_i$的交叉项进入，且其他交叉项不进入模型）。请你写出以**\{仅有文盲学历和临时合同的男性\}**工人为基础组的虚拟变量回归总体模型。（**要求**：回归系数参数用$\gamma_1,\gamma_2,\cdots$表示；随机干扰项用$v_i$表示）。
+
+答：
+
+$$
+\begin{aligned}
+wage_i & = \quad \quad \quad &&\text{(cross sex)}
+\end{aligned}
+$$ {#eq-cross-sex}
+
+<br>
+
+<br>
+
+<br>
+
+
+（2）运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型（见式 @eq-cross-sex ）进行回归分析。在Eviews软件中，以方程对象（Equation![](../pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_cross_sex`。最后截图到下列空白处。
+
+
+答：
+
+<br>
+
+<br>
+
+```{r, results='asis', eval=FALSE}
+
+lx_out2 <- xmerit::qx.est(
+  lm.mod = mod_cross_sex, 
+  lm.dt = df_dummy,lm.n = 2,
+  style = c('srf'),
+  obs = "i",
+  inf = c('over','fit','Ftest'),
+  lm.label = 'cross-sex',
+  no_dollar = FALSE)
+
+```
+
+
+（2）根据以上模型（见式 @eq-cross-sex ）的EViews回归结果，请你计算出**\{仅有文盲学历和临时合同的男性\}**工人的工资的估计值；以及**\{有高学历和临时合同的女性\}**工人的工资的估计值。（**要求**：写出主要计算过程，结果保留2位小数。）
+
+
+答：a）**\{仅有文盲学历和临时合同的男性\}**工人的工资的估计值
+
+<br>
+
+<br>
+
+<br>
+
+b）**\{有高学历和临时合同的女性\}**工人的工资的估计值
+
+<br>
+
+<br>
+
+<br>
+
+## 题目`r n_task()`：同时含定性和定量变量模型（部分混合形式）
+
+（1）考虑将工资变量（$wage_i$）对定量变量（$age_i$,$age^2_i$），以及三个定性变量（$edu_i,dpt_i,sex_i$）进行**部分混合形式**的虚拟变量线性回归建模（也即：定性变量的虚拟变量独立项加法形式进入；但明确要求$sex_i$与$edu_i$的交叉项进入，其他交叉项不进入模型）。请你写出以**\{仅有文盲学历和临时合同的男性\}**工人为基础组的虚拟变量回归总体模型。（**要求**：回归系数参数用$\gamma_1,\gamma_2,\cdots$表示；随机干扰项用$v_i$表示）。
+
+答：
+
+$$
+\begin{aligned}
+wage_i & = \quad \quad \quad &&\text{(cross hybrid)}
+\end{aligned}
+$$ {#eq-cross-hybrid}
+
+<br>
+
+<br>
+
+<br>
+
+
+（2）运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型（见式 @eq-cross-hybrid ）进行回归分析。在Eviews软件中，以方程对象（Equation![](../pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_cross_hybrid`。最后截图到下列空白处。
+
+
+答：
+
+<br>
+
+<br>
+
+```{r, results='asis', eval=FALSE}
+
+lx_out2 <- xmerit::qx.est(
+  lm.mod = mod_hybrid, 
+  lm.dt = df_dummy,lm.n = 2,
+  style = c('srf'),
+  obs = "i",
+  inf = c('over','fit','Ftest'),
+  lm.label = 'cross-hybrid',
+  no_dollar = FALSE)
+
+```
+
+
+（2）根据以上模型（见式 @eq-cross-sex ）的EViews回归结果，请你计算出**\{仅有文盲学历和临时合同的男性\}**工人的工资的估计值；以及**\{有高学历和临时合同的女性\}**工人的工资的估计值。（**要求**：写出主要计算过程，结果保留2位小数。）
+
+
+答：a）**\{仅有文盲学历和临时合同的30岁男性\}**工人的工资的估计值
+
+<br>
+
+<br>
+
+<br>
+
+b）**\{有高学历和临时合同的30岁女性\}**工人的工资的估计值
+
+<br>
+
+<br>
+
+<br>
+
+
+## 题目`r n_task()`：应用分析
+
+根据上述多个回归模型（见式 @eq-poly-model 、式 @eq-quality-model 、式 @eq-cross-full 、式 @eq-cross-sex 、式 @eq-cross-hybrid ）和EViews分析结果，你最终希望采用哪一个分析模型？请你判断女性工人是否受到了工资歧视？请简要说明你的理由和看法。
+
+答：
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+
+
+

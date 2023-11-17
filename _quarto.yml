@@ -21,6 +21,8 @@ project:
     - lab06-hetero/task06-hetero.qmd
     - lab07-correlation/lab07-correlation.qmd
     - lab07-correlation/task07-correlation.qmd
+    - lab08-dummy/lab08-dummy.qmd
+    - lab08-dummy/task08-dummy.qmd
 
 metadata-files:
   - _crossref.yml
@@ -66,6 +68,7 @@ website:
             - lab05-colinearity/task05-colinearity.qmd
             - lab06-hetero/task06-hetero.qmd
             - lab07-correlation/task07-correlation.qmd
+            - lab08-dummy/task08-dummy.qmd
         - section: "参考提示"
           contents:
             - lab01-eviews/tips01-eviews-cpi.qmd
