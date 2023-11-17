@@ -1,0 +1,79 @@
+---
+title: "实验06：异方差问题"
+subtitle: "高管薪水案例"
+author: "任课教师：胡华平"
+date: "`r params$hw_start`"
+
+execute: 
+  echo: false
+
+params:
+  hand_out:
+    value:
+      lab_num: 6
+      name_chn: 异方差问题
+      name_eng: hetero
+  hw_start: '2023-12-11'
+  hw_end: '2023-12-18'
+  topic: 'hetero'
+  class: 'under'
+  id_year: '2021'
+  teach_year: '2023'
+  term: '2023'
+  course_id:
+    value:
+      academic: '6132001'
+      major: 'pd7134001'
+      under: '3133101'
+---
+
+```{r}
+#| label: setup-pkg
+#| echo: false
+#| warning: false
+
+library(here)
+source(here("R/set-global-only.R"))
+source(here("R/load-pkg-homework.R"))
+require(fontawesome)
+
+# some function to get exercise elements
+source(here("R/fun_exercise_element.R"), encoding = "UTF-8")
+
+# Generate lab information with parameters
+source(here("R/_pre-lab-pars.R"), encoding = "UTF-8")
+
+```
+
+
+## 实验6：异方差问题及实证应用
+
+### 实验材料
+
+（1）实验目标：异方差问题；模型诊断；模型矫正；高管薪水工资案例。
+
+（2）实验任务：题目及答题纸.docx文件下载`lab06-hetero.docx`（请登陆西北农林科技大学在线教育综合平台）[.](lab06-hetero.docx)
+
+（3）实验数据集：.xlsx数据文件下载`lab06-dataset.zip`（请登陆西北农林科技大学在线教育综合平台）[.](dataset/lab06-dataset-`r params$teach_year`/lab06-dataset-`r params$teach_year`.zip)
+
+### 实验提交
+
+
+**实验发布时间**：`r start_line`
+
+**提交截止时间**：`r end_line`
+
+**实验提交材料**：
+
+（1）根据实验要求，完成Office Word电子文档一份（注意不能是wps文档），提交前请将文件命名为下述格式：`r  name_file(type='word', num= lab.num, ext = 'docx')`。
+
+（2）根据实验要求，完成EViews相关操作，保存并提交1份EViews工作文件`.wfl文件`，提交前请将文件命名为下述格式：`r  name_file(type='eviews', num= lab.num, ext='wfl')`。
+
+（3）根据实验要求，完成EViews相关操作，保存并提交1份EViews编程代码文件`.prg文件`，提交前请将文件命名为下述格式：`r  name_file(type='code', num= lab.num, ext='prg')`。
+
+
+**实验提交方式**：
+
+- 登陆西北农林科技大学[在线教育综合平台](https://eol.nwafu.edu.cn/meol/index.do) ->> 进入课程《计量经济学》（胡华平主讲，课程编号`r params$course_id$under`） ->> 进入【课程作业】进行作业资料下载和作业提交。
+
+- 请按上述要求命名各个提交文件。 系统提交页面中，务必让每个上传文件之间换行，保持提交页面布局美观！

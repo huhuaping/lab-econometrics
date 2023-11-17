@@ -17,6 +17,8 @@ project:
     - lab04-multireg/task04-multireg.qmd
     - lab05-colinearity/lab05-colinearity.qmd
     - lab05-colinearity/task05-colinearity.qmd
+    - lab06-hetero/lab06-hetero.qmd
+    - lab06-hetero/task06-hetero.qmd
 
 metadata-files:
   - _crossref.yml
@@ -60,6 +62,7 @@ website:
             - lab03-models/task03-models.qmd
             - lab04-multireg/task04-multireg.qmd
             - lab05-colinearity/task05-colinearity.qmd
+            - lab06-hetero/task06-hetero.qmd
         - section: "参考提示"
           contents:
             - lab01-eviews/tips01-eviews-cpi.qmd
