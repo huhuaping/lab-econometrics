@@ -403,7 +403,7 @@ for (i in 1:length(xvars)) {
 答：
 
 ```{r}
-#| label: tbl-tab-diag-aux
+#| label: tbl-diag-aux
 #| tbl-cap: "辅助回归判定系数诊断法"
 diag_aux <- tibble(
   "模型" = c( paste0("辅助模型",1:8)),
@@ -473,14 +473,14 @@ a.诊断的主要依据是：
 
 </br>
 
-b.诊断的数值和结论见 @tbl-tab-diag-vif ：
+b.诊断的数值和结论见 @tbl-diag-vif ：
 
 </br>
 
 </br>
 
 ```{r}
-#| label: tbl-tab-diag-vif
+#| label: tbl-diag-vif
 #| tbl-cap: "VIF和TOL诊断法"
 #| results: asis
 
