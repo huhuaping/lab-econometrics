@@ -24,6 +24,7 @@ project:
     - lab08-dummy/lab08-dummy.qmd
     - lab08-dummy/task08-dummy.qmd
 
+lang: zh
 metadata-files:
   - _crossref.yml
   

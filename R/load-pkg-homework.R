@@ -18,6 +18,7 @@ library("latex2exp")
 # tidy
 require(lubridate)
 require(mgsub)
+library(scales)
 
 # github repo
 #renv::install("jirilukavsky/pdf2pptx")

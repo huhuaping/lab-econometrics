@@ -235,26 +235,41 @@ n_task <- task_counter()
 
 ```{r}
 df_dummy <- df_base %>%
-  fastDummies::dummy_cols(select_columns = c("edu","dpt","sex"))
+  fastDummies::dummy_cols(
+    select_columns = c("edu","dpt","sex")
+    )
 
 mod_poly <- formula(wage~age+I(age^2))
 
-mod_add_only <- formula(wage~edu_pri+edu_mid+edu_hig+dpt_per+sex_m)
+mod_add_only <- formula(
+  wage~edu_pri+edu_mid+edu_hig+dpt_per+sex_m
+  )
 
 
-mod_cross_full <- formula(wage~I(dpt_per*sex_m)+I(dpt_per*edu_pri)+I(dpt_per*edu_mid)+I(dpt_per*edu_hig)+I(sex_m*edu_pri)+I(sex_m*edu_mid)+I(sex_m*edu_hig))
+mod_cross_full <- formula(
+  wage~I(dpt_per*sex_m)+I(dpt_per*edu_pri)+I(dpt_per*edu_mid)
+  +I(dpt_per*edu_hig)+I(sex_m*edu_pri)+I(sex_m*edu_mid)
+  +I(sex_m*edu_hig)
+  )
+attr(terms(mod_cross_full), "variables")
 
-mod_cross_sex <- formula(wage~edu_pri+edu_mid+edu_hig+dpt_per+sex_m+I(sex_m*edu_pri)+I(sex_m*edu_mid)+I(sex_m*edu_hig))
+mod_cross_sex <- formula(
+  wage~edu_pri+edu_mid+edu_hig+dpt_per
+  +sex_m+I(sex_m*edu_pri)+I(sex_m*edu_mid)+I(sex_m*edu_hig)
+  )
 
 
-mod_hybrid <- formula(wage~age+I(age^2)+edu_pri+edu_mid+edu_hig+dpt_per+sex_m+I(sex_m*edu_pri)+I(sex_m*edu_mid)+I(sex_m*edu_hig))
+mod_hybrid <- formula(
+  wage~age+I(age^2)+edu_pri+edu_mid+edu_hig+dpt_per
+  +sex_m+I(sex_m*edu_pri)+I(sex_m*edu_mid)+I(sex_m*edu_hig)
+  )
 
 ```
 
 
 $$
 \begin{aligned}
-&edu \Longrightarrow  
+&edu \{ill, pri, mid, hig \}\Longrightarrow  
   \begin{cases}
     edu\_ill  =
     \begin{cases}
@@ -282,7 +297,7 @@ $$
 
 $$
 \begin{aligned}
-&dpt \Longrightarrow  
+&dpt \{tem, per\} \Longrightarrow  
   \begin{cases}
     dpt\_tem  =
     \begin{cases}
@@ -300,7 +315,7 @@ $$
 
 $$
 \begin{aligned}
-&sex \Longrightarrow  
+&sex \{f, m\} \Longrightarrow  
   \begin{cases}
     sex\_f  =
     \begin{cases}
@@ -424,6 +439,23 @@ $$ {#eq-quality-model}
 <br>
 
 <br>
+
+```{r, results='asis'}
+#| eval: false
+
+yvars <- "wage"
+xvars <- all.vars(mod_add_only)[-1]
+
+out <- xmerit::qx.psm(
+  x =xvars , y = yvars,
+  begin = 1,type = "srf",
+  #greek.n = length(xvars)+1,
+  n.row = 3,
+  obs= "i",
+  lm.label = "srf-add-only",
+  #lm.tag = "polynomial model",
+  no_dollar = FALSE)
+```
 
 
 （2）运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），对上述模型（见式 @eq-quality-model ）进行回归分析。在Eviews软件中，以方程对象（Equation![](../pic/object/Equation.png)）形式保存上述回归结果，并命名为`eq_quality`。最后截图到下列空白处。
@@ -651,9 +683,7 @@ b）**\{有高学历和临时合同的30岁女性\}**工人的工资的估计值
 <br>
 
 <br>
-
-
-## 题目`r n_task()`：应用分析
+## 题目`r n_task()`：模型比较分析
 
 根据上述多个回归模型（见式 @eq-poly-model 、式 @eq-quality-model 、式 @eq-cross-full 、式 @eq-cross-sex 、式 @eq-cross-hybrid ）和EViews分析结果，你最终希望采用哪一个分析模型？请你判断女性工人是否受到了工资歧视？请简要说明你的理由和看法。
 
@@ -664,6 +694,195 @@ b）**\{有高学历和临时合同的30岁女性\}**工人的工资的估计值
 <br>
 
 <br>
+
+<br>
+
+
+## 题目`r n_task()`：线性约束条件及假设检验
+
+```{r}
+
+mod_full <- formula(wage ~ age  +edu_pri +edu_mid +  edu_hig + dpt_per +(dpt_tem + dpt_per):sex_f )
+
+mod_cs <- formula(wage ~ age + edu +edu_pri +edu_mid +  edu_hig + dpt_per )
+
+fit.full <- lm(mod_full, data = df_dummy)
+smry.full <- summary(fit.full)
+
+fit.cs <- lm(mod_cs, data = df_dummy)
+smry.cs <- summary(fit.cs)
+
+#====classical test ====
+n <- nrow(df_dummy)
+xvars_full <- attr(terms(fit.full), "term.labels")
+xvars_cs <- attr(terms(fit.cs), "term.labels")
+k_f <- length(xvars_full) +1
+k_c <- length(xvars_cs) +1
+
+k_faid <- k_f+1
+t_v0 <- qt(p = 0.975, df = n-k_f)
+t_v1 <- qt(p = 0.975, df = n-k_faid)
+t_v2 <- qt(p = 0.95, df = n-k_f)
+
+
+#===Wald test====
+
+r2_f <- smry.full$r.squared
+r2_c <- smry.cs$r.squared
+
+e_f <- smry.full$residuals
+e_c <- smry.cs$residuals
+
+rss_f <- sum(e_f^2)
+rss_c <- sum(e_c^2)
+
+q <- 3
+W1 <- ((rss_c -rss_f)/q)/(rss_f/(n - k_f)) # F stat
+W1_b <- ((r2_f-r2_c)/q)/((1-r2_f)/(n- k_f))  # F stat with R2
+
+W2 <- ((rss_c -rss_f)/1)/(rss_f/(n - k_f)) # chi2 stat
+
+Fval <- qf(p = 0.95,df1 = q, df2 = n - k_f)
+```
+
+无约束模型如下：
+
+```{r}
+#| results: asis
+
+lx.out <- qx.psm(x = xvars_full, y = "wage",
+                 type = "prm", n.row = 4,
+                 lm.label = "prm-full", lm.tag = "无约束")
+```
+
+受约束模型如下：
+
+```{r}
+#| results: asis
+
+lx.out <- qx.psm(x = xvars_cs, y = "wage",
+                 type = "prm", n.row = 4, 
+                 greek.g = c("alpha"),
+                 lm.label = "prm-cs", lm.tag = "受约束")
+```
+
+<br>
+
+（1）运用Eviews菜单（Quick $\Rightarrow$ Estimate Equation），分别对上述模型（见 @eq-prm-full 和 @eq-prm-cs ）进行最小二乘回归分析。在Eviews软件中，以方程对象（Equation![](../pic/object/Equation.png)）形式保存上述回归结果，无约束回归命名为`eq_u`，受约束回归命名为`eq_r`。最后截图到下列空白处。
+
+答：分别截图如下
+
+<br>
+
+<br>
+
+<br>
+
+
+（2）根据无约束模型最小二乘法的EViews回归结果，请你对模型中两个交互项变量（$dpt\_tem*sex\_f$ 和$dpt\_per*sex\_f$）前面的斜率参数（$\beta_{7}$ 和$\beta_{8}$）分别进行t检验并得到检验结论。给定显著性水平$\alpha =0.05$，t查表值$t_{1-\alpha/2}(n-`r k_f`) = t_{0.975}(`r n-k_f`) = `r number(t_v0,0.01)`$。（**要求**：简单直接给出检验依据和结论即可）。
+
+答：
+
+<br>
+
+<br>
+
+<br>
+
+
+
+（3）根据上述题（2）的t检验结论，你能否认为对于女性工人而言，无论是获得一份临时工作（$dpt\_tem=1$）还是获得一份合同工作（$dpt\_per=1$），对于女性工人的工资收入都是有显著影响的？
+
+答：
+
+<br>
+
+<br>
+
+<br>
+
+
+（4）为了进一步验证上述题（3）的观点，我们可以结合无约束模型 （见 @eq-prm-full ）和受约束模型 （见 @eq-prm-full ）进行线性约束条件是否成立的假设检验（F检验）。结合无约束模型和受约束模型的EViews回归结果，请依次回答如下问题：
+
+a）请你写出上述线性约束条件假设检验的原假设$H_0$和备择假设$H_1$。
+
+答：
+
+<br>
+
+<br>
+
+<br>
+
+b）在EViews中，请分别提取无约束模型的判定系数$R^2_u$，以及受约束模型的判定系数$R^2_r$，保存为标量对象![](../pic/object/Scalar.png)，并分别命名为`r2_u`和`r2_r`。同时，请分别计算无约束模型的残差平方和$RSS_u$，以及受约束模型的残差平方和$RSS_r$，保存为标量对象![](../pic/object/Scalar.png)，并分别命名为`rss_u`和`rss_r`。
+
+答：此题无需作答，完成相关操作即可。
+
+<br>
+
+<br>
+
+<br>
+
+
+c）请利用无约束模型的判定系数$R^2_u$，以及受约束模型的判定系数$R^2_r$，手动计算合适的F统计量$F^{\ast}_1$，保存为标量对象![](../pic/object/Scalar.png)，并命名为`F_str1`。
+
+答：计算结果为（保留4位小数）$F^{\ast}_1=$
+
+<br>
+
+<br>
+
+<br>
+
+
+d）请利用无约束模型的残差平方和$RSS_u$，以及受约束模型的残差平方和$RSS_r$，手动计算合适的F统计量$F^{\ast}_2$，保存为标量对象![](../pic/object/Scalar.png)，并命名为`F_str2`。
+
+答：计算结果为（保留4位小数）$F^{\ast}_2=$
+
+<br>
+
+<br>
+
+<br>
+
+e）为了进行上述F检验，请你利用EViews软件正确计算得到相应的F查表值。给定显著性水平$\alpha=0.05$，请你计算F统计量的第一自由度$df_1$和第二自由度$df_2$，分别保存为标量对象![](../pic/object/Scalar.png)，并分别命名为`df_1`和`df_2`。同时，请正确计算得到相应的F查表值$F_{1-\alpha/2}(df_1, df_2)$，并保存为标量对象![](../pic/object/Scalar.png)`F_val`。
+
+答：F理论查表值结果为（保留4位小数$F_{1-\alpha/2}(df_1, df_2)=$
+
+<br>
+
+<br>
+
+<br>
+
+f）利用F查表值结果，请对上述题c）和题d）分别进行F检验，并得出检验结论。（**要求**：简要写出检验过程和结论即可。）
+
+答：
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+g）请你利用EViews菜单操作，进行上述线性约束假设检验，将分析结果冻结Freeze保存为表格对象![](../pic/object/Table.png)，并命名为`test_restrain`。最后，请你核对是否与前述题c）和题d）的自己手动计算结果一样。（**要求**：将表格对象截图在下面空白处。）
+
+答：
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+h）根据上述线性约束条件F检验，你能否认为对于女性工人而言，无论是获得一份临时工作（$dpt\_tem=1$）还是获得一份合同工作（$dpt\_per=1$），对于女性工人的工资收入都是有显著影响的？
+
+答：
 
 <br>
 

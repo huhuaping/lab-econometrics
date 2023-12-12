@@ -397,7 +397,30 @@ for (i in 1:length(xvars)) {
 
 （2）根据EViews的回归方程结果，请将8个辅助回归的判定系数结果依次提取出来，将数值添加到向量对象![](../pic/object/Vector.png)中，保存并命名该向量对象为：`vec_R2`。最后，补充完成下表。（**要求**：结果保留4位小数）。
 
-> **温馨提示**：向量操作的EViews代码格式如：`vector(9) vec_R2(1) =eq_aux1.@r2`。
+
+
+> **温馨提示**：从辅助方程中提取判定系数$R^2$的向量操作的EViews代码如下：
+ 
+```
+'构造一个1行8列的列向量，取名为vec_r2
+vector(8) vec_r2
+'提取辅助方程1的判定系数，填入到vec_r2向量的第1个元素
+vec_r2.fill(o=1) eq_aux1.@r2
+'提取辅助方程2的判定系数，填入到vec_r2向量的第2个元素
+vec_r2.fill(o=2) eq_aux2.@r2
+'剩余操作代码，同上
+```
+
+::: {.callout-tip}
+以上`EViews`代码能得以成功运行的前提是：辅助回归方程是通过代码编程获得的，而不能是鼠标菜单操作获得的，也即：
+
+- $\checkmark$：代码编程`equation eq_aux1.ls X1 c X2 X3 X4 X5 X6 X7 X8`
+
+- $\times$：菜单操作 Quick $\Rightarrow$ Estimate Equation
+
+:::
+
+
 
 
 答：
@@ -429,6 +452,9 @@ diag_aux %>%
 （1）根据上述8个辅助回归的判定系数，请相应计算出各自的方差膨胀因子VIF，在EViews中将结果保存并命名为向量对象![](../pic/object/Vector.png)`vec_vif`。
 
 > **温馨提示**：$VIF_j=\frac{1}{1-R^2_j},\quad j\in 1,\cdots,8$。
+> 步骤1：事先准备好1行8列的单位列向量，代码为`vector(8) unit =1`
+> 步骤2：根据上述公式，进行VIF计算，代码为`vector vec_vif =@ediv(unit, (unit-vec_r2)) `
+> 其中代码命令`@ediv(v1, v2)`表示两个向量之间对应元素相除。
 
 答：此题不需要作答，完成指定操作并确保正确即可！
 
@@ -449,7 +475,7 @@ diag_aux %>%
 （3）请你利用Eviews菜单操作程序，单独得到方差膨胀因子。将结果保存并命名为表对象![](../pic/object/Vector.png)`tab_vif`。最后将表对象截图到下面空白处！
 
 
-> **温馨提示**：（1）对方程对象做如下操作：$\Rightarrow$  `View` $\Rightarrow$ `Coefficient Diagnostics`  $\Rightarrow$  `Variance Inflation Factors`。（2）另存为表格(table)对象![](../pic/object/Vector.png)：点击`Freeze`。
+> **温馨提示**：（1）对方程对象![](../pic/object/Equation.png)做如下操作：$\Rightarrow$  `View` $\Rightarrow$ `Coefficient Diagnostics`  $\Rightarrow$  `Variance Inflation Factors`。（2）另存为表格(table)对象![](../pic/object/Vector.png)：点击`Freeze`。
 
 答：
 
@@ -461,9 +487,6 @@ diag_aux %>%
 
 
 （3）请根据上述3个步骤的操作计算结果，补充完成如下表格的诊断数值和诊断结论。（**要求**：a.结果保留4位小数；b.简要说明诊断的依据。）。
-
-> **温馨提示**：向量操作的EViews代码格式如：`vector(9) vec_R2(1) =eq_aux1.@r2`。
-
 
 答：
 
