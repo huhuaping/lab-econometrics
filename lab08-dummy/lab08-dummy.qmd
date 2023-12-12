@@ -870,6 +870,12 @@ f）利用F查表值结果，请对上述题c）和题d）分别进行F检验，
 
 g）请你利用EViews菜单操作，进行上述线性约束假设检验，将分析结果冻结Freeze保存为表格对象![](../pic/object/Table.png)，并命名为`test_restrain`。最后，请你核对是否与前述题c）和题d）的自己手动计算结果一样。（**要求**：将表格对象截图在下面空白处。）
 
+::: {.callout-tips}
+EViews操作提示：（1）双击打开无约束回归对象![](../pic/object/Table.png)`eq_u` （2）对象视窗下点击菜单`View`，下拉项选择`Coefficients Diagnostics`；（3）下拉项选择`Wald Test-Coefficient Rstrictions...`，进入参数约束引导窗口，按提示填写约束条件。
+
+![](../pic/lab8-dummy-model/eviews-wald-coef-restrained.png)
+:::
+
 答：
 
 <br>
