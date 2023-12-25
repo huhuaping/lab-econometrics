@@ -704,7 +704,7 @@ b）**\{有高学历和临时合同的30岁女性\}**工人的工资的估计值
 
 mod_full <- formula(wage ~ age  +edu_pri +edu_mid +  edu_hig + dpt_per +(dpt_tem + dpt_per):sex_f )
 
-mod_cs <- formula(wage ~ age + edu +edu_pri +edu_mid +  edu_hig + dpt_per )
+mod_cs <- formula(wage ~ age +edu_pri +edu_mid +  edu_hig + dpt_per )
 
 fit.full <- lm(mod_full, data = df_dummy)
 smry.full <- summary(fit.full)
