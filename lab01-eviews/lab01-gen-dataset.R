@@ -13,8 +13,8 @@ require(zip)
 # ====get students information====
 source(here("R/get_students.R"), encoding = "UTF-8")
 
-id_year <- 2021
-teach_year <- 2023
+id_year <- 2022
+teach_year <- 2024
 n_add <- 5
 
 files_students <- paste0("data/students-list-",
@@ -41,7 +41,8 @@ source(here("R/generate_rdm_df.R"), encoding = "UTF-8")
 
 cols_rdm <- names(df_cpi)[c(-1,-2)]
 #set.seed(20211108) # for year 2021 fall
-set.seed(20231108) # for year 2023 fall
+#set.seed(20231108) # for year 2023 fall
+set.seed(20241108) # for year 2024 fall
 
 
 # call external function
