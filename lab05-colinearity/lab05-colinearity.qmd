@@ -13,19 +13,19 @@ params:
       lab_num: 5
       name_chn: 多重共线性
       name_eng: colinearity
-  hw_start: '2023-12-04'
-  hw_end: '2023-12-11'
+  hw_start: '2024-12-04'
+  hw_end: '2024-12-11'
   topic: 'colinearity'
   class: 'under'
-  id_year: '2021'
-  teach_year: '2023'
-  term: '2023'
+  id_year: '2022'
+  teach_year: '2024'
+  term: '2024'
   course_id:
     value:
       academic: '6132001'
       major: 'pd7134001'
       under: '3133101'
-
+      
 format:
   docx:
     #output-file: homework02-test.docx
