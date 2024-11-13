@@ -13,13 +13,13 @@ params:
       lab_num: 8
       name_chn: 虚拟变量
       name_eng: dummy
-  hw_start: '2023-12-25'
-  hw_end: '2024-01-01'
+  hw_start: '2024-12-25'
+  hw_end: '2025-01-01'
   topic: 'dummy'
   class: 'under'
-  id_year: '2021'
-  teach_year: '2023'
-  term: '2023'
+  id_year: '2022'
+  teach_year: '2022'
+  term: '2024'
   course_id:
     value:
       academic: '6132001'

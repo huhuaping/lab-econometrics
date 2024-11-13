@@ -13,8 +13,8 @@ require(janitor)
 # ====get students information====
 source(here("R/get_students.R"), encoding = "UTF-8")
 
-id_year <- 2021
-teach_year <- 2023
+id_year <- 2022
+teach_year <- 2024
 lab_num <- "06"
 lab_topic <- "hetero"
 n_add <- 5
