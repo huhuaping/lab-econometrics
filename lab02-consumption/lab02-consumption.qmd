@@ -13,13 +13,13 @@ params:
       lab_num: 2
       name_chn: 一元回归
       name_eng: simple-reg
-  hw_start: '2023-11-20'
-  hw_end: '2023-11-27'
+  hw_start: '2024-11-20'
+  hw_end: '2024-11-27'
   topic: 'consumption'
   class: 'under'
-  id_year: '2021'
-  teach_year: '2023'
-  term: '2023'
+  id_year: '2022'
+  teach_year: '2024'
+  term: '2024'
   course_id:
     value:
       academic: '6132001'

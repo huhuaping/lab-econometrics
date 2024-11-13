@@ -12,8 +12,8 @@ require(zip)
 # ====get students information====
 source(here("R/get_students.R"), encoding = "UTF-8")
 
-id_year <- 2021
-teach_year <- 2023
+id_year <- 2022
+teach_year <- 2024
 lab_num <- "02"
 lab_topic <- "consumption"
 n_add <- 5
@@ -58,7 +58,10 @@ vars_chn <-c("数据集", "班级", "学号", "姓名",
 
 # get all exercise data table
 df_exercise <- df_students %>%
-  mutate(data = map(.x = id, ~gen_dt(seeds = .x))) %>%
+  # 避免学号出现英文字母代码
+  mutate(seeds = str_replace(id, "[:alpha:]","0")) %>% 
+  mutate(data = map(.x = seeds, ~gen_dt(seeds = .x))) %>%
+  select(-seeds) %>%
   unnest(data) %>%
   mutate(spend = round(spend, 4)) %>% # control digits
   select(all_of(vars_sel))
