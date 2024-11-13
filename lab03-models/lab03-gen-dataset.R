@@ -12,8 +12,8 @@ require(zip)
 # ====get students information====
 source(here("R/get_students.R"), encoding = "UTF-8")
 
-id_year <- 2021
-teach_year <- 2023
+id_year <- 2022
+teach_year <- 2024
 lab_num <- "03"
 lab_topic <- "models"
 n_add <- 5
